@@ -20,9 +20,7 @@ class GMetalView: UIView {
     }
     */
     
-    var metalLayer : CAMetalLayer?
-    
-    var device : MTLDevice
+    var device : MTLDevice?
 
     override class var layerClass: Swift.AnyClass {
         return CAMetalLayer.self
@@ -30,13 +28,13 @@ class GMetalView: UIView {
     
     required init?(coder aDecoder: NSCoder) {
         
-        self.device = MTLCreateSystemDefaultDevice()!
-        
         super.init(coder: aDecoder)
-        
-        self.metalLayer = self.layer as? CAMetalLayer
-        self.metalLayer?.device = self.device
-        self.metalLayer?.pixelFormat = .bgra8Unorm
+
+        self.makeDevice()
+    }
+    
+    var metalLayer : CAMetalLayer? {
+        return self.layer as? CAMetalLayer
     }
     
     override func didMoveToWindow() {
@@ -51,14 +49,20 @@ class GMetalView: UIView {
         passDescriptor.colorAttachments[0].texture = texture
         passDescriptor.colorAttachments[0].loadAction = .clear
         passDescriptor.colorAttachments[0].storeAction = .store
-        passDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 1, green: 0, blue: 0, alpha: 1)
+        passDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 1, green: 1, blue: 0, alpha: 1)
         
-        var commandQueue = self.device.makeCommandQueue()
-        var commandBuffer = commandQueue.makeCommandBuffer()
-        var commandEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: passDescriptor)
-        commandEncoder.endEncoding()
+        let commandQueue = self.device?.makeCommandQueue()
+        let commandBuffer = commandQueue?.makeCommandBuffer()
+        let commandEncoder = commandBuffer?.makeRenderCommandEncoder(descriptor: passDescriptor)
+        commandEncoder?.endEncoding()
         
-        commandBuffer.present(drawable!)
-        commandBuffer.commit()
+        commandBuffer?.present(drawable!)
+        commandBuffer?.commit()
+    }
+    
+    func makeDevice() {
+        self.device = MTLCreateSystemDefaultDevice()!
+        self.metalLayer?.device = self.device
+        self.metalLayer?.pixelFormat = .bgra8Unorm
     }
 }
