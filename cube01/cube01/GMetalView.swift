@@ -9,6 +9,12 @@
 import UIKit
 import Metal
 import QuartzCore
+import simd
+
+struct MBEVertex {
+    var position : vector_float4
+    var color : vector_float4
+}
 
 class GMetalView: UIView {
 
@@ -21,7 +27,11 @@ class GMetalView: UIView {
     */
     
     var device : MTLDevice?
-
+    var vertexBuffer: MTLBuffer?
+    var pipeline : MTLRenderPipelineState?
+    var commandQueue : MTLCommandQueue?
+    var displayLink : CADisplayLink?
+    
     override class var layerClass: Swift.AnyClass {
         return CAMetalLayer.self
     }
@@ -31,14 +41,32 @@ class GMetalView: UIView {
         super.init(coder: aDecoder)
 
         self.makeDevice()
+        makeBuffers()
+        makePipeline()
+    }
+    
+    deinit {
+        displayLink?.invalidate()
     }
     
     var metalLayer : CAMetalLayer? {
         return self.layer as? CAMetalLayer
     }
     
-    override func didMoveToWindow() {
-        self.redraw()
+    override func didMoveToSuperview() {
+        super.didMoveToSuperview()
+        if self.superview != nil {
+            displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidFire))
+            displayLink?.add(to: RunLoop.main, forMode: .commonModes)
+        }
+        else {
+            displayLink?.invalidate()
+            displayLink = nil
+        }
+    }
+    
+    func displayLinkDidFire() {
+        redraw()
     }
     
     func redraw() {
@@ -51,9 +79,11 @@ class GMetalView: UIView {
         passDescriptor.colorAttachments[0].storeAction = .store
         passDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 1, green: 1, blue: 0, alpha: 1)
         
-        let commandQueue = self.device?.makeCommandQueue()
         let commandBuffer = commandQueue?.makeCommandBuffer()
         let commandEncoder = commandBuffer?.makeRenderCommandEncoder(descriptor: passDescriptor)
+        commandEncoder?.setRenderPipelineState(self.pipeline!)
+        commandEncoder?.setVertexBuffer(self.vertexBuffer, offset: 0, at: 0)
+        commandEncoder?.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
         commandEncoder?.endEncoding()
         
         commandBuffer?.present(drawable!)
@@ -64,5 +94,29 @@ class GMetalView: UIView {
         self.device = MTLCreateSystemDefaultDevice()!
         self.metalLayer?.device = self.device
         self.metalLayer?.pixelFormat = .bgra8Unorm
+    }
+    
+    func makeBuffers() {
+        let vertices = [
+            MBEVertex(position: vector_float4(0, 0.5, 0, 1), color: vector_float4(1, 0, 0, 1)),
+            MBEVertex(position: vector_float4(-0.5, -0.5, 0, 1), color: vector_float4(0, 1, 0, 1)),
+            MBEVertex(position: vector_float4(0.5, -0.5, 0, 1), color: vector_float4(0, 0, 1, 1))
+        ]
+        
+        self.vertexBuffer = device?.makeBuffer(bytes: vertices, length: vertices.count * MemoryLayout<MBEVertex>.size, options: [])
+    }
+    
+    func makePipeline() {
+        let library = device?.newDefaultLibrary()
+        let vertexFunc = library?.makeFunction(name: "vertex_main")
+        let fragmentFunc = library?.makeFunction(name: "fragment_main")
+        
+        let pipelineDescriptor = MTLRenderPipelineDescriptor()
+        pipelineDescriptor.vertexFunction = vertexFunc
+        pipelineDescriptor.fragmentFunction = fragmentFunc
+        pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+        
+        self.pipeline = try? self.device!.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        self.commandQueue = self.device?.makeCommandQueue()
     }
 }

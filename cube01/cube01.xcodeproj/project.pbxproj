@@ -13,6 +13,7 @@
 		EC4970C81EE45D79000EA632 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EC4970C71EE45D79000EA632 /* Assets.xcassets */; };
 		EC4970CB1EE45D79000EA632 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EC4970C91EE45D79000EA632 /* LaunchScreen.storyboard */; };
 		EC4970D31EE45E17000EA632 /* GMetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4970D21EE45E17000EA632 /* GMetalView.swift */; };
+		ECB5290E1EE73DAD0028382F /* shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = ECB5290D1EE73DAD0028382F /* shaders.metal */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		EC4970CA1EE45D79000EA632 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EC4970CC1EE45D79000EA632 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EC4970D21EE45E17000EA632 /* GMetalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GMetalView.swift; sourceTree = "<group>"; };
+		ECB5290D1EE73DAD0028382F /* shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = shaders.metal; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +65,7 @@
 				EC4970C91EE45D79000EA632 /* LaunchScreen.storyboard */,
 				EC4970CC1EE45D79000EA632 /* Info.plist */,
 				EC4970D21EE45E17000EA632 /* GMetalView.swift */,
+				ECB5290D1EE73DAD0028382F /* shaders.metal */,
 			);
 			path = cube01;
 			sourceTree = "<group>";
@@ -140,6 +143,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ECB5290E1EE73DAD0028382F /* shaders.metal in Sources */,
 				EC4970D31EE45E17000EA632 /* GMetalView.swift in Sources */,
 				EC4970C31EE45D79000EA632 /* ViewController.swift in Sources */,
 				EC4970C11EE45D79000EA632 /* AppDelegate.swift in Sources */,
@@ -308,6 +312,7 @@
 				EC4970D11EE45D79000EA632 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
