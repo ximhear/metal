@@ -65,7 +65,7 @@ class GMetalView: UIView {
         }
     }
     
-    func displayLinkDidFire() {
+    @objc func displayLinkDidFire() {
         redraw()
     }
     
@@ -82,7 +82,7 @@ class GMetalView: UIView {
         let commandBuffer = commandQueue?.makeCommandBuffer()
         let commandEncoder = commandBuffer?.makeRenderCommandEncoder(descriptor: passDescriptor)
         commandEncoder?.setRenderPipelineState(self.pipeline!)
-        commandEncoder?.setVertexBuffer(self.vertexBuffer, offset: 0, at: 0)
+        commandEncoder?.setVertexBuffer(self.vertexBuffer, offset: 0, index: 0)
         commandEncoder?.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
         commandEncoder?.endEncoding()
         
@@ -107,7 +107,7 @@ class GMetalView: UIView {
     }
     
     func makePipeline() {
-        let library = device?.newDefaultLibrary()
+        let library = device?.makeDefaultLibrary()
         let vertexFunc = library?.makeFunction(name: "vertex_main")
         let fragmentFunc = library?.makeFunction(name: "fragment_main")
         
