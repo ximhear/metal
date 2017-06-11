@@ -49,7 +49,7 @@ class GMetalView: UIView {
     required init?(coder aDecoder: NSCoder) {
         
         super.init(coder: aDecoder)
-
+        
         self.makeDevice()
         makeBuffers()
         makePipeline()
@@ -66,8 +66,10 @@ class GMetalView: UIView {
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
         if self.superview != nil {
-            displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidFire))
-            displayLink?.add(to: RunLoop.main, forMode: .commonModes)
+            if displayLink == nil {
+                displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidFire))
+                displayLink?.add(to: RunLoop.main, forMode: .commonModes)
+            }
         }
         else {
             displayLink?.invalidate()
@@ -273,5 +275,41 @@ class GMetalView: UIView {
         
         let mat = matrix_float4x4(columns:( P, Q, R, S ))
         return mat
+    }
+    
+    override var frame: CGRect {
+        get {
+            return super.frame
+        }
+        set {
+            super.frame = newValue
+            var scale = UIScreen.main.scale
+            if let w = self.window {
+                scale = w.screen.scale
+            }
+            var drawableSize = self.bounds.size
+            drawableSize.width *= scale
+            drawableSize.height *= scale
+            
+            self.metalLayer?.drawableSize = drawableSize
+            
+            self.makeDepthTexture()
+        }
+    }
+}
+
+extension GMetalView : AppProtocol {
+    
+    func applicationWillResignActive() {
+        displayLink?.invalidate()
+        displayLink = nil
+    }
+    
+    func applicationDidBecomeActive() {
+        
+        if displayLink == nil {
+            displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidFire))
+            displayLink?.add(to: RunLoop.main, forMode: .commonModes)
+        }
     }
 }

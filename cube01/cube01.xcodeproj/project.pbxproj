@@ -7,16 +7,33 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EC3B7CAA1EEDAD720049EF7D /* FirstWireFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3B7CA91EEDAD610049EF7D /* FirstWireFrame.swift */; };
+		EC3B7CAB1EEDAD770049EF7D /* FirstViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3B7CA71EEDAD610049EF7D /* FirstViewController.swift */; };
+		EC3B7CAC1EEDAD7C0049EF7D /* FirstProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3B7CA51EEDAD610049EF7D /* FirstProtocols.swift */; };
+		EC3B7CAD1EEDAD800049EF7D /* FirstPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3B7CA31EEDAD610049EF7D /* FirstPresenter.swift */; };
+		EC3B7CAE1EEDAD840049EF7D /* FirstInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3B7CA01EEDAD610049EF7D /* FirstInteractor.swift */; };
+		EC3B7CAF1EEDAD870049EF7D /* FirstItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3B7CA11EEDAD610049EF7D /* FirstItem.swift */; };
+		EC3B7CB01EEDAD8D0049EF7D /* FirstAPIDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3B7C9C1EEDAD610049EF7D /* FirstAPIDataManager.swift */; };
+		EC3B7CB11EEDAD910049EF7D /* FirstLocalDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3B7C9E1EEDAD610049EF7D /* FirstLocalDataManager.swift */; };
 		EC4970C11EE45D79000EA632 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4970C01EE45D79000EA632 /* AppDelegate.swift */; };
 		EC4970C31EE45D79000EA632 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4970C21EE45D79000EA632 /* ViewController.swift */; };
 		EC4970C61EE45D79000EA632 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EC4970C41EE45D79000EA632 /* Main.storyboard */; };
 		EC4970C81EE45D79000EA632 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EC4970C71EE45D79000EA632 /* Assets.xcassets */; };
 		EC4970CB1EE45D79000EA632 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EC4970C91EE45D79000EA632 /* LaunchScreen.storyboard */; };
 		EC4970D31EE45E17000EA632 /* GMetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4970D21EE45E17000EA632 /* GMetalView.swift */; };
+		EC53656A1EED92B900715BFC /* AppProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5365691EED92B900715BFC /* AppProtocol.swift */; };
 		ECB5290E1EE73DAD0028382F /* shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = ECB5290D1EE73DAD0028382F /* shaders.metal */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		EC3B7C9C1EEDAD610049EF7D /* FirstAPIDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstAPIDataManager.swift; sourceTree = "<group>"; };
+		EC3B7C9E1EEDAD610049EF7D /* FirstLocalDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLocalDataManager.swift; sourceTree = "<group>"; };
+		EC3B7CA01EEDAD610049EF7D /* FirstInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstInteractor.swift; sourceTree = "<group>"; };
+		EC3B7CA11EEDAD610049EF7D /* FirstItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstItem.swift; sourceTree = "<group>"; };
+		EC3B7CA31EEDAD610049EF7D /* FirstPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstPresenter.swift; sourceTree = "<group>"; };
+		EC3B7CA51EEDAD610049EF7D /* FirstProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstProtocols.swift; sourceTree = "<group>"; };
+		EC3B7CA71EEDAD610049EF7D /* FirstViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstViewController.swift; sourceTree = "<group>"; };
+		EC3B7CA91EEDAD610049EF7D /* FirstWireFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstWireFrame.swift; sourceTree = "<group>"; };
 		EC4970BD1EE45D79000EA632 /* cube01.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = cube01.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EC4970C01EE45D79000EA632 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		EC4970C21EE45D79000EA632 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -25,6 +42,7 @@
 		EC4970CA1EE45D79000EA632 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EC4970CC1EE45D79000EA632 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EC4970D21EE45E17000EA632 /* GMetalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GMetalView.swift; sourceTree = "<group>"; };
+		EC5365691EED92B900715BFC /* AppProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppProtocol.swift; sourceTree = "<group>"; };
 		ECB5290D1EE73DAD0028382F /* shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = shaders.metal; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -39,6 +57,85 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		EC3B7C991EEDAD610049EF7D /* First */ = {
+			isa = PBXGroup;
+			children = (
+				EC3B7C9A1EEDAD610049EF7D /* DataManager */,
+				EC3B7C9F1EEDAD610049EF7D /* Interactor */,
+				EC3B7CA21EEDAD610049EF7D /* Presenter */,
+				EC3B7CA41EEDAD610049EF7D /* Protocols */,
+				EC3B7CA61EEDAD610049EF7D /* ViewController */,
+				EC3B7CA81EEDAD610049EF7D /* WireFrame */,
+			);
+			path = First;
+			sourceTree = "<group>";
+		};
+		EC3B7C9A1EEDAD610049EF7D /* DataManager */ = {
+			isa = PBXGroup;
+			children = (
+				EC3B7C9B1EEDAD610049EF7D /* API */,
+				EC3B7C9D1EEDAD610049EF7D /* Local */,
+			);
+			path = DataManager;
+			sourceTree = "<group>";
+		};
+		EC3B7C9B1EEDAD610049EF7D /* API */ = {
+			isa = PBXGroup;
+			children = (
+				EC3B7C9C1EEDAD610049EF7D /* FirstAPIDataManager.swift */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
+		EC3B7C9D1EEDAD610049EF7D /* Local */ = {
+			isa = PBXGroup;
+			children = (
+				EC3B7C9E1EEDAD610049EF7D /* FirstLocalDataManager.swift */,
+			);
+			path = Local;
+			sourceTree = "<group>";
+		};
+		EC3B7C9F1EEDAD610049EF7D /* Interactor */ = {
+			isa = PBXGroup;
+			children = (
+				EC3B7CA01EEDAD610049EF7D /* FirstInteractor.swift */,
+				EC3B7CA11EEDAD610049EF7D /* FirstItem.swift */,
+			);
+			path = Interactor;
+			sourceTree = "<group>";
+		};
+		EC3B7CA21EEDAD610049EF7D /* Presenter */ = {
+			isa = PBXGroup;
+			children = (
+				EC3B7CA31EEDAD610049EF7D /* FirstPresenter.swift */,
+			);
+			path = Presenter;
+			sourceTree = "<group>";
+		};
+		EC3B7CA41EEDAD610049EF7D /* Protocols */ = {
+			isa = PBXGroup;
+			children = (
+				EC3B7CA51EEDAD610049EF7D /* FirstProtocols.swift */,
+			);
+			path = Protocols;
+			sourceTree = "<group>";
+		};
+		EC3B7CA61EEDAD610049EF7D /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				EC3B7CA71EEDAD610049EF7D /* FirstViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		EC3B7CA81EEDAD610049EF7D /* WireFrame */ = {
+			isa = PBXGroup;
+			children = (
+				EC3B7CA91EEDAD610049EF7D /* FirstWireFrame.swift */,
+			);
+			path = WireFrame;
+			sourceTree = "<group>";
+		};
 		EC4970B41EE45D79000EA632 = {
 			isa = PBXGroup;
 			children = (
@@ -58,6 +155,7 @@
 		EC4970BF1EE45D79000EA632 /* cube01 */ = {
 			isa = PBXGroup;
 			children = (
+				EC53656C1EED9ADB00715BFC /* modules */,
 				EC4970C01EE45D79000EA632 /* AppDelegate.swift */,
 				EC4970C21EE45D79000EA632 /* ViewController.swift */,
 				EC4970C41EE45D79000EA632 /* Main.storyboard */,
@@ -66,8 +164,17 @@
 				EC4970CC1EE45D79000EA632 /* Info.plist */,
 				EC4970D21EE45E17000EA632 /* GMetalView.swift */,
 				ECB5290D1EE73DAD0028382F /* shaders.metal */,
+				EC5365691EED92B900715BFC /* AppProtocol.swift */,
 			);
 			path = cube01;
+			sourceTree = "<group>";
+		};
+		EC53656C1EED9ADB00715BFC /* modules */ = {
+			isa = PBXGroup;
+			children = (
+				EC3B7C991EEDAD610049EF7D /* First */,
+			);
+			path = modules;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -144,10 +251,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EC3B7CAD1EEDAD800049EF7D /* FirstPresenter.swift in Sources */,
+				EC53656A1EED92B900715BFC /* AppProtocol.swift in Sources */,
 				ECB5290E1EE73DAD0028382F /* shaders.metal in Sources */,
 				EC4970D31EE45E17000EA632 /* GMetalView.swift in Sources */,
+				EC3B7CAA1EEDAD720049EF7D /* FirstWireFrame.swift in Sources */,
+				EC3B7CAC1EEDAD7C0049EF7D /* FirstProtocols.swift in Sources */,
+				EC3B7CAF1EEDAD870049EF7D /* FirstItem.swift in Sources */,
 				EC4970C31EE45D79000EA632 /* ViewController.swift in Sources */,
+				EC3B7CAE1EEDAD840049EF7D /* FirstInteractor.swift in Sources */,
 				EC4970C11EE45D79000EA632 /* AppDelegate.swift in Sources */,
+				EC3B7CAB1EEDAD770049EF7D /* FirstViewController.swift in Sources */,
+				EC3B7CB01EEDAD8D0049EF7D /* FirstAPIDataManager.swift in Sources */,
+				EC3B7CB11EEDAD910049EF7D /* FirstLocalDataManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
