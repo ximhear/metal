@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E0CEA6F5A32EFEB68E8948A9 /* Pods_cube01.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86844DBB603D6744BAC13E16 /* Pods_cube01.framework */; };
 		EC3B7CAA1EEDAD720049EF7D /* FirstWireFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3B7CA91EEDAD610049EF7D /* FirstWireFrame.swift */; };
 		EC3B7CAB1EEDAD770049EF7D /* FirstViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3B7CA71EEDAD610049EF7D /* FirstViewController.swift */; };
 		EC3B7CAC1EEDAD7C0049EF7D /* FirstProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3B7CA51EEDAD610049EF7D /* FirstProtocols.swift */; };
@@ -26,6 +27,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1AA24217527EC549A61BEC5D /* Pods-cube01.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-cube01.release.xcconfig"; path = "Pods/Target Support Files/Pods-cube01/Pods-cube01.release.xcconfig"; sourceTree = "<group>"; };
+		86844DBB603D6744BAC13E16 /* Pods_cube01.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_cube01.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9E3321F88526131E1B4ABAB0 /* Pods-cube01.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-cube01.debug.xcconfig"; path = "Pods/Target Support Files/Pods-cube01/Pods-cube01.debug.xcconfig"; sourceTree = "<group>"; };
 		EC3B7C9C1EEDAD610049EF7D /* FirstAPIDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstAPIDataManager.swift; sourceTree = "<group>"; };
 		EC3B7C9E1EEDAD610049EF7D /* FirstLocalDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLocalDataManager.swift; sourceTree = "<group>"; };
 		EC3B7CA01EEDAD610049EF7D /* FirstInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstInteractor.swift; sourceTree = "<group>"; };
@@ -51,12 +55,21 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E0CEA6F5A32EFEB68E8948A9 /* Pods_cube01.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		2A9A4C84A9D3E6A2597082C9 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				86844DBB603D6744BAC13E16 /* Pods_cube01.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		EC3B7C991EEDAD610049EF7D /* First */ = {
 			isa = PBXGroup;
 			children = (
@@ -141,6 +154,8 @@
 			children = (
 				EC4970BF1EE45D79000EA632 /* cube01 */,
 				EC4970BE1EE45D79000EA632 /* Products */,
+				FF93D3FCDE88BAD7F20BC25E /* Pods */,
+				2A9A4C84A9D3E6A2597082C9 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -177,6 +192,15 @@
 			path = modules;
 			sourceTree = "<group>";
 		};
+		FF93D3FCDE88BAD7F20BC25E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				9E3321F88526131E1B4ABAB0 /* Pods-cube01.debug.xcconfig */,
+				1AA24217527EC549A61BEC5D /* Pods-cube01.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -184,9 +208,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = EC4970CF1EE45D79000EA632 /* Build configuration list for PBXNativeTarget "cube01" */;
 			buildPhases = (
+				54181BDD2D33B2C34C7494EB /* [CP] Check Pods Manifest.lock */,
 				EC4970B91EE45D79000EA632 /* Sources */,
 				EC4970BA1EE45D79000EA632 /* Frameworks */,
 				EC4970BB1EE45D79000EA632 /* Resources */,
+				2A0D2FC692BD761F8F1B2373 /* [CP] Embed Pods Frameworks */,
+				26523EB12C7A8CFB89F47A5F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -245,6 +272,54 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		26523EB12C7A8CFB89F47A5F /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-cube01/Pods-cube01-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		2A0D2FC692BD761F8F1B2373 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-cube01/Pods-cube01-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		54181BDD2D33B2C34C7494EB /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		EC4970B91EE45D79000EA632 /* Sources */ = {
@@ -398,6 +473,7 @@
 		};
 		EC4970D01EE45D79000EA632 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9E3321F88526131E1B4ABAB0 /* Pods-cube01.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = WD3LPJ2STX;
@@ -412,6 +488,7 @@
 		};
 		EC4970D11EE45D79000EA632 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1AA24217527EC549A61BEC5D /* Pods-cube01.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = WD3LPJ2STX;

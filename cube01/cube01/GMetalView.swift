@@ -56,6 +56,7 @@ class GMetalView: UIView {
     }
     
     deinit {
+        print("deinit GMetalView")
         displayLink?.invalidate()
     }
     

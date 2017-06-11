@@ -3,3 +3,6 @@ cube01/cube01.xcodeproj/xcuserdata/gzonelee.xcuserdatad
 cube01/cube01.xcodeproj/project.xcworkspace/xcuserdata
 cube01/cube01.xcodeproj/xcuserdata
 WorkspaceSettings.xcsettings
+Podfile.lock
+cube01/cube01.xcworkspace
+cube01/Pods
