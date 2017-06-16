@@ -10,10 +10,12 @@ import UIKit
 import Metal
 import QuartzCore
 import simd
+import MetalKit
 
 struct MBEVertex {
     var position : vector_float4
     var color : vector_float4
+    var texture : float2 = float2(0, 0)
 }
 
 struct MBEUniforms {
@@ -41,6 +43,8 @@ class GMetalView: UIView {
     var elapsedTime : Float = 0
     var rotationX : Float = 0
     var rotationY : Float = 0
+    var texture: MTLTexture?
+    var samplerState: MTLSamplerState?
     
     override class var layerClass: Swift.AnyClass {
         return CAMetalLayer.self
@@ -51,6 +55,8 @@ class GMetalView: UIView {
         super.init(coder: aDecoder)
         
         self.makeDevice()
+        buildSamplerState()
+        makeTexture()
         makeBuffers()
         makePipeline()
     }
@@ -84,6 +90,13 @@ class GMetalView: UIView {
         self.rotationX += duration * Float(Double.pi / 2);
         self.rotationY += duration * Float(Double.pi / 3);
         redraw()
+    }
+    
+    private func buildSamplerState() {
+        let descriptor = MTLSamplerDescriptor()
+        descriptor.minFilter = .linear
+        descriptor.magFilter = .linear
+        samplerState = self.device!.makeSamplerState(descriptor: descriptor)
     }
     
     func redraw() {
@@ -126,6 +139,7 @@ class GMetalView: UIView {
         let commandEncoder = commandBuffer?.makeRenderCommandEncoder(descriptor: passDescriptor)
         commandEncoder?.setRenderPipelineState(self.pipeline!)
         commandEncoder?.setDepthStencilState(self.depthStencilState)
+        commandEncoder?.setFragmentSamplerState(samplerState, index: 0)
         commandEncoder?.setFrontFacing(.counterClockwise)
         commandEncoder?.setCullMode(.back)
         commandEncoder?.setVertexBuffer(self.vertexBuffer, offset: 0, index: 0)
@@ -135,6 +149,7 @@ class GMetalView: UIView {
                                       length: MemoryLayout<MBEUniforms>.stride,
                                       index: 1)
         
+        commandEncoder?.setFragmentTexture(self.texture, index: 0)
         commandEncoder?.drawIndexedPrimitives(type: .triangle, indexCount: self.indexBuffer!.length / MemoryLayout<UInt16>.size, indexType: .uint16, indexBuffer: self.indexBuffer!, indexBufferOffset: 0)
         
         commandEncoder?.endEncoding()
@@ -151,20 +166,29 @@ class GMetalView: UIView {
     
     func makeBuffers() {
         
-        let vertices = [
-            MBEVertex(position: vector_float4(-1, 1, 1, 1), color: vector_float4(0, 1, 1, 1)),
-            MBEVertex(position: vector_float4(-1, -1, 1, 1), color: vector_float4(0, 0, 1, 1)),
-            MBEVertex(position: vector_float4(1, -1, 1, 1), color: vector_float4(1, 0, 1, 1)),
-            MBEVertex(position: vector_float4(1, 1, 1, 1), color: vector_float4(1, 1, 1, 1)),
-            MBEVertex(position: vector_float4(-1, 1, -1, 1), color: vector_float4(0, 1, 0, 1)),
-            MBEVertex(position: vector_float4(-1, -1, -1, 1), color: vector_float4(0, 0, 0, 1)),
-            MBEVertex(position: vector_float4(1, -1, -1, 1), color: vector_float4(1, 0, 0, 1)),
-            MBEVertex(position: vector_float4(1, 1, -1, 1), color: vector_float4(1, 1, 0, 1))
+        var vertices1 = [
+            MBEVertex(position: vector_float4(-1, 1, 1, 1), color: vector_float4(0, 1, 1, 1), texture:float2(0,0)),
+            MBEVertex(position: vector_float4(-1, -1, 1, 1), color: vector_float4(0, 0, 1, 1), texture:float2(0,0)),
+            MBEVertex(position: vector_float4(1, -1, 1, 1), color: vector_float4(1, 0, 1, 1), texture:float2(0,0)),
+            MBEVertex(position: vector_float4(1, 1, 1, 1), color: vector_float4(1, 1, 1, 1), texture:float2(0,0)),
+            MBEVertex(position: vector_float4(-1, 1, -1, 1), color: vector_float4(0, 1, 0, 1), texture:float2(0,0)),
+            MBEVertex(position: vector_float4(-1, -1, -1, 1), color: vector_float4(0, 0, 0, 1), texture:float2(0,0)),
+            MBEVertex(position: vector_float4(1, -1, -1, 1), color: vector_float4(1, 0, 0, 1), texture:float2(0,0)),
+            MBEVertex(position: vector_float4(1, 1, -1, 1), color: vector_float4(1, 1, 0, 1), texture:float2(0,0))
         ]
         
-        self.vertexBuffer = device?.makeBuffer(bytes: vertices, length: vertices.count * MemoryLayout<MBEVertex>.size, options: [])
+        var vertices : [MBEVertex] = []
         
-        let indices : [UInt16] = [
+        let indices2 : [(Int, Int, Int, Int)] = [
+            (3, 2, 6, 7),
+            (4, 5, 1, 0),
+            (4, 0, 3, 7),
+            (1, 5, 6, 2),
+            (0, 1, 2, 3),
+            (7, 6, 5, 4)
+        ]
+        
+        let indices1 : [UInt16] = [
             3, 2, 6, 6, 7, 3,
             4, 5, 1, 1, 0, 4,
             4, 0, 3, 3, 7, 4,
@@ -172,13 +196,34 @@ class GMetalView: UIView {
             0, 1, 2, 2, 3, 0,
             7, 6, 5, 5, 4, 7
         ]
+        
+        var indices : [UInt16] = []
+        for (index, (a, b, c, d)) in indices2.enumerated() {
+            var vertex0 = vertices1[a]
+            var vertex1 = vertices1[b]
+            var vertex2 = vertices1[c]
+            var vertex3 = vertices1[d]
+            
+            vertex0.texture = float2(0,0)
+            vertex1.texture = float2(0,1)
+            vertex2.texture = float2(1,1)
+            vertex3.texture = float2(1,0)
+            vertices.append(contentsOf: [vertex0, vertex1, vertex2, vertex3])
+            let offset = UInt16(index) * 4
+            indices.append(contentsOf: [0, 1, 2, 2, 3, 0].map({ (a) -> UInt16 in
+                return a + offset
+            }))
+        }
+        
+        self.vertexBuffer = device?.makeBuffer(bytes: vertices, length: vertices.count * MemoryLayout<MBEVertex>.stride, options: [])
         self.indexBuffer = device?.makeBuffer(bytes: indices, length: indices.count * MemoryLayout<UInt16>.size, options: [])
     }
     
     func makePipeline() {
         let library = device?.makeDefaultLibrary()
         let vertexFunc = library?.makeFunction(name: "vertex_main")
-        let fragmentFunc = library?.makeFunction(name: "fragment_main")
+//        let fragmentFunc = library?.makeFunction(name: "fragment_main")
+        let fragmentFunc = library?.makeFunction(name: "textured_fragment")
         
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.vertexFunction = vertexFunc
@@ -207,6 +252,10 @@ class GMetalView: UIView {
         let desc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .depth32Float, width: Int(drawableSize.width), height: Int(drawableSize.height), mipmapped: false)
         desc.usage = .renderTarget
         depthTexture = self.device?.makeTexture(descriptor: desc)
+    }
+    
+    func makeTexture() {
+        self.texture = getTexture(device: self.device!, imageName: "bbb.png")
     }
     
     
@@ -297,6 +346,32 @@ class GMetalView: UIView {
             self.makeDepthTexture()
         }
     }
+}
+
+extension GMetalView {
+    
+    func getTexture(device: MTLDevice, imageName: String) -> MTLTexture? {
+        let textureLoader = MTKTextureLoader(device: device)
+        var texture: MTLTexture? = nil
+        let textureLoaderOptions: [MTKTextureLoader.Option : Any]
+        if #available(iOS 10.0, *) {
+            let origin = MTKTextureLoader.Origin.topLeft
+            textureLoaderOptions = [MTKTextureLoader.Option.origin: origin]
+        } else {
+            textureLoaderOptions = [:]
+        }
+        
+        if let textureURL = Bundle.main.url(forResource: imageName, withExtension: nil) {
+            do {
+                texture = try textureLoader.newTexture(withContentsOf: textureURL,
+                                                       options: textureLoaderOptions)
+            } catch {
+                SBLog.debug("texture not created")
+            }
+        }
+        return texture
+    }
+    
 }
 
 extension GMetalView : AppProtocol {

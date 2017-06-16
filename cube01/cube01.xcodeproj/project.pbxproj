@@ -11,6 +11,8 @@
 		8CD633381EF05FA300F599BA /* SwiftyBeaver.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8C3599B21EF054F90023DC28 /* SwiftyBeaver.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8CD6333E1EF0616600F599BA /* SBLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD6333D1EF060EE00F599BA /* SBLog.swift */; };
 		E0CEA6F5A32EFEB68E8948A9 /* Pods_cube01.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86844DBB603D6744BAC13E16 /* Pods_cube01.framework */; };
+		EC2F39471EF47A1900699556 /* aaa.png in Resources */ = {isa = PBXBuildFile; fileRef = EC2F39421EF46EAB00699556 /* aaa.png */; };
+		EC2F39491EF47B1000699556 /* bbb.png in Resources */ = {isa = PBXBuildFile; fileRef = EC2F39481EF47AD700699556 /* bbb.png */; };
 		EC3B7CAA1EEDAD720049EF7D /* FirstWireFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3B7CA91EEDAD610049EF7D /* FirstWireFrame.swift */; };
 		EC3B7CAB1EEDAD770049EF7D /* FirstViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3B7CA71EEDAD610049EF7D /* FirstViewController.swift */; };
 		EC3B7CAC1EEDAD7C0049EF7D /* FirstProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC3B7CA51EEDAD610049EF7D /* FirstProtocols.swift */; };
@@ -101,6 +103,8 @@
 		8C3599A91EF054F80023DC28 /* SwiftyBeaver.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SwiftyBeaver.xcodeproj; path = ../SwiftyBeaver/SwiftyBeaver.xcodeproj; sourceTree = "<group>"; };
 		8CD6333D1EF060EE00F599BA /* SBLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBLog.swift; sourceTree = "<group>"; };
 		9E3321F88526131E1B4ABAB0 /* Pods-cube01.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-cube01.debug.xcconfig"; path = "Pods/Target Support Files/Pods-cube01/Pods-cube01.debug.xcconfig"; sourceTree = "<group>"; };
+		EC2F39421EF46EAB00699556 /* aaa.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = aaa.png; sourceTree = "<group>"; };
+		EC2F39481EF47AD700699556 /* bbb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bbb.png; sourceTree = "<group>"; };
 		EC3B7C9C1EEDAD610049EF7D /* FirstAPIDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstAPIDataManager.swift; sourceTree = "<group>"; };
 		EC3B7C9E1EEDAD610049EF7D /* FirstLocalDataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstLocalDataManager.swift; sourceTree = "<group>"; };
 		EC3B7CA01EEDAD610049EF7D /* FirstInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstInteractor.swift; sourceTree = "<group>"; };
@@ -160,6 +164,15 @@
 				8CD6333D1EF060EE00F599BA /* SBLog.swift */,
 			);
 			path = log;
+			sourceTree = "<group>";
+		};
+		EC2F39411EF46EAB00699556 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				EC2F39481EF47AD700699556 /* bbb.png */,
+				EC2F39421EF46EAB00699556 /* aaa.png */,
+			);
+			path = images;
 			sourceTree = "<group>";
 		};
 		EC3B7C991EEDAD610049EF7D /* First */ = {
@@ -263,6 +276,7 @@
 		EC4970BF1EE45D79000EA632 /* cube01 */ = {
 			isa = PBXGroup;
 			children = (
+				EC2F39411EF46EAB00699556 /* images */,
 				8CD6333C1EF060EE00F599BA /* log */,
 				EC53656C1EED9ADB00715BFC /* modules */,
 				EC4970C01EE45D79000EA632 /* AppDelegate.swift */,
@@ -406,7 +420,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EC2F39491EF47B1000699556 /* bbb.png in Resources */,
 				EC4970CB1EE45D79000EA632 /* LaunchScreen.storyboard in Resources */,
+				EC2F39471EF47A1900699556 /* aaa.png in Resources */,
 				EC4970C81EE45D79000EA632 /* Assets.xcassets in Resources */,
 				EC4970C61EE45D79000EA632 /* Main.storyboard in Resources */,
 			);
