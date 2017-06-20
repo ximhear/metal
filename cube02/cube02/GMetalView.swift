@@ -108,7 +108,7 @@ class GMetalView: UIView {
         let drawable = self.metalLayer?.nextDrawable()
         let texture = drawable?.texture
         
-        let scaleFactor = sin(5 * self.elapsedTime) * 0.25 + 1
+        let scaleFactor = sin(2.5 * self.elapsedTime) * 0.75 + 1.0
         let xAxis = vector_float3(1, 0, 0)
         let yAxis = vector_float3(0, 1, 0)
         let xRot = matrix_float4x4_rotation(axis: xAxis, angle: rotationX)
@@ -395,7 +395,8 @@ extension GMetalView {
         let textureLoaderOptions: [MTKTextureLoader.Option : Any]
         if #available(iOS 10.0, *) {
             let origin = MTKTextureLoader.Origin.topLeft
-            textureLoaderOptions = [MTKTextureLoader.Option.origin: origin]
+            textureLoaderOptions = [MTKTextureLoader.Option.origin: origin,
+                MTKTextureLoader.Option.generateMipmaps:true]
         } else {
             textureLoaderOptions = [:]
         }
