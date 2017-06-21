@@ -42,10 +42,12 @@ class GMetalView: UIView {
     var elapsedTime : Float = 0
     var rotationX : Float = 0
     var rotationY : Float = 0
-    var cubeTexture: MTLTexture?
+    var textures: [MTLTexture]?
     var samplerState: MTLSamplerState?
     
     var renderables : [Renderable] = []
+    
+    var textureLoader : MTKTextureLoader?
     
     override class var layerClass: Swift.AnyClass {
         return CAMetalLayer.self
@@ -305,7 +307,8 @@ class GMetalView: UIView {
     }
     
     func makeTexture() {
-        self.cubeTexture = getCubeTexture(device: device!, images: ["px", "nx", "py", "ny", "pz", "nz.png"])
+        self.textureLoader = MTKTextureLoader(device: device!)
+        self.cubeTexture = getCubeTexture(device: device!, images: ["px", "nx", "py", "ny", "pz", "nz"])
     }
     
     
@@ -400,26 +403,26 @@ class GMetalView: UIView {
 
 extension GMetalView {
     
-    func getCubeTexture(device: MTLDevice, images:[String]) -> MTLTexture? {
+    func getCubeTexture(device: MTLDevice, images:[String]) -> Void {
         
+        let iii = UIImage(named: "nz.png", in: Bundle.main, compatibleWith: nil)
         let image = UIImage(named: images[0])!
         let cubeSize = image.size.width * image.scale
         let bytePerPixel = 4
         let bytesPerRow = bytePerPixel * Int(cubeSize)
         let bytePerImage = bytesPerRow * Int(cubeSize)
-        let textureLoader = MTKTextureLoader(device: device)
         var texture: MTLTexture? = nil
         
         let textureLoaderOptions: [MTKTextureLoader.Option : Any]
         if #available(iOS 10.0, *) {
             let origin = MTKTextureLoader.Origin.topLeft
             textureLoaderOptions = [MTKTextureLoader.Option.origin: origin,
-                                    MTKTextureLoader.Option.cubeLayout:true]
+                                    MTKTextureLoader.Option.cubeLayout:MTKTextureLoader.CubeLayout.vertical]
         } else {
             textureLoaderOptions = [:]
         }
         
-        textureLoader.newTextures(withNames: images, scaleFactor: image.scale, bundle: Bundle.main, options: textureLoaderOptions, completionHandler: { (textures, error) in
+        textureLoader?.newTextures(withNames: images, scaleFactor: image.scale, bundle: Bundle.main, options: textureLoaderOptions, completionHandler: { (textures, error) in
             SBLog.debug(textures)
             SBLog.debug(error)
         })

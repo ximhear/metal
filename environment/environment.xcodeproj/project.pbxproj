@@ -31,12 +31,6 @@
 		EC4970CB1EE45D79000EA632 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EC4970C91EE45D79000EA632 /* LaunchScreen.storyboard */; };
 		EC4970D31EE45E17000EA632 /* GMetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4970D21EE45E17000EA632 /* GMetalView.swift */; };
 		EC53656A1EED92B900715BFC /* AppProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5365691EED92B900715BFC /* AppProtocol.swift */; };
-		EC903F4A1EFADC10006CA75B /* ny.png in Resources */ = {isa = PBXBuildFile; fileRef = EC903F421EFADC0C006CA75B /* ny.png */; };
-		EC903F4B1EFADC13006CA75B /* nx.png in Resources */ = {isa = PBXBuildFile; fileRef = EC903F451EFADC0C006CA75B /* nx.png */; };
-		EC903F4C1EFADC16006CA75B /* nz.png in Resources */ = {isa = PBXBuildFile; fileRef = EC903F441EFADC0C006CA75B /* nz.png */; };
-		EC903F4D1EFADC1B006CA75B /* px.png in Resources */ = {isa = PBXBuildFile; fileRef = EC903F401EFADC0C006CA75B /* px.png */; };
-		EC903F4E1EFADC1E006CA75B /* py.png in Resources */ = {isa = PBXBuildFile; fileRef = EC903F431EFADC0C006CA75B /* py.png */; };
-		EC903F4F1EFADC21006CA75B /* pz.png in Resources */ = {isa = PBXBuildFile; fileRef = EC903F411EFADC0C006CA75B /* pz.png */; };
 		EC903F511EFADEA5006CA75B /* Skybox.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC903F501EFADEA5006CA75B /* Skybox.swift */; };
 		ECB5290E1EE73DAD0028382F /* shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = ECB5290D1EE73DAD0028382F /* shaders.metal */; };
 /* End PBXBuildFile section */
@@ -135,12 +129,6 @@
 		EC4970CC1EE45D79000EA632 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EC4970D21EE45E17000EA632 /* GMetalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GMetalView.swift; sourceTree = "<group>"; };
 		EC5365691EED92B900715BFC /* AppProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppProtocol.swift; sourceTree = "<group>"; };
-		EC903F401EFADC0C006CA75B /* px.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = px.png; sourceTree = "<group>"; };
-		EC903F411EFADC0C006CA75B /* pz.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pz.png; sourceTree = "<group>"; };
-		EC903F421EFADC0C006CA75B /* ny.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ny.png; sourceTree = "<group>"; };
-		EC903F431EFADC0C006CA75B /* py.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = py.png; sourceTree = "<group>"; };
-		EC903F441EFADC0C006CA75B /* nz.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nz.png; sourceTree = "<group>"; };
-		EC903F451EFADC0C006CA75B /* nx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nx.png; sourceTree = "<group>"; };
 		EC903F501EFADEA5006CA75B /* Skybox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Skybox.swift; sourceTree = "<group>"; };
 		ECB5290D1EE73DAD0028382F /* shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = shaders.metal; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -189,12 +177,6 @@
 		EC2F39411EF46EAB00699556 /* images */ = {
 			isa = PBXGroup;
 			children = (
-				EC903F451EFADC0C006CA75B /* nx.png */,
-				EC903F421EFADC0C006CA75B /* ny.png */,
-				EC903F441EFADC0C006CA75B /* nz.png */,
-				EC903F401EFADC0C006CA75B /* px.png */,
-				EC903F431EFADC0C006CA75B /* py.png */,
-				EC903F411EFADC0C006CA75B /* pz.png */,
 				EC1D042D1EF6F867000F97DF /* ddd.png */,
 				EC1D042C1EF6F7CE000F97DF /* ccc.png */,
 				EC2F39481EF47AD700699556 /* bbb.png */,
@@ -450,19 +432,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EC903F4F1EFADC21006CA75B /* pz.png in Resources */,
-				EC903F4A1EFADC10006CA75B /* ny.png in Resources */,
 				EC1D042E1EF6F8EE000F97DF /* ddd.png in Resources */,
 				EC2F39491EF47B1000699556 /* bbb.png in Resources */,
 				EC4970CB1EE45D79000EA632 /* LaunchScreen.storyboard in Resources */,
 				EC2F39471EF47A1900699556 /* aaa.png in Resources */,
-				EC903F4C1EFADC16006CA75B /* nz.png in Resources */,
 				EC4970C81EE45D79000EA632 /* Assets.xcassets in Resources */,
-				EC903F4B1EFADC13006CA75B /* nx.png in Resources */,
 				EC1D042F1EF6F8F1000F97DF /* ccc.png in Resources */,
 				EC4970C61EE45D79000EA632 /* Main.storyboard in Resources */,
-				EC903F4E1EFADC1E006CA75B /* py.png in Resources */,
-				EC903F4D1EFADC1B006CA75B /* px.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
