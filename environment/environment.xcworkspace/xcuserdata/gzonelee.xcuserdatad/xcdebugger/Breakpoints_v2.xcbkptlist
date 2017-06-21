@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   type = "0"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "environment/GMetalView.swift"
+            timestampString = "519761612.811407"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "424"
+            endingLineNumber = "424"
+            landmarkName = "getCubeTexture(device:images:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Array&lt;__C.MTLTexture&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in environment.GMetalView.getCubeTexture(device: __C.MTLDevice, images: Swift.Array&lt;Swift.String&gt;) -&gt; Swift.Optional&lt;__C.MTLTexture&gt;"
+                  moduleName = "environment"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gzonelee/git/metal/environment/environment/GMetalView.swift"
+                  timestampString = "519761612.871923"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "424"
+                  endingLineNumber = "424"
+                  offsetFromSymbolStart = "252">
+               </Location>
+               <Location
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "implicit closure #2 : @autoclosure () -&gt; Any in closure #1 (Swift.Array&lt;__C.MTLTexture&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in environment.GMetalView.getCubeTexture(device: __C.MTLDevice, images: Swift.Array&lt;Swift.String&gt;) -&gt; Swift.Optional&lt;__C.MTLTexture&gt;"
+                  moduleName = "environment"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/gzonelee/git/metal/environment/environment/GMetalView.swift"
+                  timestampString = "519761612.87457"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "424"
+                  endingLineNumber = "424"
+                  offsetFromSymbolStart = "16">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "environment/GMetalView.swift"
+            timestampString = "519761612.811971"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "406"
+            endingLineNumber = "406"
+            landmarkName = "getCubeTexture(device:images:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
