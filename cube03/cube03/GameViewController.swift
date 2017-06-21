@@ -75,6 +75,7 @@ class GameViewController:UIViewController, MTKViewDelegate {
         //        makeBuffers()
         makePipeline()
         addRectangles()
+        makeDepthTexture(size:self.metalView.drawableSize)
     }
     
     private func buildSamplerState() {
@@ -140,8 +141,8 @@ class GameViewController:UIViewController, MTKViewDelegate {
         self.commandQueue = self.device?.makeCommandQueue()
     }
     
-    func makeDepthTexture() {
-        let drawableSize = self.metalView.drawableSize
+    func makeDepthTexture(size: CGSize) {
+        let drawableSize = size
         
         if let texture = self.depthTexture {
             if Int(drawableSize.width) == texture.width && Int(drawableSize.height) == texture.height {
@@ -288,7 +289,7 @@ class GameViewController:UIViewController, MTKViewDelegate {
         passDescriptor.colorAttachments[0].storeAction = .store
         passDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 1, green: 1, blue: 0, alpha: 1)
         
-        makeDepthTexture()
+//        makeDepthTexture(size: self.metalView.drawableSize)
         passDescriptor.depthAttachment.texture = self.depthTexture
         passDescriptor.depthAttachment.clearDepth = 1.0
         passDescriptor.depthAttachment.loadAction = .clear
@@ -323,6 +324,6 @@ class GameViewController:UIViewController, MTKViewDelegate {
     
     
     func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-        
+        makeDepthTexture(size:size)
     }
 }
