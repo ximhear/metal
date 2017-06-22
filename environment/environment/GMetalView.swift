@@ -20,10 +20,10 @@ struct MBEVertex {
 class GMetalView: UIView {
     
     public struct MBEUniforms {
+        var modelViewProjectionMatrix : matrix_float4x4!
         var modelMatrix : matrix_float4x4!
         var projectionMatrix : matrix_float4x4!
         var normalMatrix : matrix_float4x4!
-        var modelViewProjectionMatrix : matrix_float4x4!
         var worldCameraPosition : vector_float4!
     }
     
@@ -120,7 +120,7 @@ class GMetalView: UIView {
         let modelMatrix = GMetalView.matrix_float4x4_identity()
         let viewMatrix = GMetalView.matrix_float4x4_identity()
         let cameraTranslation = vector_float4(0, 0, -4, 1)
-        let worldCameraPosition = GMetalView.matrix_float4x4_identity()//matrix_multiply(simd_inverse(GMetalView.matrix_float4x4_identity()), -cameraTranslation)
+        let worldCameraPosition = matrix_multiply(simd_inverse(GMetalView.matrix_float4x4_identity()), -cameraTranslation)
         
         let passDescriptor = MTLRenderPassDescriptor()
         passDescriptor.colorAttachments[0].texture = texture
@@ -141,12 +141,12 @@ class GMetalView: UIView {
         commandEncoder?.setFragmentSamplerState(samplerState, index: 0)
         commandEncoder?.setFragmentTexture(self.texture, index: 0)
         
-        var uniforms = MBEUniforms(modelMatrix: GMetalView.matrix_float4x4_identity(), projectionMatrix: GMetalView.matrix_float4x4_identity(), normalMatrix: GMetalView.matrix_float4x4_identity(), modelViewProjectionMatrix: GMetalView.matrix_float4x4_identity(), worldCameraPosition: vector_float4(1,0,0,1))
-////        uniforms.modelMatrix = modelMatrix
-////        uniforms.projectionMatrix = projectionMatrix
-////        uniforms.normalMatrix = simd_transpose(simd_inverse(uniforms.modelMatrix))
-////        uniforms.modelViewProjectionMatrix = matrix_multiply(projectionMatrix, matrix_multiply(viewMatrix, modelMatrix))
-////        uniforms.worldCameraPosition = worldCameraPosition
+        var uniforms = MBEUniforms()
+        uniforms.modelMatrix = modelMatrix
+        uniforms.projectionMatrix = projectionMatrix
+        uniforms.normalMatrix = simd_transpose(simd_inverse(uniforms.modelMatrix))
+        uniforms.modelViewProjectionMatrix = matrix_multiply(projectionMatrix, matrix_multiply(viewMatrix, modelMatrix))
+        uniforms.worldCameraPosition = worldCameraPosition
         var contents = self.uniformBuffer?.contents()
         memcpy(contents, &uniforms, MemoryLayout<MBEUniforms>.size)
         commandEncoder?.setVertexBuffer(self.uniformBuffer, offset: 0, index: 1)

@@ -24,10 +24,10 @@ struct GMatrix {
 };
 
 struct Uniforms {
+    float4x4 modelViewProjectionMatrix;
     float4x4 modelMatrix;
     float4x4 projectionMatrix;
     float4x4 normalMatrix;
-    float4x4 modelViewProjectionMatrix;
     float4 worldCameraPosition;
 };
 
@@ -55,7 +55,7 @@ vertex VertexOut vertex_skybox(device Vertex* vertices [[buffer(0)]],
     float4 position = vertices[vid].position;
     VertexOut outVertex;
     
-    outVertex.position = uniforms.modelMatrix * position;
+    outVertex.position = uniforms.modelViewProjectionMatrix * position;
     outVertex.texture = position;
     return outVertex;
 }
