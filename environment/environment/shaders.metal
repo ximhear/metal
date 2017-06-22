@@ -24,9 +24,9 @@ struct GMatrix {
 };
 
 struct Uniforms {
-    float4x4 modelViewProjectionMatrix;
     float4x4 modelMatrix;
     float4x4 projectionMatrix;
+    float4x4 modelViewProjectionMatrix;
     float4x4 normalMatrix;
     float4 worldCameraPosition;
 };

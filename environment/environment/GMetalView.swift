@@ -20,9 +20,9 @@ struct MBEVertex {
 class GMetalView: UIView {
     
     public struct MBEUniforms {
-        var modelViewProjectionMatrix : matrix_float4x4!
         var modelMatrix : matrix_float4x4!
         var projectionMatrix : matrix_float4x4!
+        var modelViewProjectionMatrix : matrix_float4x4!
         var normalMatrix : matrix_float4x4!
         var worldCameraPosition : vector_float4!
     }
@@ -122,6 +122,7 @@ class GMetalView: UIView {
         let cameraTranslation = vector_float4(0, 0, -4, 1)
         let worldCameraPosition = matrix_multiply(simd_inverse(GMetalView.matrix_float4x4_identity()), -cameraTranslation)
         
+        
         let passDescriptor = MTLRenderPassDescriptor()
         passDescriptor.colorAttachments[0].texture = texture
         passDescriptor.colorAttachments[0].loadAction = .clear
@@ -148,8 +149,12 @@ class GMetalView: UIView {
         uniforms.modelViewProjectionMatrix = matrix_multiply(projectionMatrix, matrix_multiply(viewMatrix, modelMatrix))
         uniforms.worldCameraPosition = worldCameraPosition
         var contents = self.uniformBuffer?.contents()
-        memcpy(contents, &uniforms, MemoryLayout<MBEUniforms>.size)
+        
+        withUnsafePointer(to: &uniforms, { (raw) -> Void in
+            memcpy(contents, raw, MemoryLayout<MBEUniforms>.size)
+        })
         commandEncoder?.setVertexBuffer(self.uniformBuffer, offset: 0, index: 1)
+        
 //        commandEncoder?.setVertexBytes(&uniforms,
 //                                       length: MemoryLayout<MBEUniforms>.stride,
 //                                       index: 1)
