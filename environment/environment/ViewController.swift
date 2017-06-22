@@ -49,5 +49,9 @@ class ViewController: UIViewController {
             AppDelegate.appProtocols.remove(at: index!)
         }
     }
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return UIInterfaceOrientationMask.portrait
+    }
 }
 

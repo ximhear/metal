@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8C8493F51EFB6163003DA0B1 /* pz.png in Resources */ = {isa = PBXBuildFile; fileRef = 8C8493EE1EFB615E003DA0B1 /* pz.png */; };
+		8C8493F61EFB6166003DA0B1 /* nx.png in Resources */ = {isa = PBXBuildFile; fileRef = 8C8493EC1EFB615E003DA0B1 /* nx.png */; };
+		8C8493F71EFB6166003DA0B1 /* ny.png in Resources */ = {isa = PBXBuildFile; fileRef = 8C8493F01EFB615E003DA0B1 /* ny.png */; };
+		8C8493F81EFB6166003DA0B1 /* nz.png in Resources */ = {isa = PBXBuildFile; fileRef = 8C8493ED1EFB615E003DA0B1 /* nz.png */; };
+		8C8493F91EFB6166003DA0B1 /* px.png in Resources */ = {isa = PBXBuildFile; fileRef = 8C8493EF1EFB615E003DA0B1 /* px.png */; };
+		8C8493FA1EFB6167003DA0B1 /* py.png in Resources */ = {isa = PBXBuildFile; fileRef = 8C8493EB1EFB615E003DA0B1 /* py.png */; };
 		8CD633371EF05FA300F599BA /* SwiftyBeaver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C3599B21EF054F90023DC28 /* SwiftyBeaver.framework */; };
 		8CD633381EF05FA300F599BA /* SwiftyBeaver.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8C3599B21EF054F90023DC28 /* SwiftyBeaver.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8CD6333E1EF0616600F599BA /* SBLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD6333D1EF060EE00F599BA /* SBLog.swift */; };
@@ -105,6 +111,12 @@
 		1AA24217527EC549A61BEC5D /* Pods-environment.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-environment.release.xcconfig"; path = "Pods/Target Support Files/Pods-environment/Pods-environment.release.xcconfig"; sourceTree = "<group>"; };
 		86844DBB603D6744BAC13E16 /* Pods_environment.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_environment.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C3599A91EF054F80023DC28 /* SwiftyBeaver.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SwiftyBeaver.xcodeproj; path = ../SwiftyBeaver/SwiftyBeaver.xcodeproj; sourceTree = "<group>"; };
+		8C8493EB1EFB615E003DA0B1 /* py.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = py.png; sourceTree = "<group>"; };
+		8C8493EC1EFB615E003DA0B1 /* nx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nx.png; sourceTree = "<group>"; };
+		8C8493ED1EFB615E003DA0B1 /* nz.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nz.png; sourceTree = "<group>"; };
+		8C8493EE1EFB615E003DA0B1 /* pz.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pz.png; sourceTree = "<group>"; };
+		8C8493EF1EFB615E003DA0B1 /* px.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = px.png; sourceTree = "<group>"; };
+		8C8493F01EFB615E003DA0B1 /* ny.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ny.png; sourceTree = "<group>"; };
 		8CD6333D1EF060EE00F599BA /* SBLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBLog.swift; sourceTree = "<group>"; };
 		9E3321F88526131E1B4ABAB0 /* Pods-environment.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-environment.debug.xcconfig"; path = "Pods/Target Support Files/Pods-environment/Pods-environment.debug.xcconfig"; sourceTree = "<group>"; };
 		EC1D042A1EF6EA1E000F97DF /* Renderable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderable.swift; sourceTree = "<group>"; };
@@ -177,6 +189,12 @@
 		EC2F39411EF46EAB00699556 /* images */ = {
 			isa = PBXGroup;
 			children = (
+				8C8493EC1EFB615E003DA0B1 /* nx.png */,
+				8C8493F01EFB615E003DA0B1 /* ny.png */,
+				8C8493ED1EFB615E003DA0B1 /* nz.png */,
+				8C8493EF1EFB615E003DA0B1 /* px.png */,
+				8C8493EB1EFB615E003DA0B1 /* py.png */,
+				8C8493EE1EFB615E003DA0B1 /* pz.png */,
 				EC1D042D1EF6F867000F97DF /* ddd.png */,
 				EC1D042C1EF6F7CE000F97DF /* ccc.png */,
 				EC2F39481EF47AD700699556 /* bbb.png */,
@@ -432,11 +450,17 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8C8493FA1EFB6167003DA0B1 /* py.png in Resources */,
+				8C8493F71EFB6166003DA0B1 /* ny.png in Resources */,
 				EC1D042E1EF6F8EE000F97DF /* ddd.png in Resources */,
 				EC2F39491EF47B1000699556 /* bbb.png in Resources */,
 				EC4970CB1EE45D79000EA632 /* LaunchScreen.storyboard in Resources */,
+				8C8493F51EFB6163003DA0B1 /* pz.png in Resources */,
+				8C8493F91EFB6166003DA0B1 /* px.png in Resources */,
 				EC2F39471EF47A1900699556 /* aaa.png in Resources */,
+				8C8493F81EFB6166003DA0B1 /* nz.png in Resources */,
 				EC4970C81EE45D79000EA632 /* Assets.xcassets in Resources */,
+				8C8493F61EFB6166003DA0B1 /* nx.png in Resources */,
 				EC1D042F1EF6F8F1000F97DF /* ccc.png in Resources */,
 				EC4970C61EE45D79000EA632 /* Main.storyboard in Resources */,
 			);

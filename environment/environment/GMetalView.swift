@@ -19,15 +19,12 @@ struct MBEVertex {
 
 class GMetalView: UIView {
     
-    struct MBEUniforms {
+    public struct MBEUniforms {
         var modelMatrix : matrix_float4x4!
         var projectionMatrix : matrix_float4x4!
         var normalMatrix : matrix_float4x4!
         var modelViewProjectionMatrix : matrix_float4x4!
         var worldCameraPosition : vector_float4!
-        
-        init() {
-        }
     }
     
     
@@ -47,13 +44,11 @@ class GMetalView: UIView {
     var depthTexture : MTLTexture?
     var commandQueue : MTLCommandQueue?
     var displayLink : CADisplayLink?
-    var elapsedTime : Float = 0
-    var rotationX : Float = 0
-    var rotationY : Float = 0
     var texture: MTLTexture?
     var samplerState: MTLSamplerState?
     
     var renderables : [Renderable] = []
+    var uniformBuffer : MTLBuffer?
     
     override class var layerClass: Swift.AnyClass {
         return CAMetalLayer.self
@@ -66,7 +61,7 @@ class GMetalView: UIView {
         self.makeDevice()
         buildSamplerState()
         makeTexture()
-//        makeBuffers()
+        makeBuffers()
         makePipeline()
         addRectangles()
     }
@@ -107,6 +102,11 @@ class GMetalView: UIView {
     
     func redraw() {
         
+        let depthDescriptor = MTLDepthStencilDescriptor();
+        depthDescriptor.depthCompareFunction = .less
+        depthDescriptor.isDepthWriteEnabled = false
+        let depthState = self.device!.makeDepthStencilState(descriptor: depthDescriptor)
+        
         let drawable = self.metalLayer?.nextDrawable()
         let texture = drawable?.texture
         
@@ -116,11 +116,11 @@ class GMetalView: UIView {
         let far : Float = 100
         let verticalFOV : Float = (aspectRatio > 1) ? 60 : 90
         
-        let projectionMatrix = matrix_float4x4_perspective(aspect: aspectRatio, fovy: verticalFOV * Float(Double.pi) / 180.0, near: near, far: far)
-        let modelMatrix = matrix_float4x4_identity()
-        let viewMatrix = matrix_float4x4_identity()
+        let projectionMatrix = GMetalView.matrix_float4x4_perspective(aspect: aspectRatio, fovy: verticalFOV * Float(Double.pi) / 180.0, near: near, far: far)
+        let modelMatrix = GMetalView.matrix_float4x4_identity()
+        let viewMatrix = GMetalView.matrix_float4x4_identity()
         let cameraTranslation = vector_float4(0, 0, -4, 1)
-        
+        let worldCameraPosition = GMetalView.matrix_float4x4_identity()//matrix_multiply(simd_inverse(GMetalView.matrix_float4x4_identity()), -cameraTranslation)
         
         let passDescriptor = MTLRenderPassDescriptor()
         passDescriptor.colorAttachments[0].texture = texture
@@ -128,7 +128,7 @@ class GMetalView: UIView {
         passDescriptor.colorAttachments[0].storeAction = .store
         passDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 1, green: 1, blue: 0, alpha: 1)
         
-//        makeDepthTexture()
+        makeDepthTexture()
         passDescriptor.depthAttachment.texture = self.depthTexture
         passDescriptor.depthAttachment.clearDepth = 1.0
         passDescriptor.depthAttachment.loadAction = .clear
@@ -137,25 +137,29 @@ class GMetalView: UIView {
         let commandBuffer = commandQueue?.makeCommandBuffer()
         let commandEncoder = commandBuffer?.makeRenderCommandEncoder(descriptor: passDescriptor)
         commandEncoder?.setRenderPipelineState(self.pipeline!)
-        commandEncoder?.setDepthStencilState(self.depthStencilState)
+        commandEncoder?.setDepthStencilState(depthState)
         commandEncoder?.setFragmentSamplerState(samplerState, index: 0)
         commandEncoder?.setFragmentTexture(self.texture, index: 0)
+        
+        var uniforms = MBEUniforms(modelMatrix: GMetalView.matrix_float4x4_identity(), projectionMatrix: GMetalView.matrix_float4x4_identity(), normalMatrix: GMetalView.matrix_float4x4_identity(), modelViewProjectionMatrix: GMetalView.matrix_float4x4_identity(), worldCameraPosition: vector_float4(1,0,0,1))
+////        uniforms.modelMatrix = modelMatrix
+////        uniforms.projectionMatrix = projectionMatrix
+////        uniforms.normalMatrix = simd_transpose(simd_inverse(uniforms.modelMatrix))
+////        uniforms.modelViewProjectionMatrix = matrix_multiply(projectionMatrix, matrix_multiply(viewMatrix, modelMatrix))
+////        uniforms.worldCameraPosition = worldCameraPosition
+        var contents = self.uniformBuffer?.contents()
+        memcpy(contents, &uniforms, MemoryLayout<MBEUniforms>.size)
+        commandEncoder?.setVertexBuffer(self.uniformBuffer, offset: 0, index: 1)
+//        commandEncoder?.setVertexBytes(&uniforms,
+//                                       length: MemoryLayout<MBEUniforms>.stride,
+//                                       index: 1)
+        
+        for renderable in self.renderables {
+            renderable.redraw(commandEncoder: commandEncoder!)
+        }
         commandEncoder?.setFrontFacing(.counterClockwise)
         commandEncoder?.setCullMode(.back)
         
-        var uniforms = MBEUniforms()
-        uniforms.modelMatrix = modelMatrix
-        uniforms.projectionMatrix = projectionMatrix
-        uniforms.normalMatrix = simd_transpose(simd_inverse(uniforms.modelMatrix))
-        uniforms.modelViewProjectionMatrix = matrix_multiply(projectionMatrix, matrix_multiply(viewMatrix, modelMatrix))
-        uniforms.worldCameraPosition = cameraTranslation
-        commandEncoder?.setVertexBytes(&uniforms,
-                                       length: MemoryLayout<MBEUniforms>.stride,
-                                       index: 1)
-        for renderable in self.renderables {
-            
-            renderable.redraw(commandEncoder: commandEncoder!)
-        }
         commandEncoder?.endEncoding()
         commandBuffer?.present(drawable!)
         commandBuffer?.commit()
@@ -167,66 +171,14 @@ class GMetalView: UIView {
         self.metalLayer?.pixelFormat = .bgra8Unorm
     }
     
-    /*
     func makeBuffers() {
         
-        var vertices1 = [
-            MBEVertex(position: vector_float4(-1, 1, 1, 1), color: vector_float4(0, 1, 1, 1), texture:float2(0,0)),
-            MBEVertex(position: vector_float4(-1, -1, 1, 1), color: vector_float4(0, 0, 1, 1), texture:float2(0,0)),
-            MBEVertex(position: vector_float4(1, -1, 1, 1), color: vector_float4(1, 0, 1, 1), texture:float2(0,0)),
-            MBEVertex(position: vector_float4(1, 1, 1, 1), color: vector_float4(1, 1, 1, 1), texture:float2(0,0)),
-            MBEVertex(position: vector_float4(-1, 1, -1, 1), color: vector_float4(0, 1, 0, 1), texture:float2(0,0)),
-            MBEVertex(position: vector_float4(-1, -1, -1, 1), color: vector_float4(0, 0, 0, 1), texture:float2(0,0)),
-            MBEVertex(position: vector_float4(1, -1, -1, 1), color: vector_float4(1, 0, 0, 1), texture:float2(0,0)),
-            MBEVertex(position: vector_float4(1, 1, -1, 1), color: vector_float4(1, 1, 0, 1), texture:float2(0,0))
-        ]
-        
-        var vertices : [MBEVertex] = []
-        
-        let indices2 : [(Int, Int, Int, Int)] = [
-            (3, 2, 6, 7),
-            (4, 5, 1, 0),
-            (4, 0, 3, 7),
-            (1, 5, 6, 2),
-            (0, 1, 2, 3),
-            (7, 6, 5, 4)
-        ]
-        
-        let indices1 : [UInt16] = [
-            3, 2, 6, 6, 7, 3,
-            4, 5, 1, 1, 0, 4,
-            4, 0, 3, 3, 7, 4,
-            1, 5, 6, 6, 2, 1,
-            0, 1, 2, 2, 3, 0,
-            7, 6, 5, 5, 4, 7
-        ]
-        
-        var indices : [UInt16] = []
-        for (index, (a, b, c, d)) in indices2.enumerated() {
-            var vertex0 = vertices1[a]
-            var vertex1 = vertices1[b]
-            var vertex2 = vertices1[c]
-            var vertex3 = vertices1[d]
-            
-            vertex0.texture = float2(0,0)
-            vertex1.texture = float2(0,1)
-            vertex2.texture = float2(1,1)
-            vertex3.texture = float2(1,0)
-            vertices.append(contentsOf: [vertex0, vertex1, vertex2, vertex3])
-            let offset = UInt16(index) * 4
-            indices.append(contentsOf: [0, 1, 2, 2, 3, 0].map({ (a) -> UInt16 in
-                return a + offset
-            }))
-        }
-        
-        self.vertexBuffer = device?.makeBuffer(bytes: vertices, length: vertices.count * MemoryLayout<MBEVertex>.stride, options: [])
-        self.indexBuffer = device?.makeBuffer(bytes: indices, length: indices.count * MemoryLayout<UInt16>.size, options: [])
+        self.uniformBuffer = self.device!.makeBuffer(length: MemoryLayout<MBEUniforms>.size, options: [])
     }
- */
     
     func addRectangles() {
         
-        var vertices = [
+        let vertices = [
             // + Y
             MBEVertex(position: vector_float4(-0.5,  0.5,  0.5, 1.0), normal: vector_float4(0.0, -1.0,  0.0, 0.0)),
             MBEVertex(position: vector_float4(0.5,  0.5,  0.5, 1.0), normal: vector_float4(0.0, -1.0,  0.0, 0.0)),
@@ -278,15 +230,28 @@ class GMetalView: UIView {
 //        let fragmentFunc = library?.makeFunction(name: "fragment_main")
         let fragmentFunc = library?.makeFunction(name: "fragment_cube_lookup")
         
+        var vertexDescriptor = MTLVertexDescriptor()
+        vertexDescriptor.attributes[0].bufferIndex = 0;
+        vertexDescriptor.attributes[0].offset = 0;
+        vertexDescriptor.attributes[0].format = .float4;
+        
+        vertexDescriptor.attributes[1].offset = MemoryLayout<vector_float4>.size
+        vertexDescriptor.attributes[1].format = .float4;
+        vertexDescriptor.attributes[1].bufferIndex = 0;
+        
+        vertexDescriptor.layouts[0].stepFunction = .perVertex;
+        vertexDescriptor.layouts[0].stride = MemoryLayout<MBEVertex>.stride;
+        
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.vertexFunction = vertexFunc
         pipelineDescriptor.fragmentFunction = fragmentFunc
         pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
         pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
+        pipelineDescriptor.vertexDescriptor = vertexDescriptor
         
         let depthStencilDescriptor = MTLDepthStencilDescriptor()
         depthStencilDescriptor.depthCompareFunction = .less
-        depthStencilDescriptor.isDepthWriteEnabled = true
+        depthStencilDescriptor.isDepthWriteEnabled = false
         self.depthStencilState = self.device?.makeDepthStencilState(descriptor: depthStencilDescriptor)
         
         self.pipeline = try? self.device!.makeRenderPipelineState(descriptor: pipelineDescriptor)
@@ -309,9 +274,10 @@ class GMetalView: UIView {
     
     func makeTexture() {
         self.texture = getCubeTextureImmediately(device: device!, images: ["px", "nx", "py", "ny", "pz", "nz"])
+//        self.texture = getCubeTextureImmediately(device: device!, images: ["bbb", "bbb", "bbb", "bbb", "bbb", "bbb"])
     }
     
-    func matrix_float4x4_identity() -> matrix_float4x4 {
+    static func matrix_float4x4_identity() -> matrix_float4x4 {
         let X = vector_float4( 1, 0, 0, 0 )
         let Y = vector_float4(0, 1, 0, 0 )
         let Z = vector_float4( 0, 0, 1, 0 )
@@ -321,7 +287,7 @@ class GMetalView: UIView {
         return mat
     }
     
-    func matrix_float4x4_translation(t:vector_float3) -> matrix_float4x4 {
+    static func matrix_float4x4_translation(t:vector_float3) -> matrix_float4x4 {
         let X = vector_float4( 1, 0, 0, 0 )
         let Y = vector_float4(0, 1, 0, 0 )
         let Z = vector_float4( 0, 0, 1, 0 )
@@ -331,7 +297,7 @@ class GMetalView: UIView {
         return mat
     }
     
-    func matrix_float4x4_uniform_scale(scale:Float) -> matrix_float4x4 {
+    static func matrix_float4x4_uniform_scale(scale:Float) -> matrix_float4x4 {
         let X = vector_float4( scale, 0, 0, 0 )
         let Y = vector_float4( 0, scale, 0, 0 )
         let Z = vector_float4( 0, 0, scale, 0 )
@@ -341,7 +307,7 @@ class GMetalView: UIView {
         return mat
     }
     
-    func matrix_float4x4_rotation(axis:vector_float3, angle:Float) -> matrix_float4x4 {
+    static func matrix_float4x4_rotation(axis:vector_float3, angle:Float) -> matrix_float4x4 {
         let c = cos(angle)
         let s = sin(angle)
         
@@ -373,7 +339,7 @@ class GMetalView: UIView {
         return mat
     }
     
-    func matrix_float4x4_perspective(aspect:Float, fovy:Float, near:Float, far:Float) -> matrix_float4x4 {
+    static func matrix_float4x4_perspective(aspect:Float, fovy:Float, near:Float, far:Float) -> matrix_float4x4 {
         let yScale = 1 / tan(fovy * 0.5);
         let xScale = yScale / aspect;
         let zRange = far - near;
@@ -414,28 +380,27 @@ extension GMetalView {
     
     func getCubeTexture(device: MTLDevice, images:[String]) -> Void {
         
-        let iii = UIImage(named: "nz.png", in: Bundle.main, compatibleWith: nil)
-        let image = UIImage(named: images[0])!
-        let cubeSize = image.size.width * image.scale
-        let bytePerPixel = 4
-        let bytesPerRow = bytePerPixel * Int(cubeSize)
-        let bytePerImage = bytesPerRow * Int(cubeSize)
-        
-        let textureLoaderOptions: [MTKTextureLoader.Option : Any]
-        if #available(iOS 10.0, *) {
-            let origin = MTKTextureLoader.Origin.topLeft
-            textureLoaderOptions = [MTKTextureLoader.Option.origin: origin,
-                                    MTKTextureLoader.Option.cubeLayout:MTKTextureLoader.CubeLayout.vertical]
-        } else {
-            textureLoaderOptions = [:]
-        }
-        
-        let textureLoader = MTKTextureLoader(device: device)
-        textureLoader.newTextures(withNames: images, scaleFactor: UIScreen.main.scale, bundle: Bundle.main, options: textureLoaderOptions, completionHandler: {[weak self] (textures, error) in
-            
-            SBLog.debug(textures)
-            SBLog.debug(error)
-        })
+//        let image = UIImage(named: images[0])!
+//        let cubeSize = image.size.width * image.scale
+//        let bytePerPixel = 4
+//        let bytesPerRow = bytePerPixel * Int(cubeSize)
+//        let bytePerImage = bytesPerRow * Int(cubeSize)
+//        
+//        let textureLoaderOptions: [MTKTextureLoader.Option : Any]
+//        if #available(iOS 10.0, *) {
+//            let origin = MTKTextureLoader.Origin.topLeft
+//            textureLoaderOptions = [MTKTextureLoader.Option.origin: origin,
+//                                    MTKTextureLoader.Option.cubeLayout:MTKTextureLoader.CubeLayout.vertical]
+//        } else {
+//            textureLoaderOptions = [:]
+//        }
+//        
+//        let textureLoader = MTKTextureLoader(device: device)
+//        textureLoader.newTextures(withNames: images, scaleFactor: UIScreen.main.scale, bundle: Bundle.main, options: textureLoaderOptions, completionHandler: {[weak self] (textures, error) in
+//            
+//            SBLog.debug(textures)
+//            SBLog.debug(error)
+//        })
     }
     
     func getCubeTextureImmediately(device: MTLDevice, images:[String]) -> MTLTexture? {
@@ -477,28 +442,28 @@ extension GMetalView {
         return rawData
     }
     
-    func getTexture(device: MTLDevice, imageName: String) -> MTLTexture? {
-        let textureLoader = MTKTextureLoader(device: device)
-        var texture: MTLTexture? = nil
-        let textureLoaderOptions: [MTKTextureLoader.Option : Any]
-        if #available(iOS 10.0, *) {
-            let origin = MTKTextureLoader.Origin.topLeft
-            textureLoaderOptions = [MTKTextureLoader.Option.origin: origin,
-                MTKTextureLoader.Option.generateMipmaps:true]
-        } else {
-            textureLoaderOptions = [:]
-        }
-        
-        if let textureURL = Bundle.main.url(forResource: imageName, withExtension: nil) {
-            do {
-                texture = try textureLoader.newTexture(withContentsOf: textureURL,
-                                                       options: textureLoaderOptions)
-            } catch {
-                SBLog.debug("texture not created")
-            }
-        }
-        return texture
-    }
+//    func getTexture(device: MTLDevice, imageName: String) -> MTLTexture? {
+//        let textureLoader = MTKTextureLoader(device: device)
+//        var texture: MTLTexture? = nil
+//        let textureLoaderOptions: [MTKTextureLoader.Option : Any]
+//        if #available(iOS 10.0, *) {
+//            let origin = MTKTextureLoader.Origin.topLeft
+//            textureLoaderOptions = [MTKTextureLoader.Option.origin: origin,
+//                MTKTextureLoader.Option.generateMipmaps:true]
+//        } else {
+//            textureLoaderOptions = [:]
+//        }
+//        
+//        if let textureURL = Bundle.main.url(forResource: imageName, withExtension: nil) {
+//            do {
+//                texture = try textureLoader.newTexture(withContentsOf: textureURL,
+//                                                       options: textureLoaderOptions)
+//            } catch {
+//                SBLog.debug("texture not created")
+//            }
+//        }
+//        return texture
+//    }
     
 }
 
