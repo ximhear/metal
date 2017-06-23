@@ -49,20 +49,20 @@ class ViewController: UIViewController {
             displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidFire))
             displayLink?.add(to: RunLoop.main, forMode: .commonModes)
         }
+        
+        if self.motionManager == nil {
+            self.motionManager = CMMotionManager()
+        }
+        if let motionManager = self.motionManager, motionManager.isDeviceMotionAvailable {
+            motionManager.deviceMotionUpdateInterval = 1 / 60.0
+            motionManager.startDeviceMotionUpdates(using: .xTrueNorthZVertical)
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         AppDelegate.appProtocols.append(self)
-        
-        if self.motionManager == nil {
-            self.motionManager = CMMotionManager()
-        }
-        if let motionManager = self.motionManager, motionManager.isDeviceMotionAvailable {
-            motionManager.deviceMotionUpdateInterval = 1 / 60.9
-            motionManager.startDeviceMotionUpdates(using: .xTrueNorthZVertical)
-        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -106,6 +106,7 @@ class ViewController: UIViewController {
     }
     
     @objc func displayLinkDidFire() {
+        updateDeviceOrientation()
         self.metalView.redraw()
     }
     
