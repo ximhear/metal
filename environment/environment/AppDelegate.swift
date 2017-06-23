@@ -6,6 +6,9 @@
 //  Copyright © 2017 LEE CHUL HYUN. All rights reserved.
 //
 
+// grep -rli "xxxx" * | xargs sed -i "" "s/xxxx/yyyy/g"
+// find . -type f -name "*.xcscheme" -print0 | xargs -0 sed -i "" "s/xxxx/yyyy/g"
+
 import UIKit
 
 @UIApplicationMain
