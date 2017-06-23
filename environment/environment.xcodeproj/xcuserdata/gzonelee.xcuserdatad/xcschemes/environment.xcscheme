@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "EC4970BC1EE45D79000EA632"
-               BuildableName = "cube01.app"
-               BlueprintName = "cube01"
-               ReferencedContainer = "container:cube01.xcodeproj">
+               BuildableName = "environment.app"
+               BlueprintName = "environment"
+               ReferencedContainer = "container:environment.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

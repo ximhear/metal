@@ -8,6 +8,7 @@
 
 // grep -rli "xxxx" * | xargs sed -i "" "s/xxxx/yyyy/g"
 // find . -type f -name "*.xcscheme" -print0 | xargs -0 sed -i "" "s/xxxx/yyyy/g"
+// find . -type f  \! -name "*.xcuserstate" -print0 | xargs -0 grep -li "xxxx" | xargs sed -i "" "s/xxxx/yyyy/g"
 
 import UIKit
 

@@ -52,12 +52,12 @@ class GMetalView: UIView {
     var depthStencilState : MTLDepthStencilState?
     var depthTexture : MTLTexture?
     var commandQueue : MTLCommandQueue?
-    var displayLink : CADisplayLink?
     var texture: MTLTexture?
     var samplerState: MTLSamplerState?
     
     var renderables : [Renderable] = []
-    var uniformBuffer : MTLBuffer?
+    
+    var sceneOrientation : matrix_float4x4 = matrix_float4x4_identity()
     
     override class var layerClass: Swift.AnyClass {
         return CAMetalLayer.self
@@ -77,7 +77,6 @@ class GMetalView: UIView {
     
     deinit {
         SBLog.debug()
-        displayLink?.invalidate()
     }
     
     var metalLayer : CAMetalLayer? {
@@ -86,20 +85,6 @@ class GMetalView: UIView {
     
     override func didMoveToSuperview() {
         super.didMoveToSuperview()
-        if self.superview != nil {
-            if displayLink == nil {
-                displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidFire))
-                displayLink?.add(to: RunLoop.main, forMode: .commonModes)
-            }
-        }
-        else {
-            displayLink?.invalidate()
-            displayLink = nil
-        }
-    }
-    
-    @objc func displayLinkDidFire() {
-        redraw()
     }
     
     private func buildSamplerState() {
@@ -127,9 +112,9 @@ class GMetalView: UIView {
         
         let projectionMatrix = GMetalView.matrix_float4x4_perspective(aspect: aspectRatio, fovy: verticalFOV * Float(Double.pi) / 180.0, near: near, far: far)
         let modelMatrix = GMetalView.matrix_float4x4_identity()
-        let viewMatrix = GMetalView.matrix_float4x4_identity()
+        let viewMatrix = self.sceneOrientation
         let cameraTranslation = vector_float4(0, 0, -4, 1)
-        let worldCameraPosition = matrix_multiply(simd_inverse(GMetalView.matrix_float4x4_identity()), -cameraTranslation)
+        let worldCameraPosition = matrix_multiply(simd_inverse(self.sceneOrientation), -cameraTranslation)
         
         
         let passDescriptor = MTLRenderPassDescriptor()
@@ -193,7 +178,6 @@ class GMetalView: UIView {
     
     func makeBuffers() {
         
-        self.uniformBuffer = self.device!.makeBuffer(length: MemoryLayout<MBEUniforms>.size, options: [])
     }
     
     func addRectangles() {
@@ -487,18 +471,3 @@ extension GMetalView {
     
 }
 
-extension GMetalView : AppProtocol {
-    
-    func applicationWillResignActive() {
-        displayLink?.invalidate()
-        displayLink = nil
-    }
-    
-    func applicationDidBecomeActive() {
-        
-        if displayLink == nil {
-            displayLink = CADisplayLink(target: self, selector: #selector(displayLinkDidFire))
-            displayLink?.add(to: RunLoop.main, forMode: .commonModes)
-        }
-    }
-}
