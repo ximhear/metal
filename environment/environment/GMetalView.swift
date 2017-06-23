@@ -17,14 +17,23 @@ struct MBEVertex {
     var normal : vector_float4
 }
 
+struct GMatrix {
+    var matrix1 : float4x4
+    var matrix2 : float4x4
+    var matrix3 : float4x4
+    var matrix4 : float4x4
+    var vector1 : float2
+}
+
+
 class GMetalView: UIView {
     
-    public struct MBEUniforms {
-        var modelMatrix : matrix_float4x4!
-        var projectionMatrix : matrix_float4x4!
-        var modelViewProjectionMatrix : matrix_float4x4!
-        var normalMatrix : matrix_float4x4!
-        var worldCameraPosition : vector_float4!
+    struct MBEUniforms {
+        var modelMatrix : matrix_float4x4
+        var projectionMatrix : matrix_float4x4
+        var modelViewProjectionMatrix : matrix_float4x4
+        var normalMatrix : matrix_float4x4
+        var worldCameraPosition : vector_float4
     }
     
     
@@ -142,22 +151,28 @@ class GMetalView: UIView {
         commandEncoder?.setFragmentSamplerState(samplerState, index: 0)
         commandEncoder?.setFragmentTexture(self.texture, index: 0)
         
-        var uniforms = MBEUniforms()
+        var uniforms = MBEUniforms(modelMatrix: matrix_identity_float4x4, projectionMatrix: matrix_identity_float4x4, modelViewProjectionMatrix: matrix_identity_float4x4, normalMatrix: matrix_identity_float4x4, worldCameraPosition: vector_float4(1))
         uniforms.modelMatrix = modelMatrix
         uniforms.projectionMatrix = projectionMatrix
         uniforms.normalMatrix = simd_transpose(simd_inverse(uniforms.modelMatrix))
         uniforms.modelViewProjectionMatrix = matrix_multiply(projectionMatrix, matrix_multiply(viewMatrix, modelMatrix))
         uniforms.worldCameraPosition = worldCameraPosition
-        var contents = self.uniformBuffer?.contents()
         
-        withUnsafePointer(to: &uniforms, { (raw) -> Void in
-            memcpy(contents, raw, MemoryLayout<MBEUniforms>.size)
-        })
-        commandEncoder?.setVertexBuffer(self.uniformBuffer, offset: 0, index: 1)
+//        var contents = self.uniformBuffer?.contents()
+//        withUnsafePointer(to: &uniforms, { (raw) -> Void in
+//            memcpy(contents, raw, MemoryLayout<MBEUniforms>.size)
+//        })
+//        commandEncoder?.setVertexBuffer(self.uniformBuffer, offset: 0, index: 1)
         
-//        commandEncoder?.setVertexBytes(&uniforms,
-//                                       length: MemoryLayout<MBEUniforms>.stride,
+//        var m = GMatrix()
+//        m.matrix1 = matrix_
+//        commandEncoder?.setVertexBytes(&m,
+//                                       length: MemoryLayout<GMatrix>.stride,
 //                                       index: 1)
+        
+        commandEncoder?.setVertexBytes(&uniforms,
+                                       length: MemoryLayout<MBEUniforms>.stride,
+                                       index: 1)
         
         for renderable in self.renderables {
             renderable.redraw(commandEncoder: commandEncoder!)

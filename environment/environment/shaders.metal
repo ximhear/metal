@@ -20,7 +20,11 @@ struct VertexOut {
 };
 
 struct GMatrix {
-    float4x4 matrix;
+    float4x4 matrix1;
+    float4x4 matrix2;
+    float4x4 matrix3;
+    float4x4 matrix4;
+    float2 vector1;
 };
 
 struct Uniforms {

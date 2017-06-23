@@ -10,11 +10,6 @@ import Foundation
 import Metal
 import simd
 
-struct GMatrix {
-    
-    var matrix : float4x4
-}
-
 class Skybox : Renderable {
     
     var device : MTLDevice
