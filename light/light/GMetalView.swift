@@ -113,8 +113,8 @@ class GMetalView: UIView {
         let scaleFactor = Float(1)//= sin(2.5 * self.elapsedTime) * 0.75 + 1.0
         let xAxis = vector_float3(1, 0, 0)
         let yAxis = vector_float3(0, 1, 0)
-        rotationX = 0
-        rotationY = 0
+//        rotationX = 0
+//        rotationY = 0
         let xRot = matrix_float4x4_rotation(axis: xAxis, angle: rotationX)
         let yRot = matrix_float4x4_rotation(axis: yAxis, angle: rotationY)
         let scale = matrix_float4x4_uniform_scale(scale: scaleFactor)
@@ -244,6 +244,32 @@ class GMetalView: UIView {
         self.renderables.append(objModel)
     }
     
+    func getVertexDescriptor() -> MTLVertexDescriptor {
+        
+        let vertexDescriptor = MTLVertexDescriptor()
+        
+        vertexDescriptor.attributes[0].format = .float3
+        vertexDescriptor.attributes[0].offset = 0
+        vertexDescriptor.attributes[0].bufferIndex = 0
+        
+        vertexDescriptor.attributes[1].format = .float4
+        vertexDescriptor.attributes[1].offset = MemoryLayout<Float>.stride * 3
+        vertexDescriptor.attributes[1].bufferIndex = 0
+        
+        vertexDescriptor.attributes[2].format = .float2
+        vertexDescriptor.attributes[2].offset = MemoryLayout<Float>.stride * 7
+        vertexDescriptor.attributes[2].bufferIndex = 0
+        
+        vertexDescriptor.attributes[3].format = .float3
+        vertexDescriptor.attributes[3].offset = MemoryLayout<Float>.stride * 9
+        vertexDescriptor.attributes[3].bufferIndex = 0
+        
+        vertexDescriptor.layouts[0].stride = MemoryLayout<Float>.stride * 12
+        
+        return vertexDescriptor
+        
+    }
+    
     func makePipeline() {
         let library = device?.makeDefaultLibrary()
         let vertexFunc = library?.makeFunction(name: "vertex_project")
@@ -254,13 +280,19 @@ class GMetalView: UIView {
         pipelineDescriptor.fragmentFunction = fragmentFunc
         pipelineDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
         pipelineDescriptor.depthAttachmentPixelFormat = .depth32Float
+        pipelineDescriptor.vertexDescriptor = getVertexDescriptor()
         
         let depthStencilDescriptor = MTLDepthStencilDescriptor()
         depthStencilDescriptor.depthCompareFunction = .less
         depthStencilDescriptor.isDepthWriteEnabled = true
         self.depthStencilState = self.device?.makeDepthStencilState(descriptor: depthStencilDescriptor)
         
-        self.pipeline = try? self.device!.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        do {
+            self.pipeline = try self.device!.makeRenderPipelineState(descriptor: pipelineDescriptor)
+        }
+        catch {
+            SBLog.debug(error)
+        }
         
         self.commandQueue = self.device?.makeCommandQueue()
     }
