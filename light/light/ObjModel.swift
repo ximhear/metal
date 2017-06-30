@@ -83,8 +83,7 @@ class ObjModel : Renderable {
     
     func redraw(commandEncoder: MTLRenderCommandEncoder) -> Void {
         
-        guard let meshes = meshes as? [MTKMesh],
-            meshes.count > 0 else { return }
+        guard let meshes = meshes as? [MTKMesh], meshes.count > 0 else { return }
         for mesh in meshes {
             let vertexBuffer = mesh.vertexBuffers[0]
             commandEncoder.setVertexBuffer(vertexBuffer.buffer,
