@@ -48,7 +48,7 @@ struct Uniforms
 };
 
 struct InstanceUniforms {
-    float4x4 position;
+    float4 position;
 };
 
 struct Vertex
@@ -73,8 +73,11 @@ vertex ProjectedVertex vertex_project(const Vertex in [[stage_in]],
 {
     ProjectedVertex outVert;
     float4 position = float4(in.position,1);
-    float4 position1 = uniforms.modelViewProjectionMatrix * uniforms.modelRotationMatrix * position;
-    outVert.position = uniforms.modelViewProjectionMatrix * instances[iid].position * uniforms.modelRotationMatrix * position;
+    float4x4 translation = float4x4(1);
+    translation[3][0] = instances[iid].position.x;
+    translation[3][1] = instances[iid].position.y;
+    translation[3][2] = instances[iid].position.z;
+    outVert.position = uniforms.modelViewProjectionMatrix * translation * uniforms.modelRotationMatrix * position;
     outVert.eye =  -(uniforms.modelViewMatrix * uniforms.modelRotationMatrix * position).xyz;
     outVert.normal = uniforms.normalMatrix * in.normal.xyz;
     

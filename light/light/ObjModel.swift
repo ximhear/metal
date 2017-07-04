@@ -12,7 +12,7 @@ import MetalKit
 import simd
 
 struct InstanceUniforms {
-    var position : matrix_float4x4
+    var position : vector_float4
 }
 
 class ObjModel : Renderable {
@@ -104,7 +104,7 @@ class ObjModel : Renderable {
                                                      indexType: submesh.indexType,
                                                      indexBuffer: submesh.indexBuffer.buffer,
                                                      indexBufferOffset: submesh.indexBuffer.offset,
-                                                     instanceCount: 25)
+                                                     instanceCount: 125)
             }
         }
     }
@@ -112,10 +112,13 @@ class ObjModel : Renderable {
     func createInstanceUniforms() -> [InstanceUniforms] {
         
         var uniforms = [InstanceUniforms]()
+        let ratio : Float = 1
         for x in 0..<5 {
             for y in 0..<5 {
-                let u = InstanceUniforms(position: matrix_float4x4(translationX: -1.5 * 2 + Float(x) * 1.5, y: -1.5 * 2 + Float(y) * 1.5, z: 0))
-                uniforms.append(u)
+                for z in 0..<5 {
+                    let u = InstanceUniforms(position: vector_float4(x: -ratio * 2 + Float(x) * ratio, y: -ratio * 2 + Float(y) * ratio, z: -ratio * 2 + Float(z) * ratio, w: 1))
+                    uniforms.append(u)
+                }
             }
         }
         return uniforms

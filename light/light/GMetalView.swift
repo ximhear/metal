@@ -111,7 +111,7 @@ class GMetalView: UIView {
         let drawable = self.metalLayer?.nextDrawable()
         let texture = drawable?.texture
         
-        let scaleFactor = Float(0.15)//= sin(2.5 * self.elapsedTime) * 0.75 + 1.0
+        let scaleFactor = Float(0.4)//= sin(2.5 * self.elapsedTime) * 0.75 + 1.0
         let xAxis = vector_float3(1, 0, 0)
         let yAxis = vector_float3(0, 1, 0)
         let xRot = matrix_float4x4_rotation(axis: xAxis, angle: rotationX)
@@ -120,7 +120,7 @@ class GMetalView: UIView {
         let rotation = matrix_multiply(xRot, yRot)
         let modelMatrix = matrix_multiply(rotation, scale)
         
-        let cameraTranslation = vector_float3(0, 0, -1.5)
+        let cameraTranslation = vector_float3(0, 0, -2.5 + sin(2.0 * self.elapsedTime) * 2)
         let viewMatrix = matrix_float4x4_translation(t: cameraTranslation)
         
         let drawableSize = self.metalLayer!.drawableSize
@@ -151,7 +151,7 @@ class GMetalView: UIView {
         
         let modelViewMatrix = matrix_multiply(viewMatrix, modelMatrix)
         let modelViewProjectionMatrix = matrix_multiply(projectionMatrix, modelViewMatrix)
-        let normalMatrix = modelViewMatrix.upperLeft3x3()
+        let normalMatrix = (modelViewMatrix * rotation).upperLeft3x3()
         var uniforms = MBEUniforms(
             modelViewProjectionMatrix: modelViewProjectionMatrix,
             modelViewMatrix: modelViewMatrix,
