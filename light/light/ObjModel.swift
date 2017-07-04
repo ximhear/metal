@@ -11,13 +11,19 @@ import Metal
 import MetalKit
 import simd
 
+struct InstanceUniforms {
+    var position : matrix_float4x4
+}
+
 class ObjModel : Renderable {
     
     var meshes: [AnyObject]?
     var device : MTLDevice
+    var instanceUniforms : [InstanceUniforms]?
     
     init(device: MTLDevice, objName: String) {
         self.device = device
+        instanceUniforms = createInstanceUniforms()
         loadModel(device: device, modelName: objName)
     }
     
@@ -84,6 +90,9 @@ class ObjModel : Renderable {
     func redraw(commandEncoder: MTLRenderCommandEncoder) -> Void {
         
         guard let meshes = meshes as? [MTKMesh], meshes.count > 0 else { return }
+        
+        commandEncoder.setVertexBytes(self.instanceUniforms!, length: MemoryLayout<InstanceUniforms>.stride * self.instanceUniforms!.count, index: 2)
+        
         for mesh in meshes {
             let vertexBuffer = mesh.vertexBuffers[0]
             commandEncoder.setVertexBuffer(vertexBuffer.buffer,
@@ -94,9 +103,21 @@ class ObjModel : Renderable {
                                                      indexCount: submesh.indexCount,
                                                      indexType: submesh.indexType,
                                                      indexBuffer: submesh.indexBuffer.buffer,
-                                                     indexBufferOffset: submesh.indexBuffer.offset)
+                                                     indexBufferOffset: submesh.indexBuffer.offset,
+                                                     instanceCount: 25)
             }
         }
     }
     
+    func createInstanceUniforms() -> [InstanceUniforms] {
+        
+        var uniforms = [InstanceUniforms]()
+        for x in 0..<5 {
+            for y in 0..<5 {
+                let u = InstanceUniforms(position: matrix_float4x4(translationX: -1.5 * 2 + Float(x) * 1.5, y: -1.5 * 2 + Float(y) * 1.5, z: 0))
+                uniforms.append(u)
+            }
+        }
+        return uniforms
+    }
 }

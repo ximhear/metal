@@ -19,9 +19,10 @@ struct MBEVertex {
 }
 
 struct MBEUniforms {
-    var modelViewProjectionMatrix : matrix_float4x4// = matrix_identity_float4x4
-    var modelViewMatrix : matrix_float4x4// = matrix_identity_float4x4
-    var normalMatrix : matrix_float3x3// = matrix_identity_float3x3
+    var modelViewProjectionMatrix : matrix_float4x4
+    var modelViewMatrix : matrix_float4x4
+    var modelRotationMatrix : matrix_float4x4
+    var normalMatrix : matrix_float3x3
 }
 
 class GMetalView: UIView {
@@ -110,15 +111,14 @@ class GMetalView: UIView {
         let drawable = self.metalLayer?.nextDrawable()
         let texture = drawable?.texture
         
-        let scaleFactor = Float(1)//= sin(2.5 * self.elapsedTime) * 0.75 + 1.0
+        let scaleFactor = Float(0.15)//= sin(2.5 * self.elapsedTime) * 0.75 + 1.0
         let xAxis = vector_float3(1, 0, 0)
         let yAxis = vector_float3(0, 1, 0)
-//        rotationX = 0
-//        rotationY = 0
         let xRot = matrix_float4x4_rotation(axis: xAxis, angle: rotationX)
         let yRot = matrix_float4x4_rotation(axis: yAxis, angle: rotationY)
         let scale = matrix_float4x4_uniform_scale(scale: scaleFactor)
-        let modelMatrix = matrix_multiply(matrix_multiply(xRot, yRot), scale)
+        let rotation = matrix_multiply(xRot, yRot)
+        let modelMatrix = matrix_multiply(rotation, scale)
         
         let cameraTranslation = vector_float3(0, 0, -1.5)
         let viewMatrix = matrix_float4x4_translation(t: cameraTranslation)
@@ -155,6 +155,7 @@ class GMetalView: UIView {
         var uniforms = MBEUniforms(
             modelViewProjectionMatrix: modelViewProjectionMatrix,
             modelViewMatrix: modelViewMatrix,
+            modelRotationMatrix: rotation,
             normalMatrix: normalMatrix)
 //        uniforms.normalMatrix = simd_transpose(simd_inverse(uniforms.modelViewMatrix)).upperLeft3x3()
 //        uniforms.normalMatrix = uniforms.modelViewMatrix.upperLeft3x3()

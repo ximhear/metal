@@ -134,7 +134,7 @@ class GMetalView: UIView {
         passDescriptor.colorAttachments[0].texture = texture
         passDescriptor.colorAttachments[0].loadAction = .clear
         passDescriptor.colorAttachments[0].storeAction = .store
-        passDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 1, green: 1, blue: 0, alpha: 1)
+        passDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 1, green: 1, blue: 1, alpha: 1)
         
         makeDepthTexture()
         passDescriptor.depthAttachment.texture = self.depthTexture
