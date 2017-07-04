@@ -30,7 +30,7 @@ class Rectangle : Renderable {
         commandEncoder.setVertexBuffer(self.vertexBuffer, offset: 0, index: 0)
         commandEncoder.setFragmentTexture(self.texture, index: 0)
         
-        commandEncoder.drawIndexedPrimitives(type: .triangle, indexCount: self.indexBuffer!.length / MemoryLayout<UInt16>.size, indexType: .uint16, indexBuffer: self.indexBuffer!, indexBufferOffset: 0)
+        commandEncoder.drawIndexedPrimitives(type: .triangle, indexCount: self.indexBuffer!.length / MemoryLayout<UInt16>.size, indexType: .uint16, indexBuffer: self.indexBuffer!, indexBufferOffset: 0, instanceCount: 125)
         
     }
     

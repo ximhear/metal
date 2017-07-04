@@ -17,14 +17,26 @@ struct Vertex {
 
 struct Uniforms {
     float4x4 modelViewProjectionMatrix;
+    float4x4 modelRotationMatrix;
+};
+
+struct InstanceUniforms {
+    float4 position;
 };
 
 vertex Vertex vertex_main(device Vertex* vertices[[buffer(0)]],
-                          constant Uniforms *uniforms[[buffer(1)]],
-                          uint vid[[vertex_id]]) {
+                          constant Uniforms &uniforms [[buffer(1)]],
+                          constant InstanceUniforms* instances [[buffer(2)]],
+                          uint vid[[vertex_id]],
+                          uint iid [[instance_id]]) {
     
     Vertex out;
-    out.position = uniforms->modelViewProjectionMatrix * vertices[vid].position;
+    float4x4 translation = float4x4(1);
+    translation[3][0] = instances[iid].position.x;
+    translation[3][1] = instances[iid].position.y;
+    translation[3][2] = instances[iid].position.z;
+    
+    out.position = uniforms.modelViewProjectionMatrix * translation * uniforms.modelRotationMatrix * vertices[vid].position;
     out.color = vertices[vid].color;
     out.texture = vertices[vid].texture;
     return out;

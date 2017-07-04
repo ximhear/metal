@@ -20,6 +20,11 @@ struct MBEVertex {
 
 struct MBEUniforms {
     var modelViewProjectionMatrix : matrix_float4x4
+    var modelRotationMatrix : matrix_float4x4
+}
+
+struct InstanceUniforms {
+    var position : vector_float4
 }
 
 class GMetalView: UIView {
@@ -47,6 +52,8 @@ class GMetalView: UIView {
     var texture2: MTLTexture?
     var samplerState: MTLSamplerState?
     
+    var instanceUniforms : [InstanceUniforms]?
+    
     var renderables : [Renderable] = []
     
     override class var layerClass: Swift.AnyClass {
@@ -58,6 +65,7 @@ class GMetalView: UIView {
         super.init(coder: aDecoder)
         
         self.makeDevice()
+        instanceUniforms = createInstanceUniforms()
         buildSamplerState()
         makeTexture()
 //        makeBuffers()
@@ -108,15 +116,19 @@ class GMetalView: UIView {
         let drawable = self.metalLayer?.nextDrawable()
         let texture = drawable?.texture
         
-        let scaleFactor = sin(2.5 * self.elapsedTime) * 0.75 + 1.0
+//        rotationX = 0
+//        rotationY = 0
+        
+        let scaleFactor = Float(0.2) // sin(2.5 * self.elapsedTime) * 0.75 + 1.0
         let xAxis = vector_float3(1, 0, 0)
         let yAxis = vector_float3(0, 1, 0)
         let xRot = matrix_float4x4_rotation(axis: xAxis, angle: rotationX)
         let yRot = matrix_float4x4_rotation(axis: yAxis, angle: rotationY)
         let scale = matrix_float4x4_uniform_scale(scale: scaleFactor)
-        let modelMatrix = matrix_multiply(matrix_multiply(xRot, yRot), scale)
+        let rotation = matrix_multiply(xRot, yRot)
+        let modelMatrix = matrix_multiply(rotation, scale)
         
-        let cameraTranslation = vector_float3(0, 0, -5)
+        let cameraTranslation = vector_float3(0, 0, -6 + sin(1.5 * self.elapsedTime) * 2)
         let viewMatrix = matrix_float4x4_translation(t: cameraTranslation)
         
         let drawableSize = self.metalLayer!.drawableSize
@@ -133,7 +145,7 @@ class GMetalView: UIView {
         passDescriptor.colorAttachments[0].storeAction = .store
         passDescriptor.colorAttachments[0].clearColor = MTLClearColor(red: 1, green: 1, blue: 0, alpha: 1)
         
-//        makeDepthTexture()
+        makeDepthTexture()
         passDescriptor.depthAttachment.texture = self.depthTexture
         passDescriptor.depthAttachment.clearDepth = 1.0
         passDescriptor.depthAttachment.loadAction = .clear
@@ -147,10 +159,13 @@ class GMetalView: UIView {
         commandEncoder?.setFrontFacing(.counterClockwise)
         commandEncoder?.setCullMode(.back)
         
-        var uniforms = MBEUniforms(modelViewProjectionMatrix: matrix_multiply(matrix_multiply(projectionMatrix, viewMatrix), modelMatrix))
+        var uniforms = MBEUniforms(modelViewProjectionMatrix: matrix_multiply(matrix_multiply(projectionMatrix, viewMatrix), modelMatrix), modelRotationMatrix: rotation)
         commandEncoder?.setVertexBytes(&uniforms,
                                        length: MemoryLayout<MBEUniforms>.stride,
                                        index: 1)
+        
+        commandEncoder?.setVertexBytes(self.instanceUniforms!, length: MemoryLayout<InstanceUniforms>.stride * self.instanceUniforms!.count, index: 2)
+        
         for renderable in self.renderables {
             
             renderable.redraw(commandEncoder: commandEncoder!)
@@ -222,6 +237,20 @@ class GMetalView: UIView {
         self.indexBuffer = device?.makeBuffer(bytes: indices, length: indices.count * MemoryLayout<UInt16>.size, options: [])
     }
  */
+    func createInstanceUniforms() -> [InstanceUniforms] {
+        
+        var uniforms = [InstanceUniforms]()
+    let ratio : Float = 3
+        for x in 0..<5 {
+            for y in 0..<5 {
+                for z in 0..<5 {
+                    let u = InstanceUniforms(position: vector_float4(x: -ratio * 2 + Float(x) * ratio, y: -ratio * 2 + Float(y) * ratio, z: -ratio * 2 + Float(z) * ratio, w: 1))
+                    uniforms.append(u)
+                }
+            }
+        }
+        return uniforms
+    }
     
     func addRectangles() {
         
