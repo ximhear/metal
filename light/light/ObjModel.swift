@@ -13,6 +13,7 @@ import simd
 
 struct InstanceUniforms {
     var position : vector_float4
+    var color : vector_float4
 }
 
 class ObjModel : Renderable {
@@ -116,7 +117,13 @@ class ObjModel : Renderable {
         for x in 0..<5 {
             for y in 0..<5 {
                 for z in 0..<5 {
-                    let u = InstanceUniforms(position: vector_float4(x: -ratio * 2 + Float(x) * ratio, y: -ratio * 2 + Float(y) * ratio, z: -ratio * 2 + Float(z) * ratio, w: 1))
+                    let c = UIColor.getRandomColor()
+                    var r : CGFloat = 0
+                    var g : CGFloat = 0
+                    var b : CGFloat = 0
+                    var a : CGFloat = 0
+                    c.getRed(&r, green: &g, blue: &b, alpha: &a)
+                    let u = InstanceUniforms(position: vector_float4(x: -ratio * 2 + Float(x) * ratio, y: -ratio * 2 + Float(y) * ratio, z: -ratio * 2 + Float(z) * ratio, w: 1), color: vector_float4(x: Float(r), y: Float(g), z: Float(b), w: Float(a)))
                     uniforms.append(u)
                 }
             }

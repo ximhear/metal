@@ -49,6 +49,7 @@ struct Uniforms
 
 struct InstanceUniforms {
     float4 position;
+    float4 color;
 };
 
 struct Vertex
@@ -64,6 +65,7 @@ struct ProjectedVertex
     float4 position [[position]];
     float3 eye;
     float3 normal;
+    float4 color;
 };
 
 vertex ProjectedVertex vertex_project(const Vertex in [[stage_in]],
@@ -80,6 +82,7 @@ vertex ProjectedVertex vertex_project(const Vertex in [[stage_in]],
     outVert.position = uniforms.modelViewProjectionMatrix * translation * uniforms.modelRotationMatrix * position;
     outVert.eye =  -(uniforms.modelViewMatrix * uniforms.modelRotationMatrix * position).xyz;
     outVert.normal = uniforms.normalMatrix * in.normal.xyz;
+    outVert.color = instances[iid].color;
     
     return outVert;
 }
@@ -87,11 +90,11 @@ vertex ProjectedVertex vertex_project(const Vertex in [[stage_in]],
 fragment float4 fragment_light(ProjectedVertex vert [[stage_in]],
                                constant Uniforms &uniforms [[buffer(0)]])
 {
-    float3 ambientTerm = light.ambientColor * material.ambientColor;
+    float3 ambientTerm = light.ambientColor * vert.color.xyz /*material.ambientColor*/;
 
     float3 normal = normalize(vert.normal);
     float diffuseIntensity = saturate(dot(normal, light.direction));
-    float3 diffuseTerm = light.diffuseColor * material.diffuseColor * diffuseIntensity;
+    float3 diffuseTerm = light.diffuseColor * vert.color.xyz/*material.diffuseColor*/ * diffuseIntensity;
 
     float3 specularTerm(0);
     if (diffuseIntensity > 0)

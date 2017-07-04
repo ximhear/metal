@@ -35,6 +35,7 @@
 		EC4970CB1EE45D79000EA632 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EC4970C91EE45D79000EA632 /* LaunchScreen.storyboard */; };
 		EC4970D31EE45E17000EA632 /* GMetalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC4970D21EE45E17000EA632 /* GMetalView.swift */; };
 		EC53656A1EED92B900715BFC /* AppProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC5365691EED92B900715BFC /* AppProtocol.swift */; };
+		ECB0580F1F0BFF4F0015E125 /* UIColor-extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECB0580E1F0BFF4F0015E125 /* UIColor-extension.swift */; };
 		ECB5290E1EE73DAD0028382F /* shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = ECB5290D1EE73DAD0028382F /* shaders.metal */; };
 /* End PBXBuildFile section */
 
@@ -137,6 +138,7 @@
 		EC4970CC1EE45D79000EA632 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EC4970D21EE45E17000EA632 /* GMetalView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GMetalView.swift; sourceTree = "<group>"; };
 		EC5365691EED92B900715BFC /* AppProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppProtocol.swift; sourceTree = "<group>"; };
+		ECB0580E1F0BFF4F0015E125 /* UIColor-extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIColor-extension.swift"; sourceTree = "<group>"; };
 		ECB5290D1EE73DAD0028382F /* shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = shaders.metal; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -310,6 +312,7 @@
 				EC1D04241EF6E7C2000F97DF /* Rectangle.swift */,
 				EC1D042A1EF6EA1E000F97DF /* Renderable.swift */,
 				8C1C12DF1F063622002F7881 /* ObjModel.swift */,
+				ECB0580E1F0BFF4F0015E125 /* UIColor-extension.swift */,
 			);
 			path = light;
 			sourceTree = "<group>";
@@ -468,6 +471,7 @@
 				EC3B7CAC1EEDAD7C0049EF7D /* FirstProtocols.swift in Sources */,
 				8C1C12E01F063622002F7881 /* ObjModel.swift in Sources */,
 				EC3B7CAF1EEDAD870049EF7D /* FirstItem.swift in Sources */,
+				ECB0580F1F0BFF4F0015E125 /* UIColor-extension.swift in Sources */,
 				EC4970C31EE45D79000EA632 /* ViewController.swift in Sources */,
 				EC3B7CAE1EEDAD840049EF7D /* FirstInteractor.swift in Sources */,
 				EC4970C11EE45D79000EA632 /* AppDelegate.swift in Sources */,
