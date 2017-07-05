@@ -106,14 +106,11 @@ class GMetalView: UIView {
         let drawable = self.metalLayer?.nextDrawable()
         let texture = drawable?.texture
         
-//        rotationX = 0
-//        rotationY = 0
-        
         let scaleFactor = sin(2.5 * self.elapsedTime) * 1.75 + 2.0
         let xAxis = vector_float3(1, 0, 0)
         let yAxis = vector_float3(0, 1, 0)
-        let xRot = matrix_float4x4_rotation(axis: xAxis, angle: rotationX)
-        let yRot = matrix_float4x4_rotation(axis: yAxis, angle: rotationY)
+        let xRot = matrix_float4x4_rotation(axis: xAxis, angle: rotationX/2.0)
+        let yRot = matrix_float4x4_rotation(axis: yAxis, angle: rotationY/2.0)
         let scale = matrix_float4x4_uniform_scale(scale: scaleFactor)
         let rotation = matrix_multiply(xRot, yRot)
         let modelMatrix = matrix_multiply(rotation, scale)
