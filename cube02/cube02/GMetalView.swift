@@ -14,17 +14,11 @@ import MetalKit
 
 struct MBEVertex {
     var position : vector_float4
-    var color : vector_float4
-    var texture : float2 = float2(0, 0)
 }
 
 struct MBEUniforms {
     var modelViewProjectionMatrix : matrix_float4x4
     var modelRotationMatrix : matrix_float4x4
-}
-
-struct InstanceUniforms {
-    var position : vector_float4
 }
 
 class GMetalView: UIView {
@@ -48,11 +42,8 @@ class GMetalView: UIView {
     var elapsedTime : Float = 0
     var rotationX : Float = 0
     var rotationY : Float = 0
-    var texture1: MTLTexture?
-    var texture2: MTLTexture?
+    var texture: MTLTexture?
     var samplerState: MTLSamplerState?
-    
-    var instanceUniforms : [InstanceUniforms]?
     
     var renderables : [Renderable] = []
     
@@ -65,12 +56,11 @@ class GMetalView: UIView {
         super.init(coder: aDecoder)
         
         self.makeDevice()
-        instanceUniforms = createInstanceUniforms()
         buildSamplerState()
         makeTexture()
 //        makeBuffers()
         makePipeline()
-        addRectangles()
+        addCube()
     }
     
     deinit {
@@ -119,7 +109,7 @@ class GMetalView: UIView {
 //        rotationX = 0
 //        rotationY = 0
         
-        let scaleFactor = Float(0.2) // sin(2.5 * self.elapsedTime) * 0.75 + 1.0
+        let scaleFactor = sin(2.5 * self.elapsedTime) * 1.75 + 2.0
         let xAxis = vector_float3(1, 0, 0)
         let yAxis = vector_float3(0, 1, 0)
         let xRot = matrix_float4x4_rotation(axis: xAxis, angle: rotationX)
@@ -128,7 +118,7 @@ class GMetalView: UIView {
         let rotation = matrix_multiply(xRot, yRot)
         let modelMatrix = matrix_multiply(rotation, scale)
         
-        let cameraTranslation = vector_float3(0, 0, -6 + sin(1.5 * self.elapsedTime) * 2)
+        let cameraTranslation = vector_float3(0, 0, -15 - fabs(sin(2.5 * self.elapsedTime)*5))
         let viewMatrix = matrix_float4x4_translation(t: cameraTranslation)
         
         let drawableSize = self.metalLayer!.drawableSize
@@ -156,6 +146,7 @@ class GMetalView: UIView {
         commandEncoder?.setRenderPipelineState(self.pipeline!)
         commandEncoder?.setDepthStencilState(self.depthStencilState)
         commandEncoder?.setFragmentSamplerState(samplerState, index: 0)
+        commandEncoder?.setFragmentTexture(self.texture, index: 0)
         commandEncoder?.setFrontFacing(.counterClockwise)
         commandEncoder?.setCullMode(.back)
         
@@ -163,8 +154,6 @@ class GMetalView: UIView {
         commandEncoder?.setVertexBytes(&uniforms,
                                        length: MemoryLayout<MBEUniforms>.stride,
                                        index: 1)
-        
-        commandEncoder?.setVertexBytes(self.instanceUniforms!, length: MemoryLayout<InstanceUniforms>.stride * self.instanceUniforms!.count, index: 2)
         
         for renderable in self.renderables {
             
@@ -237,60 +226,18 @@ class GMetalView: UIView {
         self.indexBuffer = device?.makeBuffer(bytes: indices, length: indices.count * MemoryLayout<UInt16>.size, options: [])
     }
  */
-    func createInstanceUniforms() -> [InstanceUniforms] {
-        
-        var uniforms = [InstanceUniforms]()
-    let ratio : Float = 3
-        for x in 0..<5 {
-            for y in 0..<5 {
-                for z in 0..<5 {
-                    let u = InstanceUniforms(position: vector_float4(x: -ratio * 2 + Float(x) * ratio, y: -ratio * 2 + Float(y) * ratio, z: -ratio * 2 + Float(z) * ratio, w: 1))
-                    uniforms.append(u)
-                }
-            }
-        }
-        return uniforms
-    }
     
-    func addRectangles() {
+    func addCube() {
         
-        var vertices1 = [
-            MBEVertex(position: vector_float4(-1, 1, 1, 1), color: vector_float4(0, 1, 1, 1), texture:float2(0,0)),
-            MBEVertex(position: vector_float4(-1, -1, 1, 1), color: vector_float4(0, 0, 1, 1), texture:float2(0,0)),
-            MBEVertex(position: vector_float4(1, -1, 1, 1), color: vector_float4(1, 0, 1, 1), texture:float2(0,0)),
-            MBEVertex(position: vector_float4(1, 1, 1, 1), color: vector_float4(1, 1, 1, 1), texture:float2(0,0)),
-            MBEVertex(position: vector_float4(-1, 1, -1, 1), color: vector_float4(0, 1, 0, 1), texture:float2(0,0)),
-            MBEVertex(position: vector_float4(-1, -1, -1, 1), color: vector_float4(0, 0, 0, 1), texture:float2(0,0)),
-            MBEVertex(position: vector_float4(1, -1, -1, 1), color: vector_float4(1, 0, 0, 1), texture:float2(0,0)),
-            MBEVertex(position: vector_float4(1, 1, -1, 1), color: vector_float4(1, 1, 0, 1), texture:float2(0,0))
-        ]
-        
-        var vertices : [MBEVertex] = []
-        
-        let indices2 : [(Int, Int, Int, Int)] = [
-            (3, 2, 6, 7),
-            (4, 5, 1, 0),
-            (4, 0, 3, 7),
-            (1, 5, 6, 2),
-            (0, 1, 2, 3),
-            (7, 6, 5, 4)
-        ]
-        
-        for (index, (a, b, c, d)) in indices2.enumerated() {
-            let vertex0 = vertices1[a]
-            let vertex1 = vertices1[b]
-            let vertex2 = vertices1[c]
-            let vertex3 = vertices1[d]
-            let rect = Rectangle(device: self.device!, texture: index%2 == 0 ? self.texture1! : self.texture2!, vertices: [vertex0, vertex1, vertex2, vertex3])
-            self.renderables.append(rect)
-        }
+        let cube = Cube(device: device!, width: 5)
+        self.renderables.append(cube)
     }
     
     func makePipeline() {
         let library = device?.makeDefaultLibrary()
         let vertexFunc = library?.makeFunction(name: "vertex_main")
 //        let fragmentFunc = library?.makeFunction(name: "fragment_main")
-        let fragmentFunc = library?.makeFunction(name: "textured_fragment")
+        let fragmentFunc = library?.makeFunction(name: "fragment_cube_lookup")
         
         let pipelineDescriptor = MTLRenderPipelineDescriptor()
         pipelineDescriptor.vertexFunction = vertexFunc
@@ -322,10 +269,47 @@ class GMetalView: UIView {
     }
     
     func makeTexture() {
-        self.texture1 = getTexture(device: self.device!, imageName: "bbb.png")
-        self.texture2 = getTexture(device: self.device!, imageName: "ccc.png")
+        self.texture = getCubeTextureImmediately(device: device!, images: ["bbb", "ccc", "bbb", "ccc", "bbb", "ccc"])
     }
     
+    func getCubeTextureImmediately(device: MTLDevice, images:[String]) -> MTLTexture? {
+        
+        let image = UIImage(named: images[0])!
+        let cubeSize = image.size.width * image.scale
+        let bytePerPixel = 4
+        let bytesPerRow = bytePerPixel * Int(cubeSize)
+        let bytePerImage = bytesPerRow * Int(cubeSize)
+        var texture : MTLTexture?
+        
+        let region = MTLRegionMake2D(0, 0, Int(cubeSize), Int(cubeSize))
+        let textureDescriptor = MTLTextureDescriptor.textureCubeDescriptor(pixelFormat: .rgba8Unorm, size: Int(cubeSize), mipmapped: false)
+        texture = device.makeTexture(descriptor: textureDescriptor)
+        
+        for slice in 0..<6 {
+            let image = UIImage(named: images[slice])
+            let data = dataForImage(image: image!)
+            
+            texture?.replace(region: region, mipmapLevel: 0, slice: slice, withBytes: data, bytesPerRow: bytesPerRow, bytesPerImage: bytePerImage)
+        }
+        return texture
+    }
+    
+    func dataForImage(image: UIImage) -> UnsafeMutablePointer<UInt8> {
+        let imageRef = image.cgImage
+        let width = Int(image.size.width)
+        let height = Int(image.size.height)
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        
+        let rawData = UnsafeMutablePointer<UInt8>.allocate(capacity: width * height * 4)
+        let bytePerPixel = 4
+        let bytesPerRow = bytePerPixel * Int(width)
+        let bitsPerComponent = 8
+        let bitmapInfo = CGBitmapInfo.byteOrder32Big.rawValue + CGImageAlphaInfo.premultipliedLast.rawValue
+        let context = CGContext.init(data: rawData, width: width, height: height, bitsPerComponent: bitsPerComponent, bytesPerRow: bytesPerRow, space: colorSpace, bitmapInfo: bitmapInfo)
+        context?.draw(imageRef!, in: CGRect(x: 0, y: 0, width: width, height: height))
+        
+        return rawData
+    }
     
     func matrix_float4x4_translation(t:vector_float3) -> matrix_float4x4 {
         let X = vector_float4( 1, 0, 0, 0 )

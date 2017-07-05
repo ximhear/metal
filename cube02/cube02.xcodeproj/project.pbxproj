@@ -7,11 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8CAE17521F0C6DA0009C611A /* Cube.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CAE17511F0C6DA0009C611A /* Cube.swift */; };
 		8CD633371EF05FA300F599BA /* SwiftyBeaver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C3599B21EF054F90023DC28 /* SwiftyBeaver.framework */; };
 		8CD633381EF05FA300F599BA /* SwiftyBeaver.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8C3599B21EF054F90023DC28 /* SwiftyBeaver.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		8CD6333E1EF0616600F599BA /* SBLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD6333D1EF060EE00F599BA /* SBLog.swift */; };
-		E0CEA6F5A32EFEB68E8948A9 /* Pods_cube02.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86844DBB603D6744BAC13E16 /* Pods_cube02.framework */; };
-		EC1D04251EF6E7C2000F97DF /* Rectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1D04241EF6E7C2000F97DF /* Rectangle.swift */; };
 		EC1D042B1EF6EA1E000F97DF /* Renderable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1D042A1EF6EA1E000F97DF /* Renderable.swift */; };
 		EC1D042E1EF6F8EE000F97DF /* ddd.png in Resources */ = {isa = PBXBuildFile; fileRef = EC1D042D1EF6F867000F97DF /* ddd.png */; };
 		EC1D042F1EF6F8F1000F97DF /* ccc.png in Resources */ = {isa = PBXBuildFile; fileRef = EC1D042C1EF6F7CE000F97DF /* ccc.png */; };
@@ -105,9 +104,9 @@
 		1AA24217527EC549A61BEC5D /* Pods-cube02.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-cube02.release.xcconfig"; path = "Pods/Target Support Files/Pods-cube02/Pods-cube02.release.xcconfig"; sourceTree = "<group>"; };
 		86844DBB603D6744BAC13E16 /* Pods_cube02.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_cube02.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8C3599A91EF054F80023DC28 /* SwiftyBeaver.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SwiftyBeaver.xcodeproj; path = ../SwiftyBeaver/SwiftyBeaver.xcodeproj; sourceTree = "<group>"; };
+		8CAE17511F0C6DA0009C611A /* Cube.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cube.swift; sourceTree = "<group>"; };
 		8CD6333D1EF060EE00F599BA /* SBLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBLog.swift; sourceTree = "<group>"; };
 		9E3321F88526131E1B4ABAB0 /* Pods-cube02.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-cube02.debug.xcconfig"; path = "Pods/Target Support Files/Pods-cube02/Pods-cube02.debug.xcconfig"; sourceTree = "<group>"; };
-		EC1D04241EF6E7C2000F97DF /* Rectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle.swift; sourceTree = "<group>"; };
 		EC1D042A1EF6EA1E000F97DF /* Renderable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderable.swift; sourceTree = "<group>"; };
 		EC1D042C1EF6F7CE000F97DF /* ccc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ccc.png; sourceTree = "<group>"; };
 		EC1D042D1EF6F867000F97DF /* ddd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ddd.png; sourceTree = "<group>"; };
@@ -138,7 +137,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E0CEA6F5A32EFEB68E8948A9 /* Pods_cube02.framework in Frameworks */,
 				8CD633371EF05FA300F599BA /* SwiftyBeaver.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -298,8 +296,8 @@
 				EC4970D21EE45E17000EA632 /* GMetalView.swift */,
 				ECB5290D1EE73DAD0028382F /* shaders.metal */,
 				EC5365691EED92B900715BFC /* AppProtocol.swift */,
-				EC1D04241EF6E7C2000F97DF /* Rectangle.swift */,
 				EC1D042A1EF6EA1E000F97DF /* Renderable.swift */,
+				8CAE17511F0C6DA0009C611A /* Cube.swift */,
 			);
 			path = cube02;
 			sourceTree = "<group>";
@@ -328,12 +326,9 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = EC4970CF1EE45D79000EA632 /* Build configuration list for PBXNativeTarget "cube02" */;
 			buildPhases = (
-				54181BDD2D33B2C34C7494EB /* [CP] Check Pods Manifest.lock */,
 				EC4970B91EE45D79000EA632 /* Sources */,
 				EC4970BA1EE45D79000EA632 /* Frameworks */,
 				EC4970BB1EE45D79000EA632 /* Resources */,
-				2A0D2FC692BD761F8F1B2373 /* [CP] Embed Pods Frameworks */,
-				26523EB12C7A8CFB89F47A5F /* [CP] Copy Pods Resources */,
 				8CD6333B1EF05FA300F599BA /* Embed Frameworks */,
 			);
 			buildRules = (
@@ -444,60 +439,11 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
-/* Begin PBXShellScriptBuildPhase section */
-		26523EB12C7A8CFB89F47A5F /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-cube02/Pods-cube02-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		2A0D2FC692BD761F8F1B2373 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-cube02/Pods-cube02-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		54181BDD2D33B2C34C7494EB /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
-			showEnvVarsInLog = 0;
-		};
-/* End PBXShellScriptBuildPhase section */
-
 /* Begin PBXSourcesBuildPhase section */
 		EC4970B91EE45D79000EA632 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EC1D04251EF6E7C2000F97DF /* Rectangle.swift in Sources */,
 				EC3B7CAD1EEDAD800049EF7D /* FirstPresenter.swift in Sources */,
 				EC53656A1EED92B900715BFC /* AppProtocol.swift in Sources */,
 				ECB5290E1EE73DAD0028382F /* shaders.metal in Sources */,
@@ -512,6 +458,7 @@
 				8CD6333E1EF0616600F599BA /* SBLog.swift in Sources */,
 				EC3B7CB01EEDAD8D0049EF7D /* FirstAPIDataManager.swift in Sources */,
 				EC3B7CB11EEDAD910049EF7D /* FirstLocalDataManager.swift in Sources */,
+				8CAE17521F0C6DA0009C611A /* Cube.swift in Sources */,
 				EC1D042B1EF6EA1E000F97DF /* Renderable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
