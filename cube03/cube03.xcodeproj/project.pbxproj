@@ -12,9 +12,6 @@
 		8C1B237A1EFAB333004B0B5C /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8C1B23781EFAB333004B0B5C /* Main.storyboard */; };
 		8C1B237C1EFAB333004B0B5C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8C1B237B1EFAB333004B0B5C /* Assets.xcassets */; };
 		8C1B237F1EFAB333004B0B5C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8C1B237D1EFAB333004B0B5C /* LaunchScreen.storyboard */; };
-		8C1B23AB1EFAB7CF004B0B5C /* SwiftyBeaver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C1B23A21EFAB7A6004B0B5C /* SwiftyBeaver.framework */; };
-		8C1B23AC1EFAB7CF004B0B5C /* SwiftyBeaver.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8C1B23A21EFAB7A6004B0B5C /* SwiftyBeaver.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		8C1B23BB1EFABAAE004B0B5C /* SBLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C1B23B61EFAB834004B0B5C /* SBLog.swift */; };
 		8C1B23BC1EFABAC9004B0B5C /* bbb.png in Resources */ = {isa = PBXBuildFile; fileRef = 8C1B23B11EFAB834004B0B5C /* bbb.png */; };
 		8C1B23BD1EFABAC9004B0B5C /* ccc.png in Resources */ = {isa = PBXBuildFile; fileRef = 8C1B23B21EFAB834004B0B5C /* ccc.png */; };
 		8C1B23BE1EFABAC9004B0B5C /* ddd.png in Resources */ = {isa = PBXBuildFile; fileRef = 8C1B23B31EFAB834004B0B5C /* ddd.png */; };
@@ -22,52 +19,8 @@
 		8C1B23C01EFABACE004B0B5C /* shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 8C1B23B81EFAB986004B0B5C /* shaders.metal */; };
 		8C1B23C11EFABAD1004B0B5C /* Renderable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C1B23BA1EFAB986004B0B5C /* Renderable.swift */; };
 		8C1B23C21EFABAD4004B0B5C /* Rectangle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C1B23B91EFAB986004B0B5C /* Rectangle.swift */; };
+		8C5AF5A020887BD40008636F /* GZLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5AF59F20887BD40008636F /* GZLog.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		8C1B23A11EFAB7A6004B0B5C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8C1B23991EFAB7A5004B0B5C /* SwiftyBeaver.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 9EDCE3E41C09D211002FA4A7;
-			remoteInfo = "SwiftyBeaver (iOS)";
-		};
-		8C1B23A31EFAB7A6004B0B5C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8C1B23991EFAB7A5004B0B5C /* SwiftyBeaver.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 9EDCE3EE1C09D211002FA4A7;
-			remoteInfo = SwiftyBeaverTests;
-		};
-		8C1B23A51EFAB7A6004B0B5C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8C1B23991EFAB7A5004B0B5C /* SwiftyBeaver.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = ACE597841C1882DF0031451F;
-			remoteInfo = "SwiftyBeaver (watchOS)";
-		};
-		8C1B23A71EFAB7A6004B0B5C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8C1B23991EFAB7A5004B0B5C /* SwiftyBeaver.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = ACE597951C18830D0031451F;
-			remoteInfo = "SwiftyBeaver (tvOS)";
-		};
-		8C1B23A91EFAB7A6004B0B5C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8C1B23991EFAB7A5004B0B5C /* SwiftyBeaver.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = ACE597A61C18832E0031451F;
-			remoteInfo = "SwiftyBeaver (macOS)";
-		};
-		8C1B23AD1EFAB7CF004B0B5C /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8C1B23991EFAB7A5004B0B5C /* SwiftyBeaver.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 9EDCE3E31C09D211002FA4A7;
-			remoteInfo = "SwiftyBeaver (iOS)";
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		8C1B23AF1EFAB7CF004B0B5C /* Embed Frameworks */ = {
@@ -76,7 +29,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				8C1B23AC1EFAB7CF004B0B5C /* SwiftyBeaver.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -91,15 +43,14 @@
 		8C1B237B1EFAB333004B0B5C /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8C1B237E1EFAB333004B0B5C /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8C1B23801EFAB333004B0B5C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8C1B23991EFAB7A5004B0B5C /* SwiftyBeaver.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SwiftyBeaver.xcodeproj; path = ../../SwiftyBeaver/SwiftyBeaver.xcodeproj; sourceTree = "<group>"; };
 		8C1B23B11EFAB834004B0B5C /* bbb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bbb.png; sourceTree = "<group>"; };
 		8C1B23B21EFAB834004B0B5C /* ccc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ccc.png; sourceTree = "<group>"; };
 		8C1B23B31EFAB834004B0B5C /* ddd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ddd.png; sourceTree = "<group>"; };
 		8C1B23B41EFAB834004B0B5C /* aaa.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = aaa.png; sourceTree = "<group>"; };
-		8C1B23B61EFAB834004B0B5C /* SBLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBLog.swift; sourceTree = "<group>"; };
 		8C1B23B81EFAB986004B0B5C /* shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = shaders.metal; sourceTree = "<group>"; };
 		8C1B23B91EFAB986004B0B5C /* Rectangle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rectangle.swift; sourceTree = "<group>"; };
 		8C1B23BA1EFAB986004B0B5C /* Renderable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderable.swift; sourceTree = "<group>"; };
+		8C5AF59F20887BD40008636F /* GZLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GZLog.swift; path = ../../../GZLog.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -107,7 +58,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8C1B23AB1EFAB7CF004B0B5C /* SwiftyBeaver.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -117,7 +67,6 @@
 		8C1B23661EFAB332004B0B5C = {
 			isa = PBXGroup;
 			children = (
-				8C1B23991EFAB7A5004B0B5C /* SwiftyBeaver.xcodeproj */,
 				8C1B23711EFAB332004B0B5C /* cube03 */,
 				8C1B23701EFAB332004B0B5C /* Products */,
 			);
@@ -149,18 +98,6 @@
 			path = cube03;
 			sourceTree = "<group>";
 		};
-		8C1B239A1EFAB7A5004B0B5C /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				8C1B23A21EFAB7A6004B0B5C /* SwiftyBeaver.framework */,
-				8C1B23A41EFAB7A6004B0B5C /* SwiftyBeaverTests.xctest */,
-				8C1B23A61EFAB7A6004B0B5C /* SwiftyBeaver.framework */,
-				8C1B23A81EFAB7A6004B0B5C /* SwiftyBeaver.framework */,
-				8C1B23AA1EFAB7A6004B0B5C /* SwiftyBeaver.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		8C1B23B01EFAB834004B0B5C /* images */ = {
 			isa = PBXGroup;
 			children = (
@@ -175,7 +112,7 @@
 		8C1B23B51EFAB834004B0B5C /* log */ = {
 			isa = PBXGroup;
 			children = (
-				8C1B23B61EFAB834004B0B5C /* SBLog.swift */,
+				8C5AF59F20887BD40008636F /* GZLog.swift */,
 			);
 			path = log;
 			sourceTree = "<group>";
@@ -195,7 +132,6 @@
 			buildRules = (
 			);
 			dependencies = (
-				8C1B23AE1EFAB7CF004B0B5C /* PBXTargetDependency */,
 			);
 			name = cube03;
 			productName = cube03;
@@ -209,7 +145,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0900;
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = "C.H Lee";
 				TargetAttributes = {
 					8C1B236E1EFAB332004B0B5C = {
@@ -228,56 +164,12 @@
 			mainGroup = 8C1B23661EFAB332004B0B5C;
 			productRefGroup = 8C1B23701EFAB332004B0B5C /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 8C1B239A1EFAB7A5004B0B5C /* Products */;
-					ProjectRef = 8C1B23991EFAB7A5004B0B5C /* SwiftyBeaver.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				8C1B236E1EFAB332004B0B5C /* cube03 */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		8C1B23A21EFAB7A6004B0B5C /* SwiftyBeaver.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SwiftyBeaver.framework;
-			remoteRef = 8C1B23A11EFAB7A6004B0B5C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8C1B23A41EFAB7A6004B0B5C /* SwiftyBeaverTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = SwiftyBeaverTests.xctest;
-			remoteRef = 8C1B23A31EFAB7A6004B0B5C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8C1B23A61EFAB7A6004B0B5C /* SwiftyBeaver.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SwiftyBeaver.framework;
-			remoteRef = 8C1B23A51EFAB7A6004B0B5C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8C1B23A81EFAB7A6004B0B5C /* SwiftyBeaver.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SwiftyBeaver.framework;
-			remoteRef = 8C1B23A71EFAB7A6004B0B5C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8C1B23AA1EFAB7A6004B0B5C /* SwiftyBeaver.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SwiftyBeaver.framework;
-			remoteRef = 8C1B23A91EFAB7A6004B0B5C /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		8C1B236D1EFAB332004B0B5C /* Resources */ = {
@@ -302,7 +194,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8C1B23C01EFABACE004B0B5C /* shaders.metal in Sources */,
-				8C1B23BB1EFABAAE004B0B5C /* SBLog.swift in Sources */,
+				8C5AF5A020887BD40008636F /* GZLog.swift in Sources */,
 				8C1B23751EFAB332004B0B5C /* GameViewController.swift in Sources */,
 				8C1B23C21EFABAD4004B0B5C /* Rectangle.swift in Sources */,
 				8C1B23C11EFABAD1004B0B5C /* Renderable.swift in Sources */,
@@ -311,14 +203,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		8C1B23AE1EFAB7CF004B0B5C /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "SwiftyBeaver (iOS)";
-			targetProxy = 8C1B23AD1EFAB7CF004B0B5C /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		8C1B23781EFAB333004B0B5C /* Main.storyboard */ = {
@@ -354,12 +238,16 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
@@ -409,12 +297,16 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
@@ -448,7 +340,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = WD3LPJ2STX;
+				DEVELOPMENT_TEAM = J8647L48BZ;
 				INFOPLIST_FILE = cube03/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -464,7 +356,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = WD3LPJ2STX;
+				DEVELOPMENT_TEAM = J8647L48BZ;
 				INFOPLIST_FILE = cube03/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -494,6 +386,7 @@
 				8C1B23851EFAB333004B0B5C /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

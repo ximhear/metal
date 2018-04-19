@@ -67,7 +67,7 @@ class GMetalView: UIView {
     }
     
     deinit {
-        SBLog.debug()
+        GZLog()
         displayLink?.invalidate()
     }
     
@@ -382,10 +382,10 @@ extension GMetalView {
         
         if let textureURL = Bundle.main.url(forResource: imageName, withExtension: nil) {
             do {
-                texture = try textureLoader.newTexture(withContentsOf: textureURL,
+                texture = try textureLoader.newTexture(URL: textureURL,
                                                        options: textureLoaderOptions)
             } catch {
-                SBLog.debug("texture not created")
+                GZLog("texture not created")
             }
         }
         return texture

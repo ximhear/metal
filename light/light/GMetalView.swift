@@ -68,7 +68,7 @@ class GMetalView: UIView {
     }
     
     deinit {
-        SBLog.debug()
+        GZLog()
         displayLink?.invalidate()
     }
     
@@ -291,7 +291,7 @@ class GMetalView: UIView {
             self.pipeline = try self.device!.makeRenderPipelineState(descriptor: pipelineDescriptor)
         }
         catch {
-            SBLog.debug(error)
+            GZLog(error)
         }
         
         self.commandQueue = self.device?.makeCommandQueue()
@@ -421,10 +421,10 @@ extension GMetalView {
         
         if let textureURL = Bundle.main.url(forResource: imageName, withExtension: nil) {
             do {
-                texture = try textureLoader.newTexture(withContentsOf: textureURL,
+                texture = try textureLoader.newTexture(URL: textureURL,
                                                        options: textureLoaderOptions)
             } catch {
-                SBLog.debug("texture not created")
+                GZLog("texture not created")
             }
         }
         return texture

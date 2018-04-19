@@ -31,7 +31,7 @@ class FirstViewController: UIViewController, FirstViewProtocol {
     }
     
     override func viewWillAppear(_ animated: Bool) {
-        SBLog.debug()
+        GZLog()
         super.viewWillAppear(animated)
         
 //        self.navigationController?.navigationBar.setBackgroundImage(nil, for: UIBarMetrics.default)
@@ -41,7 +41,7 @@ class FirstViewController: UIViewController, FirstViewProtocol {
     }
     
     override func viewDidAppear(_ animated: Bool) {
-        SBLog.debug()
+        GZLog()
         super.viewDidAppear(animated)
     }
 }

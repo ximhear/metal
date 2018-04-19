@@ -7,15 +7,13 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8C5AF5A320887C610008636F /* GZLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C5AF5A220887C610008636F /* GZLog.swift */; };
 		8C8493F51EFB6163003DA0B1 /* pz.png in Resources */ = {isa = PBXBuildFile; fileRef = 8C8493EE1EFB615E003DA0B1 /* pz.png */; };
 		8C8493F61EFB6166003DA0B1 /* nx.png in Resources */ = {isa = PBXBuildFile; fileRef = 8C8493EC1EFB615E003DA0B1 /* nx.png */; };
 		8C8493F71EFB6166003DA0B1 /* ny.png in Resources */ = {isa = PBXBuildFile; fileRef = 8C8493F01EFB615E003DA0B1 /* ny.png */; };
 		8C8493F81EFB6166003DA0B1 /* nz.png in Resources */ = {isa = PBXBuildFile; fileRef = 8C8493ED1EFB615E003DA0B1 /* nz.png */; };
 		8C8493F91EFB6166003DA0B1 /* px.png in Resources */ = {isa = PBXBuildFile; fileRef = 8C8493EF1EFB615E003DA0B1 /* px.png */; };
 		8C8493FA1EFB6167003DA0B1 /* py.png in Resources */ = {isa = PBXBuildFile; fileRef = 8C8493EB1EFB615E003DA0B1 /* py.png */; };
-		8CD633371EF05FA300F599BA /* SwiftyBeaver.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C3599B21EF054F90023DC28 /* SwiftyBeaver.framework */; };
-		8CD633381EF05FA300F599BA /* SwiftyBeaver.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8C3599B21EF054F90023DC28 /* SwiftyBeaver.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		8CD6333E1EF0616600F599BA /* SBLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CD6333D1EF060EE00F599BA /* SBLog.swift */; };
 		E0CEA6F5A32EFEB68E8948A9 /* Pods_environment.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 86844DBB603D6744BAC13E16 /* Pods_environment.framework */; };
 		EC1D042B1EF6EA1E000F97DF /* Renderable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC1D042A1EF6EA1E000F97DF /* Renderable.swift */; };
 		EC1D042E1EF6F8EE000F97DF /* ddd.png in Resources */ = {isa = PBXBuildFile; fileRef = EC1D042D1EF6F867000F97DF /* ddd.png */; };
@@ -41,58 +39,6 @@
 		ECB5290E1EE73DAD0028382F /* shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = ECB5290D1EE73DAD0028382F /* shaders.metal */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		8C3599B11EF054F90023DC28 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8C3599A91EF054F80023DC28 /* SwiftyBeaver.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 9EDCE3E41C09D211002FA4A7;
-			remoteInfo = "SwiftyBeaver (iOS)";
-		};
-		8C3599B31EF054F90023DC28 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8C3599A91EF054F80023DC28 /* SwiftyBeaver.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 9EDCE3EE1C09D211002FA4A7;
-			remoteInfo = SwiftyBeaverTests;
-		};
-		8C3599B51EF054F90023DC28 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8C3599A91EF054F80023DC28 /* SwiftyBeaver.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = ACE597841C1882DF0031451F;
-			remoteInfo = "SwiftyBeaver (watchOS)";
-		};
-		8C3599B71EF054F90023DC28 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8C3599A91EF054F80023DC28 /* SwiftyBeaver.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = ACE597951C18830D0031451F;
-			remoteInfo = "SwiftyBeaver (tvOS)";
-		};
-		8C3599B91EF054F90023DC28 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8C3599A91EF054F80023DC28 /* SwiftyBeaver.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = ACE597A61C18832E0031451F;
-			remoteInfo = "SwiftyBeaver (macOS)";
-		};
-		8C3599C31EF056F30023DC28 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8C3599A91EF054F80023DC28 /* SwiftyBeaver.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 9EDCE3E31C09D211002FA4A7;
-			remoteInfo = "SwiftyBeaver (iOS)";
-		};
-		8CD633391EF05FA300F599BA /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 8C3599A91EF054F80023DC28 /* SwiftyBeaver.xcodeproj */;
-			proxyType = 1;
-			remoteGlobalIDString = 9EDCE3E31C09D211002FA4A7;
-			remoteInfo = "SwiftyBeaver (iOS)";
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXCopyFilesBuildPhase section */
 		8CD6333B1EF05FA300F599BA /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
@@ -100,7 +46,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				8CD633381EF05FA300F599BA /* SwiftyBeaver.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -110,14 +55,13 @@
 /* Begin PBXFileReference section */
 		1AA24217527EC549A61BEC5D /* Pods-environment.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-environment.release.xcconfig"; path = "Pods/Target Support Files/Pods-environment/Pods-environment.release.xcconfig"; sourceTree = "<group>"; };
 		86844DBB603D6744BAC13E16 /* Pods_environment.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_environment.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		8C3599A91EF054F80023DC28 /* SwiftyBeaver.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = SwiftyBeaver.xcodeproj; path = ../SwiftyBeaver/SwiftyBeaver.xcodeproj; sourceTree = "<group>"; };
+		8C5AF5A220887C610008636F /* GZLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GZLog.swift; path = ../../../GZLog.swift; sourceTree = "<group>"; };
 		8C8493EB1EFB615E003DA0B1 /* py.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = py.png; sourceTree = "<group>"; };
 		8C8493EC1EFB615E003DA0B1 /* nx.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nx.png; sourceTree = "<group>"; };
 		8C8493ED1EFB615E003DA0B1 /* nz.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = nz.png; sourceTree = "<group>"; };
 		8C8493EE1EFB615E003DA0B1 /* pz.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = pz.png; sourceTree = "<group>"; };
 		8C8493EF1EFB615E003DA0B1 /* px.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = px.png; sourceTree = "<group>"; };
 		8C8493F01EFB615E003DA0B1 /* ny.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ny.png; sourceTree = "<group>"; };
-		8CD6333D1EF060EE00F599BA /* SBLog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SBLog.swift; sourceTree = "<group>"; };
 		9E3321F88526131E1B4ABAB0 /* Pods-environment.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-environment.debug.xcconfig"; path = "Pods/Target Support Files/Pods-environment/Pods-environment.debug.xcconfig"; sourceTree = "<group>"; };
 		EC1D042A1EF6EA1E000F97DF /* Renderable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Renderable.swift; sourceTree = "<group>"; };
 		EC1D042C1EF6F7CE000F97DF /* ccc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ccc.png; sourceTree = "<group>"; };
@@ -151,7 +95,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				E0CEA6F5A32EFEB68E8948A9 /* Pods_environment.framework in Frameworks */,
-				8CD633371EF05FA300F599BA /* SwiftyBeaver.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -166,22 +109,10 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		8C3599AA1EF054F80023DC28 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				8C3599B21EF054F90023DC28 /* SwiftyBeaver.framework */,
-				8C3599B41EF054F90023DC28 /* SwiftyBeaverTests.xctest */,
-				8C3599B61EF054F90023DC28 /* SwiftyBeaver.framework */,
-				8C3599B81EF054F90023DC28 /* SwiftyBeaver.framework */,
-				8C3599BA1EF054F90023DC28 /* SwiftyBeaver.framework */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		8CD6333C1EF060EE00F599BA /* log */ = {
 			isa = PBXGroup;
 			children = (
-				8CD6333D1EF060EE00F599BA /* SBLog.swift */,
+				8C5AF5A220887C610008636F /* GZLog.swift */,
 			);
 			path = log;
 			sourceTree = "<group>";
@@ -285,7 +216,6 @@
 		EC4970B41EE45D79000EA632 = {
 			isa = PBXGroup;
 			children = (
-				8C3599A91EF054F80023DC28 /* SwiftyBeaver.xcodeproj */,
 				EC4970BF1EE45D79000EA632 /* environment */,
 				EC4970BE1EE45D79000EA632 /* Products */,
 				FF93D3FCDE88BAD7F20BC25E /* Pods */,
@@ -350,15 +280,11 @@
 				EC4970B91EE45D79000EA632 /* Sources */,
 				EC4970BA1EE45D79000EA632 /* Frameworks */,
 				EC4970BB1EE45D79000EA632 /* Resources */,
-				2A0D2FC692BD761F8F1B2373 /* [CP] Embed Pods Frameworks */,
-				26523EB12C7A8CFB89F47A5F /* [CP] Copy Pods Resources */,
 				8CD6333B1EF05FA300F599BA /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				8C3599C41EF056F30023DC28 /* PBXTargetDependency */,
-				8CD6333A1EF05FA300F599BA /* PBXTargetDependency */,
 			);
 			name = environment;
 			productName = environment;
@@ -372,12 +298,12 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0900;
+				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = "LEE CHUL HYUN";
 				TargetAttributes = {
 					EC4970BC1EE45D79000EA632 = {
 						CreatedOnToolsVersion = 8.3.2;
-						DevelopmentTeam = WD3LPJ2STX;
+						DevelopmentTeam = J8647L48BZ;
 						LastSwiftMigration = 0900;
 						ProvisioningStyle = Automatic;
 					};
@@ -394,56 +320,12 @@
 			mainGroup = EC4970B41EE45D79000EA632;
 			productRefGroup = EC4970BE1EE45D79000EA632 /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = 8C3599AA1EF054F80023DC28 /* Products */;
-					ProjectRef = 8C3599A91EF054F80023DC28 /* SwiftyBeaver.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				EC4970BC1EE45D79000EA632 /* environment */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		8C3599B21EF054F90023DC28 /* SwiftyBeaver.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SwiftyBeaver.framework;
-			remoteRef = 8C3599B11EF054F90023DC28 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8C3599B41EF054F90023DC28 /* SwiftyBeaverTests.xctest */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.cfbundle;
-			path = SwiftyBeaverTests.xctest;
-			remoteRef = 8C3599B31EF054F90023DC28 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8C3599B61EF054F90023DC28 /* SwiftyBeaver.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SwiftyBeaver.framework;
-			remoteRef = 8C3599B51EF054F90023DC28 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8C3599B81EF054F90023DC28 /* SwiftyBeaver.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SwiftyBeaver.framework;
-			remoteRef = 8C3599B71EF054F90023DC28 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		8C3599BA1EF054F90023DC28 /* SwiftyBeaver.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = SwiftyBeaver.framework;
-			remoteRef = 8C3599B91EF054F90023DC28 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		EC4970BB1EE45D79000EA632 /* Resources */ = {
@@ -469,49 +351,22 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		26523EB12C7A8CFB89F47A5F /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-environment/Pods-environment-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		2A0D2FC692BD761F8F1B2373 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-environment/Pods-environment-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		54181BDD2D33B2C34C7494EB /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
 			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-environment-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -530,9 +385,9 @@
 				EC3B7CAF1EEDAD870049EF7D /* FirstItem.swift in Sources */,
 				EC4970C31EE45D79000EA632 /* ViewController.swift in Sources */,
 				EC3B7CAE1EEDAD840049EF7D /* FirstInteractor.swift in Sources */,
+				8C5AF5A320887C610008636F /* GZLog.swift in Sources */,
 				EC4970C11EE45D79000EA632 /* AppDelegate.swift in Sources */,
 				EC3B7CAB1EEDAD770049EF7D /* FirstViewController.swift in Sources */,
-				8CD6333E1EF0616600F599BA /* SBLog.swift in Sources */,
 				EC3B7CB01EEDAD8D0049EF7D /* FirstAPIDataManager.swift in Sources */,
 				EC3B7CB11EEDAD910049EF7D /* FirstLocalDataManager.swift in Sources */,
 				EC1D042B1EF6EA1E000F97DF /* Renderable.swift in Sources */,
@@ -541,19 +396,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		8C3599C41EF056F30023DC28 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "SwiftyBeaver (iOS)";
-			targetProxy = 8C3599C31EF056F30023DC28 /* PBXContainerItemProxy */;
-		};
-		8CD6333A1EF05FA300F599BA /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			name = "SwiftyBeaver (iOS)";
-			targetProxy = 8CD633391EF05FA300F599BA /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		EC4970C41EE45D79000EA632 /* Main.storyboard */ = {
@@ -589,6 +431,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -596,6 +439,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -646,6 +490,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -653,6 +498,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -688,7 +534,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = WD3LPJ2STX;
+				DEVELOPMENT_TEAM = J8647L48BZ;
 				INFOPLIST_FILE = environment/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = g.environment;
@@ -704,7 +550,7 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = WD3LPJ2STX;
+				DEVELOPMENT_TEAM = J8647L48BZ;
 				INFOPLIST_FILE = environment/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = g.environment;

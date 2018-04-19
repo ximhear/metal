@@ -76,7 +76,7 @@ class GMetalView: UIView {
     }
     
     deinit {
-        SBLog.debug()
+        GZLog()
     }
     
     var metalLayer : CAMetalLayer? {

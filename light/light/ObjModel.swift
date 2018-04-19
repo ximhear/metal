@@ -13,7 +13,7 @@ import simd
 
 class ObjModel : Renderable {
     
-    var meshes: [AnyObject]?
+    var meshes: (modelIOMeshes: [MDLMesh], metalKitMeshes: [MTKMesh])?
     var device : MTLDevice
     
     init(device: MTLDevice, objName: String) {
@@ -73,9 +73,8 @@ class ObjModel : Renderable {
                              bufferAllocator: bufferAllocator)
         
         do {
-            meshes = try MTKMesh.newMeshes(from: asset,
-                                           device: device,
-                                           sourceMeshes: nil)
+            meshes = try MTKMesh.newMeshes(asset: asset,
+                                           device: device)
         } catch {
             print("mesh error")
         }
@@ -83,7 +82,7 @@ class ObjModel : Renderable {
     
     func redraw(commandEncoder: MTLRenderCommandEncoder) -> Void {
         
-        guard let meshes = meshes as? [MTKMesh], meshes.count > 0 else { return }
+        guard let meshes = meshes?.metalKitMeshes, meshes.count > 0 else { return }
         for mesh in meshes {
             let vertexBuffer = mesh.vertexBuffers[0]
             commandEncoder.setVertexBuffer(vertexBuffer.buffer,

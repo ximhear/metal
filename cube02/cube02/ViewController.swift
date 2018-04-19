@@ -17,7 +17,7 @@ class ViewController: UIViewController {
     }
     
     deinit {
-        SBLog.debug()
+        GZLog()
     }
 
     override func viewDidLoad() {

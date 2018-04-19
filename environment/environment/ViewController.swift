@@ -22,7 +22,7 @@ class ViewController: UIViewController {
     }
     
     deinit {
-        SBLog.debug()
+        GZLog()
         displayLink?.invalidate()
     }
 
@@ -66,7 +66,7 @@ class ViewController: UIViewController {
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        SBLog.debug()
+        GZLog()
         super.viewWillDisappear(animated)
         
         let index = AppDelegate.appProtocols.index(where: { (appProtocol) -> Bool in
@@ -90,7 +90,7 @@ class ViewController: UIViewController {
     }
     
     override func viewDidDisappear(_ animated: Bool) {
-        SBLog.debug()
+        GZLog()
         super.viewDidDisappear(animated)
     }
     
