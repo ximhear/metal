@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		EC605C04208BA6B9006F71AD /* GVertex.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC605C03208BA6B9006F71AD /* GVertex.swift */; };
 		EC605C06208BB32C006F71AD /* g.metal in Sources */ = {isa = PBXBuildFile; fileRef = EC605C05208BB32C006F71AD /* g.metal */; };
+		EC8C262A2094FE2F0079F7E9 /* GUniforms.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC8C26292094FE2F0079F7E9 /* GUniforms.swift */; };
 		ECA47AAB208A81E000DC2C61 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA47AAA208A81E000DC2C61 /* AppDelegate.swift */; };
 		ECA47AAD208A81E000DC2C61 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECA47AAC208A81E000DC2C61 /* ViewController.swift */; };
 		ECA47AB0208A81E000DC2C61 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ECA47AAE208A81E000DC2C61 /* Main.storyboard */; };
@@ -20,6 +21,7 @@
 /* Begin PBXFileReference section */
 		EC605C03208BA6B9006F71AD /* GVertex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GVertex.swift; sourceTree = "<group>"; };
 		EC605C05208BB32C006F71AD /* g.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = g.metal; sourceTree = "<group>"; };
+		EC8C26292094FE2F0079F7E9 /* GUniforms.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GUniforms.swift; sourceTree = "<group>"; };
 		ECA47AA7208A81E000DC2C61 /* metal01.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = metal01.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECA47AAA208A81E000DC2C61 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		ECA47AAC208A81E000DC2C61 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -69,6 +71,7 @@
 				ECA47ABC208A826600DC2C61 /* GMetalView.swift */,
 				EC605C03208BA6B9006F71AD /* GVertex.swift */,
 				EC605C05208BB32C006F71AD /* g.metal */,
+				EC8C26292094FE2F0079F7E9 /* GUniforms.swift */,
 			);
 			path = metal01;
 			sourceTree = "<group>";
@@ -148,6 +151,7 @@
 				EC605C04208BA6B9006F71AD /* GVertex.swift in Sources */,
 				ECA47AAD208A81E000DC2C61 /* ViewController.swift in Sources */,
 				EC605C06208BB32C006F71AD /* g.metal in Sources */,
+				EC8C262A2094FE2F0079F7E9 /* GUniforms.swift in Sources */,
 				ECA47AAB208A81E000DC2C61 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
