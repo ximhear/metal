@@ -58,6 +58,8 @@ class ViewController: NSViewController {
         self.desaturateFilter = GSaturationAdjustmentFilter.init(saturationFactor: self.saturationSlider.floatValue, context: self.context!)
         self.desaturateFilter?.provider = self.imageProvider!
         
+        GZLogFunc(self.blurRadiusSlider.floatValue)
+        GZLogFunc(self.saturationSlider.floatValue)
         self.blurFilter = GGaussianBlur2DFilter.init(radius: self.blurRadiusSlider.floatValue, context: self.context!)
         self.blurFilter?.provider = self.desaturateFilter
     }

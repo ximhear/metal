@@ -47,7 +47,8 @@ class GImageFilter: GTextureProvider, GTextureConsumer {
         GZLogFunc("threadExecutionWidth: \(pipeline.threadExecutionWidth)")
         GZLogFunc("maxTotalThreadsPerThreadgroup: \(pipeline.maxTotalThreadsPerThreadgroup)")
         
-        let threadgroupCounts = MTLSizeMake(pipeline.threadExecutionWidth, pipeline.maxTotalThreadsPerThreadgroup/pipeline.threadExecutionWidth, 1)
+//        let threadgroupCounts = MTLSizeMake(pipeline.threadExecutionWidth, pipeline.maxTotalThreadsPerThreadgroup/pipeline.threadExecutionWidth, 1)
+        let threadgroupCounts = MTLSizeMake(2, 2, 1)
         let threadgroups = MTLSizeMake(inputTexture.width / threadgroupCounts.width, inputTexture.height / threadgroupCounts.height, 1)
     
         let commandBuffer = self.context.commandQueue.makeCommandBuffer()
@@ -61,6 +62,7 @@ class GImageFilter: GTextureProvider, GTextureConsumer {
         
         commandBuffer?.commit()
         commandBuffer?.waitUntilCompleted()
+        GZLogFunc()
     }
     
 }
