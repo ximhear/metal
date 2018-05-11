@@ -719,14 +719,14 @@
                             </imageView>
                             <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="H3j-Lo-QyH">
                                 <rect key="frame" x="14" y="255" width="484" height="19"/>
-                                <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="Ukj-os-RUg"/>
+                                <sliderCell key="cell" state="on" alignment="left" maxValue="7" doubleValue="1" tickMarkPosition="above" sliderType="linear" id="Ukj-os-RUg"/>
                                 <connections>
                                     <action selector="blurChanged:" target="XfG-lQ-9wD" id="e9Q-yM-Bmy"/>
                                 </connections>
                             </slider>
                             <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hsN-zm-KOD">
                                 <rect key="frame" x="14" y="176" width="484" height="19"/>
-                                <sliderCell key="cell" state="on" alignment="left" maxValue="100" doubleValue="50" tickMarkPosition="above" sliderType="linear" id="dUU-XD-uFz"/>
+                                <sliderCell key="cell" state="on" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="above" sliderType="linear" id="dUU-XD-uFz"/>
                                 <connections>
                                     <action selector="saturationChanged:" target="XfG-lQ-9wD" id="Tfk-AU-gzn"/>
                                 </connections>

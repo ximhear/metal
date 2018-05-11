@@ -36,6 +36,7 @@ class GImageFilter: GTextureProvider, GTextureConsumer {
     
     func applyFilter() {
         let inputTexture = self.provider.texture!
+        GZLogFunc(inputTexture)
         if self.internalTexture == nil ||
             self.internalTexture!.width != inputTexture.width ||
             self.internalTexture!.height != inputTexture.height {
