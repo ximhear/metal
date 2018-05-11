@@ -9,13 +9,12 @@
 import Cocoa
 import Metal
 
-class GContext: NSObject {
+class GContext {
     var device: MTLDevice!
     var library: MTLLibrary!
     var commandQueue: MTLCommandQueue!
     
-    override init() {
-        super.init()
+    init() {
         
         device = MTLCreateSystemDefaultDevice()
         library = device.makeDefaultLibrary()

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14111" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14112" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14111"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14112"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -715,7 +715,7 @@
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="nG7-WD-epL" secondAttribute="height" multiplier="1:1" id="AVV-Cq-NlL"/>
                                 </constraints>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" image="mandrill" id="ffJ-g5-k17"/>
+                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyDown" id="ffJ-g5-k17"/>
                             </imageView>
                             <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="H3j-Lo-QyH">
                                 <rect key="frame" x="14" y="255" width="484" height="19"/>
@@ -744,13 +744,15 @@
                             <constraint firstAttribute="trailing" secondItem="H3j-Lo-QyH" secondAttribute="trailing" constant="16" id="wfH-fX-q92"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="blurRadiusSlider" destination="H3j-Lo-QyH" id="xxq-4c-4Ah"/>
+                        <outlet property="imageView" destination="nG7-WD-epL" id="kHq-4o-4UR"/>
+                        <outlet property="saturationSlider" destination="hsN-zm-KOD" id="6ad-kx-4nx"/>
+                    </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="28" y="775.5"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="mandrill" width="512" height="512"/>
-    </resources>
 </document>

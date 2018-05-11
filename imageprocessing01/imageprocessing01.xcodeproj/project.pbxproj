@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8C1B0DE420A51B6B0064FFB7 /* GImageFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C1B0DE320A51B6B0064FFB7 /* GImageFilter.swift */; };
+		8C1B0DE620A5233B0064FFB7 /* GGaussianBlur2DFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C1B0DE520A5233B0064FFB7 /* GGaussianBlur2DFilter.swift */; };
+		8C1B0DE820A52D460064FFB7 /* GSaturationAdjustmentFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C1B0DE720A52D460064FFB7 /* GSaturationAdjustmentFilter.swift */; };
+		8C1B0DEA20A536160064FFB7 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 8C1B0DE920A536160064FFB7 /* Shaders.metal */; };
 		ECBBEC4820A4AA8A00F0C048 /* GContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBBEC4720A4AA8A00F0C048 /* GContext.swift */; };
 		ECBBEC4A20A4AC9C00F0C048 /* GTextureProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBBEC4920A4AC9C00F0C048 /* GTextureProvider.swift */; };
 		ECBBEC4C20A4AD7900F0C048 /* MainBundleTextureProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBBEC4B20A4AD7900F0C048 /* MainBundleTextureProvider.swift */; };
@@ -19,6 +23,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8C1B0DE320A51B6B0064FFB7 /* GImageFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GImageFilter.swift; sourceTree = "<group>"; };
+		8C1B0DE520A5233B0064FFB7 /* GGaussianBlur2DFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GGaussianBlur2DFilter.swift; sourceTree = "<group>"; };
+		8C1B0DE720A52D460064FFB7 /* GSaturationAdjustmentFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GSaturationAdjustmentFilter.swift; sourceTree = "<group>"; };
+		8C1B0DE920A536160064FFB7 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
 		ECBBEC4720A4AA8A00F0C048 /* GContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GContext.swift; sourceTree = "<group>"; };
 		ECBBEC4920A4AC9C00F0C048 /* GTextureProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTextureProvider.swift; sourceTree = "<group>"; };
 		ECBBEC4B20A4AD7900F0C048 /* MainBundleTextureProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainBundleTextureProvider.swift; sourceTree = "<group>"; };
@@ -74,6 +82,10 @@
 				ECBBEC4920A4AC9C00F0C048 /* GTextureProvider.swift */,
 				ECBBEC4B20A4AD7900F0C048 /* MainBundleTextureProvider.swift */,
 				ECBBEC4D20A4BA5C00F0C048 /* NSImage-extension.swift */,
+				8C1B0DE320A51B6B0064FFB7 /* GImageFilter.swift */,
+				8C1B0DE520A5233B0064FFB7 /* GGaussianBlur2DFilter.swift */,
+				8C1B0DE720A52D460064FFB7 /* GSaturationAdjustmentFilter.swift */,
+				8C1B0DE920A536160064FFB7 /* Shaders.metal */,
 			);
 			path = imageprocessing01;
 			sourceTree = "<group>";
@@ -151,8 +163,12 @@
 				ECC41B7120A4A4CB00B421EF /* ViewController.swift in Sources */,
 				ECBBEC4820A4AA8A00F0C048 /* GContext.swift in Sources */,
 				ECC41B7F20A4A73300B421EF /* GZLog.swift in Sources */,
+				8C1B0DE620A5233B0064FFB7 /* GGaussianBlur2DFilter.swift in Sources */,
 				ECBBEC4C20A4AD7900F0C048 /* MainBundleTextureProvider.swift in Sources */,
 				ECBBEC4E20A4BA5C00F0C048 /* NSImage-extension.swift in Sources */,
+				8C1B0DE820A52D460064FFB7 /* GSaturationAdjustmentFilter.swift in Sources */,
+				8C1B0DE420A51B6B0064FFB7 /* GImageFilter.swift in Sources */,
+				8C1B0DEA20A536160064FFB7 /* Shaders.metal in Sources */,
 				ECBBEC4A20A4AC9C00F0C048 /* GTextureProvider.swift in Sources */,
 				ECC41B6F20A4A4CB00B421EF /* AppDelegate.swift in Sources */,
 			);
@@ -292,7 +308,7 @@
 				CODE_SIGN_ENTITLEMENTS = imageprocessing01/imageprocessing01.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = WD3LPJ2STX;
+				DEVELOPMENT_TEAM = J8647L48BZ;
 				INFOPLIST_FILE = imageprocessing01/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -311,7 +327,7 @@
 				CODE_SIGN_ENTITLEMENTS = imageprocessing01/imageprocessing01.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = WD3LPJ2STX;
+				DEVELOPMENT_TEAM = J8647L48BZ;
 				INFOPLIST_FILE = imageprocessing01/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
