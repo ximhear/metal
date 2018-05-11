@@ -56,6 +56,8 @@ class GImageFilter: GTextureProvider, GTextureConsumer {
         commandEncoder?.setComputePipelineState(self.pipeline)
         commandEncoder?.setTexture(inputTexture, index: 0)
         commandEncoder?.setTexture(internalTexture, index: 1)
+        GZLogFunc("\(inputTexture.width), \(inputTexture.height)")
+        GZLogFunc("\(internalTexture?.width), \(internalTexture?.height)")
         self.configureArgumentTable(commandEncoder: commandEncoder!)
         commandEncoder?.dispatchThreads(threadgroups, threadsPerThreadgroup: threadgroupCounts)
         commandEncoder?.endEncoding()

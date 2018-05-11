@@ -28,7 +28,7 @@ class GSaturationAdjustmentFilter: GImageFilter {
     var uniforms: UnsafeMutablePointer<AdjustSaturationUniforms>
 
     init?(saturationFactor: Float, context: GContext) {
-        guard let buffer = context.device.makeBuffer(length: MemoryLayout<AdjustSaturationUniforms>.size, options: [MTLResourceOptions.storageModeShared]) else { return nil }
+        guard let buffer = context.device.makeBuffer(length: MemoryLayout<AdjustSaturationUniforms>.size, options: [MTLResourceOptions.init(rawValue: 0)]) else { return nil }
         uniforms = UnsafeMutableRawPointer(buffer.contents()).bindMemory(to:AdjustSaturationUniforms.self, capacity:1)
         super.init(functionName: "adjust_saturation", context: context)
         _saturationFactor = saturationFactor

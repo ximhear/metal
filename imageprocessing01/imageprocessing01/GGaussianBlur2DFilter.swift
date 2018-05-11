@@ -64,7 +64,7 @@ class GGaussianBlur2DFilter : GImageFilter {
         for j in 0..<size {
             var x: Float = -radius
             for i in 0..<size {
-                var weight: Float = expf((x * x + y * y) * expScale);
+                let weight: Float = expf((x * x + y * y) * expScale);
                 weights[j * size + i] = weight
                 weightSum += weight
                 x += delta
