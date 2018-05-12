@@ -1,5 +1,5 @@
 //
-//  NSImage-extension.swift
+//  UIImage-extension.swift
 //  imageprocessing01
 //
 //  Created by LEE CHUL HYUN on 5/11/18.
@@ -7,10 +7,10 @@
 //
 
 import Foundation
-import AppKit
+import UIKit
 import Metal
 
-extension NSImage {
+extension UIImage {
     
     convenience init?(texture: MTLTexture?) {
         
@@ -42,6 +42,6 @@ extension NSImage {
                                     shouldInterpolate: false,
                                     intent: renderingIntent)
         
-        self.init(cgImage: imageRef!, size: NSSize.init(width: imageSize.width, height: imageSize.height))
+        self.init(cgImage: imageRef!)
     }
 }
