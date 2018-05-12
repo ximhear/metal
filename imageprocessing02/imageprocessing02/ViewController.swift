@@ -53,7 +53,7 @@ class ViewController: UIViewController {
         GZLogFunc(self.blurRadiusSlider.value)
         GZLogFunc(self.saturationSlider.value)
         self.blurFilter = GGaussianBlur2DFilter.init(radius: self.blurRadiusSlider.value, context: self.context!)
-        self.blurFilter?.provider = self.imageProvider!//self.desaturateFilter
+        self.blurFilter?.provider = self.desaturateFilter
     }
     
     func updateImage() {

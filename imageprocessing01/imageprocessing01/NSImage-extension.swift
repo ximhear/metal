@@ -19,12 +19,14 @@ extension NSImage {
         }
         let imageSize = CGSize.init(width: texture.width, height: texture.height)
         let imageByteCount = Int(imageSize.width * imageSize.height * 4)
-        let imageBytes = UnsafeMutablePointer<UInt8>.allocate(capacity: imageByteCount)
-        let bytesPerRow = UInt(imageSize.width) * 4
+//        let imageBytes = UnsafeMutablePointer<UInt8>.allocate(capacity: imageByteCount)
+        let imageBytes = UnsafeMutableRawPointer.allocate(byteCount: imageByteCount, alignment: 1)
+        let bytesPerRow = Int(imageSize.width) * 4
         let region = MTLRegionMake2D(0, 0, Int(imageSize.width), Int(imageSize.height))
-        texture.getBytes(UnsafeMutableRawPointer.init(imageBytes), bytesPerRow: Int(bytesPerRow), from: region, mipmapLevel: 0)
-        guard let data = CFDataCreate(nil, imageBytes, imageByteCount) else { return nil }
-        let provider = CGDataProvider.init(data: data)
+        texture.getBytes(imageBytes, bytesPerRow: bytesPerRow, from: region, mipmapLevel: 0)
+        let provider = CGDataProvider.init(dataInfo: nil, data: imageBytes, size: Int(imageByteCount)) { (raw1, raw2, val) in
+            raw2.deallocate()
+        }
         let bitsPerComponent = 8
         let bitsPerPixel = 32
         let space = CGColorSpaceCreateDeviceRGB()
@@ -41,8 +43,6 @@ extension NSImage {
                                     decode: nil,
                                     shouldInterpolate: false,
                                     intent: renderingIntent)
-        imageBytes.deallocate()
-        
         self.init(cgImage: imageRef!, size: NSSize.init(width: imageSize.width, height: imageSize.height))
     }
 }

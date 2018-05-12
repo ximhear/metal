@@ -24,6 +24,7 @@ extension UIImage {
         let region = MTLRegionMake2D(0, 0, Int(imageSize.width), Int(imageSize.height))
         texture.getBytes(imageBytes, bytesPerRow: Int(bytesPerRow), from: region, mipmapLevel: 0)
         let provider = CGDataProvider.init(dataInfo: nil, data: imageBytes, size: Int(imageByteCount)) { (raw1, raw2, val) in
+            raw2.deallocate()
         }
         let bitsPerComponent = 8
         let bitsPerPixel = 32
@@ -41,7 +42,6 @@ extension UIImage {
                                     decode: nil,
                                     shouldInterpolate: false,
                                     intent: renderingIntent)
-        
         self.init(cgImage: imageRef!)
     }
 }
