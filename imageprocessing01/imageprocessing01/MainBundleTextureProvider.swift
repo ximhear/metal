@@ -36,6 +36,7 @@ class MainBundleTextureProvider: GTextureProvider {
         let texture = context.device.makeTexture(descriptor: textureDescriptor)
         let region = MTLRegionMake2D(0, 0, width, height)
         texture?.replace(region: region, mipmapLevel: 0, withBytes: rawData, bytesPerRow: bytesPerRow)
+        rawData.deallocate()
         return texture!
     }
     

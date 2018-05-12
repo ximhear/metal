@@ -6,7 +6,6 @@
 //  Copyright © 2018 LEE CHUL HYUN. All rights reserved.
 //
 
-import Cocoa
 import Metal
 
 class GContext {

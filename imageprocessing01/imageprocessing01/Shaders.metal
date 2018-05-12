@@ -1,12 +1,5 @@
-//
-//  Shaders.metal
-//  imageprocessing01
-//
-//  Created by chlee on 11/05/2018.
-//  Copyright © 2018 LEE CHUL HYUN. All rights reserved.
-//
-
 #include <metal_stdlib>
+
 using namespace metal;
 
 struct AdjustSaturationUniforms

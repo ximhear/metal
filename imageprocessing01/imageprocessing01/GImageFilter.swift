@@ -40,6 +40,9 @@ class GImageFilter: GTextureProvider, GTextureConsumer {
         if self.internalTexture == nil ||
             self.internalTexture!.width != inputTexture.width ||
             self.internalTexture!.height != inputTexture.height {
+            GZLogFunc("pixel format : \(inputTexture.pixelFormat.rawValue)")
+            GZLogFunc("width : \(inputTexture.width)")
+            GZLogFunc("height : \(inputTexture.height)")
             let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: inputTexture.pixelFormat, width: inputTexture.width, height: inputTexture.height, mipmapped: false)
             textureDescriptor.usage = MTLTextureUsage.init(rawValue: MTLTextureUsage.shaderWrite.rawValue | MTLTextureUsage.shaderRead.rawValue)
             self.internalTexture = self.context.device.makeTexture(descriptor: textureDescriptor)
@@ -47,8 +50,8 @@ class GImageFilter: GTextureProvider, GTextureConsumer {
         GZLogFunc("threadExecutionWidth: \(pipeline.threadExecutionWidth)")
         GZLogFunc("maxTotalThreadsPerThreadgroup: \(pipeline.maxTotalThreadsPerThreadgroup)")
         
-//        let threadgroupCounts = MTLSizeMake(pipeline.threadExecutionWidth, pipeline.maxTotalThreadsPerThreadgroup/pipeline.threadExecutionWidth, 1)
-        let threadgroupCounts = MTLSizeMake(2, 2, 1)
+        let threadgroupCounts = MTLSizeMake(pipeline.threadExecutionWidth, pipeline.maxTotalThreadsPerThreadgroup/pipeline.threadExecutionWidth, 1)
+//        let threadgroupCounts = MTLSizeMake(8, 8, 1)
         let threadgroups = MTLSizeMake(inputTexture.width / threadgroupCounts.width, inputTexture.height / threadgroupCounts.height, 1)
     
         let commandBuffer = self.context.commandQueue.makeCommandBuffer()
@@ -59,7 +62,11 @@ class GImageFilter: GTextureProvider, GTextureConsumer {
         GZLogFunc("\(inputTexture.width), \(inputTexture.height)")
         GZLogFunc("\(internalTexture?.width), \(internalTexture?.height)")
         self.configureArgumentTable(commandEncoder: commandEncoder!)
-        commandEncoder?.dispatchThreads(threadgroups, threadsPerThreadgroup: threadgroupCounts)
+        if #available(iOS 11.0, *) {
+            commandEncoder?.dispatchThreads(MTLSizeMake(inputTexture.width, inputTexture.height, 1), threadsPerThreadgroup: threadgroupCounts)
+        } else {
+            commandEncoder?.dispatchThreadgroups(threadgroups, threadsPerThreadgroup: threadgroupCounts)
+        }
         commandEncoder?.endEncoding()
         
         commandBuffer?.commit()
