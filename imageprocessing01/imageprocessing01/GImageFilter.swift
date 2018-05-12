@@ -62,11 +62,11 @@ class GImageFilter: GTextureProvider, GTextureConsumer {
         GZLogFunc("\(inputTexture.width), \(inputTexture.height)")
         GZLogFunc("\(internalTexture?.width), \(internalTexture?.height)")
         self.configureArgumentTable(commandEncoder: commandEncoder!)
-        if #available(OSX 10.13, *) {
-            commandEncoder?.dispatchThreads(MTLSizeMake(1, 1, 1), threadsPerThreadgroup: threadgroupCounts)
-        } else {
+//        if #available(OSX 10.13, *) {
+//            commandEncoder?.dispatchThreads(MTLSizeMake(1, 1, 1), threadsPerThreadgroup: threadgroupCounts)
+//        } else {
             commandEncoder?.dispatchThreadgroups(threadgroups, threadsPerThreadgroup: threadgroupCounts)
-        }
+//        }
         commandEncoder?.endEncoding()
         
         commandBuffer?.commit()

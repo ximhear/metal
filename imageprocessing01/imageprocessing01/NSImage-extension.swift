@@ -19,8 +19,8 @@ extension NSImage {
         }
         let imageSize = CGSize.init(width: texture.width, height: texture.height)
         let imageByteCount = Int(imageSize.width * imageSize.height * 4)
-//        let imageBytes = UnsafeMutablePointer<UInt8>.allocate(capacity: imageByteCount)
-        let imageBytes = UnsafeMutableRawPointer.allocate(byteCount: imageByteCount, alignment: 1)
+        let imageBytes = UnsafeMutablePointer<UInt8>.allocate(capacity: imageByteCount)
+//        let imageBytes = UnsafeMutableRawPointer.allocate(byteCount: imageByteCount, alignment: 1)
         let bytesPerRow = Int(imageSize.width) * 4
         let region = MTLRegionMake2D(0, 0, Int(imageSize.width), Int(imageSize.height))
         texture.getBytes(imageBytes, bytesPerRow: bytesPerRow, from: region, mipmapLevel: 0)
