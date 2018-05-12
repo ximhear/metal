@@ -18,6 +18,7 @@ class ViewController: UIViewController {
     var imageProvider: GTextureProvider?
     var desaturateFilter: GSaturationAdjustmentFilter?
     var blurFilter: GGaussianBlur2DFilter?
+    var rotationFilter: GRotationFilter?
     
     var renderingQueue: DispatchQueue?
     var jobIndex: UInt = 0
@@ -47,11 +48,13 @@ class ViewController: UIViewController {
         self.context = GContext()
         
         self.imageProvider = MainBundleTextureProvider.init(imageName: "mandrill", context: self.context!)
-        self.desaturateFilter = GSaturationAdjustmentFilter.init(saturationFactor: self.saturationSlider.value, context: self.context!)
-        self.desaturateFilter?.provider = self.imageProvider!
+        self.rotationFilter = GRotationFilter.init(context: self.context!)
+        self.rotationFilter?.provider = self.imageProvider!
         
-        GZLogFunc(self.blurRadiusSlider.value)
-        GZLogFunc(self.saturationSlider.value)
+
+        self.desaturateFilter = GSaturationAdjustmentFilter.init(saturationFactor: self.saturationSlider.value, context: self.context!)
+        self.desaturateFilter?.provider = self.rotationFilter
+        
         self.blurFilter = GGaussianBlur2DFilter.init(radius: self.blurRadiusSlider.value, context: self.context!)
         self.blurFilter?.provider = self.desaturateFilter
     }

@@ -1,7 +1,10 @@
 #include <metal_stdlib>
+#include <metal_common>
+#include <simd/simd.h>
 
 using namespace metal;
 
+constant float PI = 3.14159;
 struct AdjustSaturationUniforms
 {
     float saturationFactor;
@@ -41,4 +44,26 @@ kernel void gaussian_blur_2d(texture2d<float, access::read> inTexture [[texture(
     }
     
     outTexture.write(float4(accumColor.rgb, 1), gid);
+}
+
+kernel void rotation_around_center(texture2d<float, access::read> inTexture [[texture(0)]],
+                                   texture2d<float, access::write> outTexture [[texture(1)]],
+                                   uint2 gid [[thread_position_in_grid]])
+{
+    float centerX = 511/2.0;
+    float centerY = 511/2.0;
+
+    float modX = (gid.x - centerX);
+    float modY = (centerY - gid.y);
+    float distance = sqrt(modX*modX + modY*modY);
+    if (distance <= centerX) {
+        float theta = 0.25 * PI * pow(distance/centerX, 3);
+        uint2 textureIndex(cos(theta) * modX - sin(theta) * modY + centerX, centerY - (sin(theta) * modX + cos(theta) * modY));
+        float4 color = inTexture.read(textureIndex).rgba;
+        outTexture.write(float4(color.rgb, 1), gid);
+    }
+    else {
+        float4 color = inTexture.read(gid).rgba;
+        outTexture.write(float4(color.rgb, 1), gid);
+    }
 }

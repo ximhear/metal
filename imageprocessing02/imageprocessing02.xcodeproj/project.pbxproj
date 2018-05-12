@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8CA7441320A75F57001CC8FD /* GRotationFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA7441220A75F57001CC8FD /* GRotationFilter.swift */; };
 		ECBC457F20A66C5300D1FBA6 /* UIImage-extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBC457620A66C5200D1FBA6 /* UIImage-extension.swift */; };
 		ECBC458020A66C5300D1FBA6 /* GZLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBC457720A66C5200D1FBA6 /* GZLog.swift */; };
 		ECBC458120A66C5300D1FBA6 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = ECBC457820A66C5200D1FBA6 /* Shaders.metal */; };
@@ -24,6 +25,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8CA7441220A75F57001CC8FD /* GRotationFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GRotationFilter.swift; sourceTree = "<group>"; };
 		ECBC457620A66C5200D1FBA6 /* UIImage-extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage-extension.swift"; sourceTree = "<group>"; };
 		ECBC457720A66C5200D1FBA6 /* GZLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GZLog.swift; sourceTree = "<group>"; };
 		ECBC457820A66C5200D1FBA6 /* Shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
@@ -76,6 +78,7 @@
 				ECBC457B20A66C5200D1FBA6 /* GImageFilter.swift */,
 				ECBC457920A66C5200D1FBA6 /* GContext.swift */,
 				ECBC457A20A66C5200D1FBA6 /* GSaturationAdjustmentFilter.swift */,
+				8CA7441220A75F57001CC8FD /* GRotationFilter.swift */,
 				ECBC457E20A66C5300D1FBA6 /* GTextureProvider.swift */,
 				ECBC457720A66C5200D1FBA6 /* GZLog.swift */,
 				ECBC457C20A66C5200D1FBA6 /* MainBundleTextureProvider.swift */,
@@ -163,6 +166,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ECBC458420A66C5300D1FBA6 /* GImageFilter.swift in Sources */,
+				8CA7441320A75F57001CC8FD /* GRotationFilter.swift in Sources */,
 				ECBC458020A66C5300D1FBA6 /* GZLog.swift in Sources */,
 				ECF44C8620A659230030D658 /* ViewController.swift in Sources */,
 				ECBC457F20A66C5300D1FBA6 /* UIImage-extension.swift in Sources */,
