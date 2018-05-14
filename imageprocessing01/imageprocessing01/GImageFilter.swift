@@ -22,6 +22,7 @@ class GImageFilter: GTextureProvider, GTextureConsumer {
         }
         return self.internalTexture
     }
+    var outputBuffer: MTLBuffer?
     var provider: GTextureProvider!
     var internalTexture: MTLTexture?
 
@@ -46,6 +47,8 @@ class GImageFilter: GTextureProvider, GTextureConsumer {
             let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: inputTexture.pixelFormat, width: inputTexture.width, height: inputTexture.height, mipmapped: false)
             textureDescriptor.usage = MTLTextureUsage.init(rawValue: MTLTextureUsage.shaderWrite.rawValue | MTLTextureUsage.shaderRead.rawValue)
             self.internalTexture = self.context.device.makeTexture(descriptor: textureDescriptor)
+            
+            self.outputBuffer = self.context.device.makeBuffer(length: inputTexture.width * inputTexture.height * 4, options: [MTLResourceOptions.init(rawValue: 0)])
         }
         GZLogFunc("threadExecutionWidth: \(pipeline.threadExecutionWidth)")
         GZLogFunc("maxTotalThreadsPerThreadgroup: \(pipeline.maxTotalThreadsPerThreadgroup)")
@@ -68,6 +71,10 @@ class GImageFilter: GTextureProvider, GTextureConsumer {
             commandEncoder?.dispatchThreadgroups(threadgroups, threadsPerThreadgroup: threadgroupCounts)
 //        }
         commandEncoder?.endEncoding()
+
+        let blitEncoder = commandBuffer?.makeBlitCommandEncoder()
+        blitEncoder?.copy(from: internalTexture!, sourceSlice: 0, sourceLevel: 0, sourceOrigin: MTLOriginMake(0, 0, 0), sourceSize: MTLSizeMake(internalTexture!.width,internalTexture!.height,1), to: outputBuffer!, destinationOffset: 0, destinationBytesPerRow: internalTexture!.width * 4, destinationBytesPerImage: 0)
+        blitEncoder?.endEncoding()
         
         commandBuffer?.commit()
         commandBuffer?.waitUntilCompleted()

@@ -82,7 +82,7 @@ class ViewController: NSViewController {
             self?.desaturateFilter?.saturationFactor = saturation
             
             let texture = self?.blurFilter?.texture
-            let image = NSImage.init(texture: texture)
+            let image = NSImage.init(buffer: self?.blurFilter?.outputBuffer, texture: texture)
             
             DispatchQueue.main.async {[weak self] in
                 self?.imageView.image = image
