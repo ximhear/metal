@@ -67,7 +67,7 @@ class GMetalView: UIView {
         
         makeDevice()
 
-        let image = generateCircularSector(radius: UIScreen.main.bounds.size.width / 2.0, count: 6, backgroundColor: UIColor.yellow)
+        let image = generateCircularSector(radius: UIScreen.main.bounds.size.width / 2.0, count: 3, backgroundColor: UIColor.yellow)
         texture = getTexture(device: device!, cgImage: image!.cgImage!)
 //        texture = getTexture(device: device!, imageName: "aaa.png")
         GZLog(texture)
@@ -86,6 +86,7 @@ class GMetalView: UIView {
         let descriptor = MTLSamplerDescriptor()
         descriptor.minFilter = .linear
         descriptor.magFilter = .linear
+        descriptor.normalizedCoordinates = true
         samplerState = self.device!.makeSamplerState(descriptor: descriptor)
     }
 
@@ -366,7 +367,7 @@ extension GMetalView {
         do {
             texture = try textureLoader.newTexture(cgImage: cgImage,
                                                    options: textureLoaderOptions)
-            GZLog(texture)
+//            GZLog(texture)
         } catch {
             GZLog("texture not created")
         }
@@ -438,17 +439,17 @@ extension GMetalView {
             
             center1 = CGPoint.init(x: width / 2, y: center.y - lineWidth / 2 / sin(theta))
         }
-        imageSize = CGSize.init(width: (Int(width + 1) / 2) * 2 , height: (Int(height + 1) / 2) * 2)
+//        imageSize = CGSize.init(width: (Int(width + 1) / 2) * 2 , height: (Int(height + 1) / 2) * 2)
         imageSize = CGSize.init(width: width , height: height)
 
 //        imageSize = CGSize.init(width: 64, height: 64)
-        UIGraphicsBeginImageContextWithOptions(imageSize, false, 0)
+        UIGraphicsBeginImageContextWithOptions(imageSize, true, 0)
         let context = UIGraphicsGetCurrentContext()!
         
-        UIColor.magenta.setFill()
+        UIColor.green.setFill()
         context.fill(CGRect.init(x: 0, y: 0, width: imageSize.width, height: imageSize.height))
 
-        UIColor.cyan.setFill()
+        UIColor.yellow.setFill()
         context.fill(CGRect.init(x: 0, y: 10, width: imageSize.width, height: imageSize.height-10))
 
         context.move(to: center)
