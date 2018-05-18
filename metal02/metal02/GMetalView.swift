@@ -92,8 +92,8 @@ class GMetalView: UIView {
 
     let vertices: [GVertex] = [
         GVertex.init(position: .init(0, 0, 0, 1), color: .init(0, 1, 1, 1), texture:float2(0.5 ,1)),
-        GVertex.init(position: .init(1, 1, 0, 1), color: .init(1, 0, 1, 1), texture:float2(1, 0)),
-        GVertex.init(position: .init(-1, 1, 0, 1), color: .init(0, 0, 1, 1), texture:float2(0, 0))
+        GVertex.init(position: .init(1, sqrt(3), 0, 1), color: .init(1, 0, 1, 1), texture:float2(1, 0)),
+        GVertex.init(position: .init(-1, sqrt(3), 0, 1), color: .init(0, 0, 1, 1), texture:float2(0, 0))
     ]
     
     let indices: [UInt16] = [
@@ -225,7 +225,7 @@ class GMetalView: UIView {
         encoder?.setFragmentTexture(self.texture, index: 0)
 
 
-        uniforms[0].modelViewProjectionMatrix = matrix_multiply(matrix_multiply(projectionMatrix, viewMatrix), modelMatrix)
+        uniforms[0].modelViewProjectionMatrix = projectionMatrix//matrix_multiply(matrix_multiply(projectionMatrix, viewMatrix), modelMatrix)
         encoder?.setVertexBuffer(uniformBuffer, offset:uniformBufferOffset, index: 1)
 //        var uniforms = GUniforms(modelViewProjectionMatrix: matrix_multiply(matrix_multiply(projectionMatrix, viewMatrix), modelMatrix))
 //        encoder?.setVertexBytes(&uniforms,
@@ -359,7 +359,7 @@ extension GMetalView {
         if #available(iOS 10.0, *) {
             let origin = MTKTextureLoader.Origin.topLeft
             textureLoaderOptions = [MTKTextureLoader.Option.origin: origin,
-                                    MTKTextureLoader.Option.generateMipmaps:false]
+                                    MTKTextureLoader.Option.generateMipmaps:true]
         } else {
             textureLoaderOptions = [:]
         }
@@ -449,7 +449,7 @@ extension GMetalView {
         UIColor.green.setFill()
         context.fill(CGRect.init(x: 0, y: 0, width: imageSize.width, height: imageSize.height))
 
-        UIColor.yellow.setFill()
+        UIColor.green.setFill()
         context.fill(CGRect.init(x: 0, y: 10, width: imageSize.width, height: imageSize.height-10))
 
         context.move(to: center)

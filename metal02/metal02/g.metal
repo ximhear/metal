@@ -9,7 +9,6 @@
 #include <metal_stdlib>
 using namespace metal;
 
-
 struct Vertex {
     float4 position [[position]];
     float4 color;
@@ -27,6 +26,7 @@ vertex Vertex vertex_main(device Vertex* vertices[[buffer(0)]],
     Vertex out;
     out.position = uniforms->modelViewProjectionMatrix * vertices[vid].position;
     out.color = vertices[vid].color;
+    out.texture = vertices[vid].texture;
     return out;
 }
 

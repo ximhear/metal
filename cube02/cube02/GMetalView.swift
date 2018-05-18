@@ -294,7 +294,9 @@ class GMetalView: UIView {
     
     func makeTexture() {
         self.texture1 = getTexture(device: self.device!, imageName: "bbb.png")
-        self.texture2 = getTexture(device: self.device!, imageName: "ccc.png")
+//        self.texture2 = getTexture(device: self.device!, imageName: "ccc.png")
+        let image = generateCircularSector(radius: UIScreen.main.bounds.size.width / 2.0, count: 3, backgroundColor: UIColor.yellow)
+        self.texture2 = getTexture(device: device!, cgImage: image!.cgImage!)
     }
     
     
@@ -428,4 +430,128 @@ extension GMetalView : AppProtocol {
             displayLink?.add(to: RunLoop.main, forMode: .commonModes)
         }
     }
+}
+
+extension GMetalView {
+
+    func generateCircularSector(radius: CGFloat, count: UInt, backgroundColor: UIColor) -> UIImage? {
+        guard count > 0 else {
+            return nil
+        }
+        let angle: CGFloat = CGFloat.pi / CGFloat(count)
+        let lineWidth: CGFloat = 10
+        var imageSize = CGSize.zero
+        var width: CGFloat = 0
+        var height: CGFloat = 0
+        
+        var startAngle: CGFloat = 0
+        var endAngle: CGFloat = 0
+        var center = CGPoint.zero
+        
+        var startAngle1: CGFloat = 0
+        var endAngle1: CGFloat = 0
+        var center1 = CGPoint.zero
+        
+        if angle >= CGFloat.pi {
+            width = radius * 2
+            height = sin((angle - CGFloat.pi)/2.0) * radius + radius
+            
+            startAngle = (angle - CGFloat.pi) / 2.0
+            endAngle = startAngle - angle
+            
+            center = CGPoint.init(x: width / 2, y: radius)
+            
+            var theta: CGFloat = (CGFloat.pi * 2 - angle) / 2
+            var m: CGFloat = tan(CGFloat.pi / 2 - theta)
+            var b: CGFloat = lineWidth / 2 / sin(theta)
+            var p: CGFloat = radius - lineWidth
+            var x: CGFloat = (-m * b - sqrt(m*m*b*b - (m*m+1)*(b*b-p*p)))/(m*m + 1)
+            var y: CGFloat = m * x + b
+            
+            var theta1 = atan( y / x)
+            var newAnagle = CGFloat.pi + 2 * theta1
+            startAngle1 = (newAnagle - CGFloat.pi) / 2.0
+            endAngle1 = startAngle1 - newAnagle
+            
+            center1 = CGPoint.init(x: width / 2, y: center.y - lineWidth / 2 / sin(theta))
+        }
+        else {
+            width = radius * sin(angle / 2) * 2
+            height = radius
+            
+            startAngle = -(CGFloat.pi - angle) / 2.0
+            endAngle = startAngle - angle
+            
+            center = CGPoint.init(x: width / 2, y: height)
+            
+            var theta: CGFloat =  angle / 2
+            var m: CGFloat = tan(CGFloat.pi / 2 - theta)
+            var b: CGFloat = lineWidth / 2 / sin(theta)
+            var p: CGFloat = radius - lineWidth
+            var x: CGFloat = (-m * b + sqrt(m*m*b*b - (m*m+1)*(b*b-p*p)))/(m*m + 1)
+            var y: CGFloat = m * x + b
+            
+            var theta1 = atan( y / x)
+            var newAnagle = CGFloat.pi - 2 * theta1
+            startAngle1 = -(CGFloat.pi - newAnagle) / 2.0
+            endAngle1 = startAngle1 - newAnagle
+            
+            center1 = CGPoint.init(x: width / 2, y: center.y - lineWidth / 2 / sin(theta))
+        }
+        //        imageSize = CGSize.init(width: (Int(width + 1) / 2) * 2 , height: (Int(height + 1) / 2) * 2)
+        imageSize = CGSize.init(width: width , height: height)
+        
+        //        imageSize = CGSize.init(width: 64, height: 64)
+        UIGraphicsBeginImageContextWithOptions(imageSize, true, 0)
+        let context = UIGraphicsGetCurrentContext()!
+        
+        UIColor.green.setFill()
+        context.fill(CGRect.init(x: 0, y: 0, width: imageSize.width, height: imageSize.height))
+        
+        UIColor.yellow.setFill()
+        context.fill(CGRect.init(x: 0, y: 10, width: imageSize.width, height: imageSize.height-10))
+        
+        context.move(to: center)
+        context.addArc(center: center, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: true)
+        context.addLine(to: center)
+        
+        backgroundColor.setFill()
+        context.fillPath()
+        
+        context.move(to: center1)
+        context.addArc(center: center, radius: radius - lineWidth, startAngle: startAngle1, endAngle: endAngle1, clockwise: true)
+        context.addLine(to: center1)
+        
+        //        context.addRect(CGRect.init(x: 0, y: 0, width: imageSize.width, height: imageSize.height))
+        UIColor.red.setFill()
+        context.fillPath()
+        
+        let image = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        
+        return image
+    }
+
+    func getTexture(device: MTLDevice, cgImage: CGImage) -> MTLTexture? {
+        let textureLoader = MTKTextureLoader(device: device)
+        var texture: MTLTexture? = nil
+        let textureLoaderOptions: [MTKTextureLoader.Option : Any]
+        if #available(iOS 10.0, *) {
+            let origin = MTKTextureLoader.Origin.topLeft
+            textureLoaderOptions = [MTKTextureLoader.Option.origin: origin,
+                                    MTKTextureLoader.Option.generateMipmaps:false]
+        } else {
+            textureLoaderOptions = [:]
+        }
+        
+        do {
+            texture = try textureLoader.newTexture(cgImage: cgImage,
+                                                   options: textureLoaderOptions)
+            //            GZLog(texture)
+        } catch {
+            GZLog("texture not created")
+        }
+        return texture
+    }
+
 }
