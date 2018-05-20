@@ -46,8 +46,9 @@ class GMetalView: UIView {
     var uniformBufferOffset = 0
     var uniformBufferIndex = 0
     var uniforms: UnsafeMutablePointer<GUniforms>
+    var vertices: UnsafeMutablePointer<GVertex>
 
-    var texture: MTLTexture?
+    var textures: [MTLTexture]?
     var samplerState: MTLSamplerState?
 
     required init?(coder aDecoder: NSCoder) {
@@ -63,13 +64,37 @@ class GMetalView: UIView {
         
         uniforms = UnsafeMutableRawPointer(uniformBuffer.contents()).bindMemory(to:GUniforms.self, capacity:1)
 
+        vertexBuffer = device?.makeBuffer(length: 3 * MemoryLayout<GVertex>.stride * 6, options: .cpuCacheModeWriteCombined)
+        vertices = UnsafeMutableRawPointer(vertexBuffer!.contents()).bindMemory(to:GVertex.self, capacity:3)
+
         super.init(coder: aDecoder)
         
         makeDevice()
 
-        let image = generateCircularSector(radius: UIScreen.main.bounds.size.width / 2.0, count: 3, backgroundColor: UIColor.blue)
+        textures = [MTLTexture].init()
+        var image = generateCircularSector(radius: UIScreen.main.bounds.size.width / 2.0, count: 3, borderColor: UIColor.blue, fillColor: UIColor.yellow)
+        var texture = getTexture(device: device!, cgImage: image!.cgImage!)
+        textures?.append(texture!)
+
+        texture = getTexture(device: device!, imageName: "aaa.png")
+        textures?.append(texture!)
+
+        image = generateCircularSector(radius: UIScreen.main.bounds.size.width / 2.0, count: 3, borderColor: UIColor.cyan, fillColor: UIColor.magenta)
         texture = getTexture(device: device!, cgImage: image!.cgImage!)
-//        texture = getTexture(device: device!, imageName: "aaa.png")
+        textures?.append(texture!)
+
+        image = generateCircularSector(radius: UIScreen.main.bounds.size.width / 2.0, count: 3, borderColor: UIColor.black, fillColor: UIColor.green)
+        texture = getTexture(device: device!, cgImage: image!.cgImage!)
+        textures?.append(texture!)
+
+        image = generateCircularSector(radius: UIScreen.main.bounds.size.width / 2.0, count: 3, borderColor: UIColor.magenta, fillColor: UIColor.red)
+        texture = getTexture(device: device!, cgImage: image!.cgImage!)
+        textures?.append(texture!)
+        
+        image = generateCircularSector(radius: UIScreen.main.bounds.size.width / 2.0, count: 3, borderColor: UIColor.brown, fillColor: UIColor.orange)
+        texture = getTexture(device: device!, cgImage: image!.cgImage!)
+        textures?.append(texture!)
+        
         GZLog(texture)
         buildSamplerState()
         makeBuffers()
@@ -90,18 +115,11 @@ class GMetalView: UIView {
         samplerState = self.device!.makeSamplerState(descriptor: descriptor)
     }
 
-    let vertices: [GVertex] = [
-        GVertex.init(position: .init(0, 0, 0, 1), color: .init(0, 1, 1, 1), texture:float2(0.5 ,1)),
-        GVertex.init(position: .init(1, sqrt(3), 0, 1), color: .init(1, 0, 1, 1), texture:float2(1, 0)),
-        GVertex.init(position: .init(-1, sqrt(3), 0, 1), color: .init(0, 0, 1, 1), texture:float2(0, 0))
-    ]
-    
     let indices: [UInt16] = [
         0, 1, 2
     ]
     
     func makeBuffers() {
-        vertexBuffer = device?.makeBuffer(bytes: vertices, length: vertices.count * MemoryLayout<GVertex>.stride, options: .cpuCacheModeWriteCombined)
         indexBuffer = device?.makeBuffer(bytes: indices, length: indices.count * MemoryLayout<UInt16>.stride, options: .cpuCacheModeWriteCombined)
     }
     
@@ -183,15 +201,13 @@ class GMetalView: UIView {
         let yAxis = vector_float3(0, 1, 0)
         let xRot = matrix_float4x4_rotation(axis: xAxis, angle: rotationX)
         let yRot = matrix_float4x4_rotation(axis: yAxis, angle: rotationY)
-        let scale = matrix_float4x4_uniform_scale(scale: scaleFactor)
-        let modelMatrix = matrix_multiply(matrix_multiply(xRot, yRot), scale)
         
-        let cameraTranslation = vector_float3(0, 0, -5)
+        let cameraTranslation = vector_float3(0, 0, 0)
         let viewMatrix = matrix_float4x4_translation(t: cameraTranslation)
         
         let drawableSize = self.metalLayer.drawableSize
         var ratio: Float = Float(drawableSize.width / drawableSize.height)
-        let projectionMatrix = matrix_float4x4_ortho(left: -1.5, right: 1.5, bottom: -1.5 / ratio, top: 1.5 / ratio, near: -1, far: 1)
+        let projectionMatrix = matrix_float4x4_ortho(left: -2, right: 2, bottom: -2 / ratio, top: 2 / ratio, near: -1, far: 1)
 
         let passDescriptor = MTLRenderPassDescriptor()
         passDescriptor.colorAttachments[0].texture = texture
@@ -221,22 +237,56 @@ class GMetalView: UIView {
         encoder?.setFrontFacing(.counterClockwise)
         encoder?.setCullMode(.back)
 
-        encoder?.setVertexBuffer(self.vertexBuffer, offset: 0, index: 0)
-        encoder?.setFragmentTexture(self.texture, index: 0)
+        uniforms = UnsafeMutableRawPointer(uniformBuffer.contents() + uniformBufferOffset).bindMemory(to:GUniforms.self, capacity:1)
 
+        encoder?.setFragmentTexture(self.textures![0], index: 0)
+        drawPie(encoder: encoder, index: 0, scaleFactor: scaleFactor, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix)
+        encoder?.setFragmentTexture(self.textures![1], index: 0)
+        drawPie(encoder: encoder, index: 1, scaleFactor: scaleFactor, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix)
+        encoder?.setFragmentTexture(self.textures![2], index: 0)
+        drawPie(encoder: encoder, index: 2, scaleFactor: scaleFactor, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix)
+        encoder?.setFragmentTexture(self.textures![3], index: 0)
+        drawPie(encoder: encoder, index: 3, scaleFactor: scaleFactor, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix)
+        encoder?.setFragmentTexture(self.textures![4], index: 0)
+        drawPie(encoder: encoder, index: 4, scaleFactor: scaleFactor, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix)
+        encoder?.setFragmentTexture(self.textures![5], index: 0)
+        drawPie(encoder: encoder, index: 5, scaleFactor: scaleFactor, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix)
 
-        uniforms[0].modelViewProjectionMatrix = projectionMatrix//matrix_multiply(matrix_multiply(projectionMatrix, viewMatrix), modelMatrix)
-        encoder?.setVertexBuffer(uniformBuffer, offset:uniformBufferOffset, index: 1)
-//        var uniforms = GUniforms(modelViewProjectionMatrix: matrix_multiply(matrix_multiply(projectionMatrix, viewMatrix), modelMatrix))
-//        encoder?.setVertexBytes(&uniforms,
-//                                       length: MemoryLayout<GUniforms>.stride,
-//                                       index: 1)
-
-        encoder?.drawIndexedPrimitives(type: .triangle, indexCount: self.indexBuffer!.length / MemoryLayout<UInt16>.size, indexType: .uint16, indexBuffer: self.indexBuffer!, indexBufferOffset: 0)
-//        encoder?.drawPrimitives(type: .triangle, vertexStart: 0, vertexCount: 3)
+        
         encoder?.endEncoding()
         commandBuffer?.present(drawable)
         commandBuffer?.commit()
+    }
+    
+    func drawPie(encoder: MTLRenderCommandEncoder?, index: Int, scaleFactor: Float, projectionMatrix: matrix_float4x4, viewMatrix: matrix_float4x4) {
+        let zAxis = vector_float3(0, 0, 1)
+        var zRot = matrix_float4x4_rotation(axis: zAxis, angle: 0)
+        let scale = matrix_float4x4_uniform_scale(scale: scaleFactor)
+        var modelMatrix = matrix_multiply(zRot, scale)
+        
+        zRot = matrix_float4x4_rotation(axis: zAxis, angle: Float.pi * 2 / 6 * Float(index))
+        modelMatrix = matrix_multiply(zRot, scale)
+        uniforms[0].modelViewProjectionMatrix = matrix_multiply(matrix_multiply(projectionMatrix, viewMatrix), modelMatrix)
+        let m = matrix_multiply(matrix_multiply(projectionMatrix, viewMatrix), modelMatrix)
+        vertices = UnsafeMutableRawPointer(vertexBuffer!.contents() + 3 * MemoryLayout<GVertex>.stride * index).bindMemory(to:GVertex.self, capacity:3)
+        vertices[0] = GVertex.init(position: .init(0, 0, 0, 1), color: .init(0, 1, 1, 1), texture:float2(0.5 ,1), col0: vector_float4(), col1: vector_float4(), col2: vector_float4(), col3: vector_float4())
+        vertices[1] = GVertex.init(position: .init(1, sqrt(3), 0, 1), color: .init(1, 0, 1, 1), texture:float2(1, 0), col0: vector_float4(), col1: vector_float4(), col2: vector_float4(), col3: vector_float4())
+        vertices[2] = GVertex.init(position: .init(-1, sqrt(3), 0, 1), color: .init(0, 0, 1, 1), texture:float2(0, 0), col0: vector_float4(), col1: vector_float4(), col2: vector_float4(), col3: vector_float4())
+        self.vertices[0].col0 = m.columns.0;
+        self.vertices[0].col1 = m.columns.1;
+        self.vertices[0].col2 = m.columns.2;
+        self.vertices[0].col3 = m.columns.3;
+        self.vertices[1].col0 = m.columns.0;
+        self.vertices[1].col1 = m.columns.1;
+        self.vertices[1].col2 = m.columns.2;
+        self.vertices[1].col3 = m.columns.3;
+        self.vertices[2].col0 = m.columns.0;
+        self.vertices[2].col1 = m.columns.1;
+        self.vertices[2].col2 = m.columns.2;
+        self.vertices[2].col3 = m.columns.3;
+        encoder?.setVertexBuffer(self.vertexBuffer, offset: 3 * MemoryLayout<GVertex>.stride * index, index: 0)
+        encoder?.setVertexBuffer(uniformBuffer, offset:uniformBufferOffset, index: 1)
+        encoder?.drawIndexedPrimitives(type: .triangle, indexCount: self.indexBuffer!.length / MemoryLayout<UInt16>.size, indexType: .uint16, indexBuffer: self.indexBuffer!, indexBufferOffset: 0)
     }
 }
 
@@ -375,7 +425,7 @@ extension GMetalView {
     }
     
     // generateCircularSector(radius: UIScreen.main.bounds.size.width / 2.0, count: UInt(slider.value), backgroundColor: UIColor.yellow)
-    func generateCircularSector(radius: CGFloat, count: UInt, backgroundColor: UIColor) -> UIImage? {
+    func generateCircularSector(radius: CGFloat, count: UInt, borderColor: UIColor, fillColor: UIColor) -> UIImage? {
         guard count > 0 else {
             return nil
         }
@@ -456,7 +506,7 @@ extension GMetalView {
         context.addArc(center: center, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: true)
         context.addLine(to: center)
 
-        backgroundColor.setFill()
+        borderColor.setFill()
         context.fillPath()
 
         context.move(to: center1)
@@ -464,7 +514,7 @@ extension GMetalView {
         context.addLine(to: center1)
         
 //        context.addRect(CGRect.init(x: 0, y: 0, width: imageSize.width, height: imageSize.height))
-        UIColor.red.setFill()
+        fillColor.setFill()
         context.fillPath()
         
         let image = UIGraphicsGetImageFromCurrentImageContext()

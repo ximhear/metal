@@ -13,6 +13,10 @@ struct Vertex {
     float4 position [[position]];
     float4 color;
     float2 texture;
+    float4 col0;
+    float4 col1;
+    float4 col2;
+    float4 col3;
 };
 
 struct Uniforms {
@@ -24,7 +28,8 @@ vertex Vertex vertex_main(device Vertex* vertices[[buffer(0)]],
                           uint vid[[vertex_id]]) {
     
     Vertex out;
-    out.position = uniforms->modelViewProjectionMatrix * vertices[vid].position;
+    float4x4 mvp_matrix = float4x4(vertices[vid].col0, vertices[vid].col1, vertices[vid].col2, vertices[vid].col3);
+    out.position = mvp_matrix * vertices[vid].position;
     out.color = vertices[vid].color;
     out.texture = vertices[vid].texture;
     return out;
