@@ -498,9 +498,9 @@ extension GMetalView {
         
         UIColor.green.setFill()
         context.fill(CGRect.init(x: 0, y: 0, width: imageSize.width, height: imageSize.height))
-
-        UIColor.green.setFill()
-        context.fill(CGRect.init(x: 0, y: 10, width: imageSize.width, height: imageSize.height-10))
+//
+//        UIColor.green.setFill()
+//        context.fill(CGRect.init(x: 0, y: 10, width: imageSize.width, height: imageSize.height-10))
 
         context.move(to: center)
         context.addArc(center: center, radius: radius, startAngle: startAngle, endAngle: endAngle, clockwise: true)
