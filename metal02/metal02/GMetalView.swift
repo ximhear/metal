@@ -67,7 +67,7 @@ class GMetalView: UIView {
         
         makeDevice()
 
-        let image = generateCircularSector(radius: UIScreen.main.bounds.size.width / 2.0, count: 3, backgroundColor: UIColor.yellow)
+        let image = generateCircularSector(radius: UIScreen.main.bounds.size.width / 2.0, count: 3, backgroundColor: UIColor.blue)
         texture = getTexture(device: device!, cgImage: image!.cgImage!)
 //        texture = getTexture(device: device!, imageName: "aaa.png")
         GZLog(texture)
@@ -191,7 +191,7 @@ class GMetalView: UIView {
         
         let drawableSize = self.metalLayer.drawableSize
         var ratio: Float = Float(drawableSize.width / drawableSize.height)
-        let projectionMatrix = matrix_float4x4_ortho(left: -2, right: 2, bottom: -2 / ratio, top: 2 / ratio, near: -10, far: 10)
+        let projectionMatrix = matrix_float4x4_ortho(left: -1.5, right: 1.5, bottom: -1.5 / ratio, top: 1.5 / ratio, near: -1, far: 1)
 
         let passDescriptor = MTLRenderPassDescriptor()
         passDescriptor.colorAttachments[0].texture = texture
@@ -417,7 +417,7 @@ extension GMetalView {
             center1 = CGPoint.init(x: width / 2, y: center.y - lineWidth / 2 / sin(theta))
         }
         else {
-            width = radius * sin(angle / 2) * 2
+            width = radius * tan(angle / 2)  * 2
             height = radius
             
             startAngle = -(CGFloat.pi - angle) / 2.0
