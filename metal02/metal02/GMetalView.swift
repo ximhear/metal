@@ -38,9 +38,18 @@ class GMetalView: UIView {
     var depthTexture : MTLTexture?
     var displayLink: CADisplayLink?
 
-    var elapsedTime : Float = 0
-    var rotationX : Float = 0
-    var rotationY : Float = 0
+    var elapsedTime : Double = 0
+    var rotationZ : Double = 0
+    var speed: Double = 0
+    
+    var timingFunction: ((_ tx: Double) -> Double)?
+    var speedFunction: ((_ tx: Double) -> Double)?
+    var beginingTime: TimeInterval = 0
+    var endingTime: TimeInterval = 0
+    var rotating = false
+    var beginingRotationZ: Double = 0
+    var endingRotationZ: Double = 0
+
 
     let inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
     var uniformBufferOffset = 0
@@ -170,11 +179,37 @@ class GMetalView: UIView {
     }
     
     @objc func displayLinkDidFire(displayLink: CADisplayLink) {
-        let duration : Float = 1.0 / 60.0
-//        elapsedTime += duration
-//        self.rotationX += duration * Float(Double.pi / 2);
-//        self.rotationY += duration * Float(Double.pi / 3);
-        redraw()
+        
+        if self.rotating == true {
+            let fps : Double = 1.0 / 60.0
+            elapsedTime += fps
+            
+            if self.beginingTime + elapsedTime >= self.endingTime {
+                self.rotationZ = self.endingRotationZ
+                self.rotating = false
+                GZLog("Rotation ended")
+            }
+            else {
+                var result: Double = 0
+                if let timingFunction = self.timingFunction {
+                    result = beginingRotationZ + timingFunction(elapsedTime/(self.endingTime - self.beginingTime)) * (self.endingRotationZ - beginingRotationZ)
+                }
+                else {
+                    result = beginingRotationZ + (self.endingRotationZ - beginingRotationZ) * elapsedTime / (self.endingTime - self.beginingTime)
+                }
+                self.rotationZ = result
+                
+                var speed: Double = 0
+                if let speedFunction = self.speedFunction {
+                    speed = speedFunction(elapsedTime/(self.endingTime - self.beginingTime))
+                }
+                else {
+                    speed = 0
+                }
+                self.speed = speed
+            }
+        }
+        redraw(speed: self.speed)
     }
     
     private func updateDynamicBufferState() {
@@ -187,7 +222,7 @@ class GMetalView: UIView {
         uniforms = UnsafeMutableRawPointer(uniformBuffer.contents() + uniformBufferOffset).bindMemory(to:GUniforms.self, capacity:1)
     }
     
-    func redraw() {
+    func redraw(speed: Double) {
         guard let drawable = self.metalLayer.nextDrawable() else {
             return
         }
@@ -196,12 +231,12 @@ class GMetalView: UIView {
 
         let texture = drawable.texture
 
-        let scaleFactor = sin(5 * self.elapsedTime) * 0.25 + 1
-        let xAxis = vector_float3(1, 0, 0)
-        let yAxis = vector_float3(0, 1, 0)
-        let xRot = matrix_float4x4_rotation(axis: xAxis, angle: rotationX)
-        let yRot = matrix_float4x4_rotation(axis: yAxis, angle: rotationY)
-        
+        let scaleFactor: Float = 1.0 // sin(5 * Float(self.elapsedTime)) * 0.25 + 1
+        let zAxis = vector_float3(0, 0, 1)
+            let zRot = matrix_float4x4_rotation(axis: zAxis, angle: Float(rotationZ))
+            let scale = matrix_float4x4_uniform_scale(scale: scaleFactor)
+            let modelMatrix = matrix_multiply(zRot, scale)
+
         let cameraTranslation = vector_float3(0, 0, 0)
         let viewMatrix = matrix_float4x4_translation(t: cameraTranslation)
         
@@ -240,17 +275,17 @@ class GMetalView: UIView {
         uniforms = UnsafeMutableRawPointer(uniformBuffer.contents() + uniformBufferOffset).bindMemory(to:GUniforms.self, capacity:1)
 
         encoder?.setFragmentTexture(self.textures![0], index: 0)
-        drawPie(encoder: encoder, index: 0, scaleFactor: scaleFactor, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix)
+        drawPie(encoder: encoder, index: 0, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix, modelMatrix: modelMatrix)
         encoder?.setFragmentTexture(self.textures![1], index: 0)
-        drawPie(encoder: encoder, index: 1, scaleFactor: scaleFactor, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix)
+        drawPie(encoder: encoder, index: 1, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix, modelMatrix: modelMatrix)
         encoder?.setFragmentTexture(self.textures![2], index: 0)
-        drawPie(encoder: encoder, index: 2, scaleFactor: scaleFactor, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix)
+        drawPie(encoder: encoder, index: 2, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix, modelMatrix: modelMatrix)
         encoder?.setFragmentTexture(self.textures![3], index: 0)
-        drawPie(encoder: encoder, index: 3, scaleFactor: scaleFactor, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix)
+        drawPie(encoder: encoder, index: 3, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix, modelMatrix: modelMatrix)
         encoder?.setFragmentTexture(self.textures![4], index: 0)
-        drawPie(encoder: encoder, index: 4, scaleFactor: scaleFactor, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix)
+        drawPie(encoder: encoder, index: 4, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix, modelMatrix: modelMatrix)
         encoder?.setFragmentTexture(self.textures![5], index: 0)
-        drawPie(encoder: encoder, index: 5, scaleFactor: scaleFactor, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix)
+        drawPie(encoder: encoder, index: 5, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix, modelMatrix: modelMatrix)
 
         
         encoder?.endEncoding()
@@ -258,16 +293,14 @@ class GMetalView: UIView {
         commandBuffer?.commit()
     }
     
-    func drawPie(encoder: MTLRenderCommandEncoder?, index: Int, scaleFactor: Float, projectionMatrix: matrix_float4x4, viewMatrix: matrix_float4x4) {
+    func drawPie(encoder: MTLRenderCommandEncoder?, index: Int, projectionMatrix: matrix_float4x4, viewMatrix: matrix_float4x4, modelMatrix: matrix_float4x4) {
         let zAxis = vector_float3(0, 0, 1)
-        var zRot = matrix_float4x4_rotation(axis: zAxis, angle: 0)
-        let scale = matrix_float4x4_uniform_scale(scale: scaleFactor)
-        var modelMatrix = matrix_multiply(zRot, scale)
+        var zRot = matrix_float4x4_rotation(axis: zAxis, angle: Float.pi * 2 / 6 * Float(index))
+
+        var modelMatrix1 = matrix_multiply(zRot, modelMatrix)
         
-        zRot = matrix_float4x4_rotation(axis: zAxis, angle: Float.pi * 2 / 6 * Float(index))
-        modelMatrix = matrix_multiply(zRot, scale)
         uniforms[0].modelViewProjectionMatrix = matrix_multiply(matrix_multiply(projectionMatrix, viewMatrix), modelMatrix)
-        let m = matrix_multiply(matrix_multiply(projectionMatrix, viewMatrix), modelMatrix)
+        let m = matrix_multiply(matrix_multiply(projectionMatrix, viewMatrix), modelMatrix1)
         vertices = UnsafeMutableRawPointer(vertexBuffer!.contents() + 3 * MemoryLayout<GVertex>.stride * index).bindMemory(to:GVertex.self, capacity:3)
         vertices[0] = GVertex.init(position: .init(0, 0, 0, 1), color: .init(0, 1, 1, 1), texture:float2(0.5 ,1), col0: vector_float4(), col1: vector_float4(), col2: vector_float4(), col3: vector_float4())
         vertices[1] = GVertex.init(position: .init(1, sqrt(3), 0, 1), color: .init(1, 0, 1, 1), texture:float2(1, 0), col0: vector_float4(), col1: vector_float4(), col2: vector_float4(), col3: vector_float4())
@@ -523,4 +556,25 @@ extension GMetalView {
         return image
     }
 }
+
+extension GMetalView {
+        func startRotation(duration: TimeInterval, endingRotationZ: Double, timingFunction: ((_ tx: Double) -> Double)?, speedFunction: ((_ tx: Double) -> Double)?) {
+            GZLog("Rotation started")
+
+            self.timingFunction = timingFunction
+            self.speedFunction = speedFunction
+            if duration > 0 {
+                self.beginingTime = Date().timeIntervalSince1970
+                self.elapsedTime = 0
+                self.endingTime = self.beginingTime + duration
+                self.rotating = true
+                self.rotationZ = self.rotationZ.truncatingRemainder(dividingBy: Double.pi * 2.0)
+                self.beginingRotationZ = self.rotationZ
+                self.endingRotationZ = endingRotationZ
+            }
+            else {
+                self.rotating = false
+            }
+        }
+    }
 
