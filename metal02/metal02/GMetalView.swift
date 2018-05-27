@@ -556,14 +556,17 @@ extension GMetalView {
         attributedStringParagraphStyle.paragraphSpacing = -2.0
         attributedStringParagraphStyle.paragraphSpacingBefore = -2.0
 
-        let attributedString = NSAttributedString(string: "장\n난\n감",
+        let rectWidth: CGFloat = 15
+        let stringRect = CGRect.init(x: width / 2.0 - rectWidth, y: lineWidth + 5.0, width: rectWidth * 2.0, height: height - lineWidth - 5.0 - lineWidth * 2.0)
+        let string = "장\n난\n감"
+        let font = UIFont.bestFittingFont(for: string, in: stringRect, fontDescriptor: UIFont(name:"AppleSDGothicNeo-Bold", size:30.0)!.fontDescriptor)
+        let attributedString = NSAttributedString(string: string,
                 attributes:[NSAttributedStringKey.foregroundColor:UIColor(red:1.0, green:1.0, blue:1.0, alpha:1.0),
                             NSAttributedStringKey.paragraphStyle:attributedStringParagraphStyle,
-                            NSAttributedStringKey.font:UIFont(name:"AppleSDGothicNeo-Bold", size:30.0)!])
-//        attributedString.draw(at: CGPoint.init(x: width / 2.0, y: lineWidth + 5.0))
-        let rectWidth: CGFloat = 15
-        attributedString.draw(in: CGRect.init(x: width / 2.0 - rectWidth, y: lineWidth + 5.0, width: rectWidth * 2.0, height: height - lineWidth - 5.0 - lineWidth * 2.0))
+                            NSAttributedStringKey.font:font])
         
+        attributedString.draw(in: stringRect)
+
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
         
@@ -572,23 +575,56 @@ extension GMetalView {
 }
 
 extension GMetalView {
-        func startRotation(duration: TimeInterval, endingRotationZ: Double, timingFunction: ((_ tx: Double) -> Double)?, speedFunction: ((_ tx: Double) -> Double)?) {
-            GZLog("Rotation started")
-
-            self.timingFunction = timingFunction
-            self.speedFunction = speedFunction
-            if duration > 0 {
-                self.beginingTime = Date().timeIntervalSince1970
-                self.elapsedTime = 0
-                self.endingTime = self.beginingTime + duration
-                self.rotating = true
-                self.rotationZ = self.rotationZ.truncatingRemainder(dividingBy: Double.pi * 2.0)
-                self.beginingRotationZ = self.rotationZ
-                self.endingRotationZ = endingRotationZ
-            }
-            else {
-                self.rotating = false
-            }
+    func startRotation(duration: TimeInterval, endingRotationZ: Double, timingFunction: ((_ tx: Double) -> Double)?, speedFunction: ((_ tx: Double) -> Double)?) {
+        GZLog("Rotation started")
+        
+        self.timingFunction = timingFunction
+        self.speedFunction = speedFunction
+        if duration > 0 {
+            self.beginingTime = Date().timeIntervalSince1970
+            self.elapsedTime = 0
+            self.endingTime = self.beginingTime + duration
+            self.rotating = true
+            self.rotationZ = self.rotationZ.truncatingRemainder(dividingBy: Double.pi * 2.0)
+            self.beginingRotationZ = self.rotationZ
+            self.endingRotationZ = endingRotationZ
+        }
+        else {
+            self.rotating = false
         }
     }
+}
+
+extension UIFont {
+    
+    /**
+     Will return the best font conforming to the descriptor which will fit in the provided bounds.
+     */
+    static func bestFittingFontSize(for text: String, in bounds: CGRect, fontDescriptor: UIFontDescriptor) -> CGFloat {
+        let constrainingDimension = min(bounds.width, bounds.height)
+        let properBounds = CGRect(origin: .zero, size: bounds.size)
+        
+        let slices: CGFloat = constrainingDimension * 2.0
+        var bestFontSize: CGFloat = constrainingDimension
+        
+        for fontSize in stride(from: bestFontSize, through: 0, by: -(bestFontSize / slices)) {
+            let newFont = UIFont(descriptor: fontDescriptor, size: fontSize)
+            let attributedTestString = NSAttributedString(string: text, attributes: [.font : newFont])
+            
+            let currentFrame = CGRect(origin: .zero, size: attributedTestString.size())
+            
+            if properBounds.contains(currentFrame) {
+                bestFontSize = fontSize
+                break
+            }
+        }
+        
+        return bestFontSize
+    }
+    
+    static func bestFittingFont(for text: String, in bounds: CGRect, fontDescriptor: UIFontDescriptor) -> UIFont {
+        let bestSize = bestFittingFontSize(for: text, in: bounds, fontDescriptor: fontDescriptor)
+        return UIFont(descriptor: fontDescriptor, size: bestSize)
+    }
+}
 
