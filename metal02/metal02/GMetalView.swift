@@ -549,6 +549,20 @@ extension GMetalView {
 //        context.addRect(CGRect.init(x: 0, y: 0, width: imageSize.width, height: imageSize.height))
         fillColor.setFill()
         context.fillPath()
+
+        let attributedStringParagraphStyle = NSMutableParagraphStyle()
+        attributedStringParagraphStyle.alignment = NSTextAlignment.center
+        attributedStringParagraphStyle.lineSpacing = 0.0
+        attributedStringParagraphStyle.paragraphSpacing = -2.0
+        attributedStringParagraphStyle.paragraphSpacingBefore = -2.0
+
+        let attributedString = NSAttributedString(string: "장\n난\n감",
+                attributes:[NSAttributedStringKey.foregroundColor:UIColor(red:1.0, green:1.0, blue:1.0, alpha:1.0),
+                            NSAttributedStringKey.paragraphStyle:attributedStringParagraphStyle,
+                            NSAttributedStringKey.font:UIFont(name:"AppleSDGothicNeo-Bold", size:30.0)!])
+//        attributedString.draw(at: CGPoint.init(x: width / 2.0, y: lineWidth + 5.0))
+        let rectWidth: CGFloat = 15
+        attributedString.draw(in: CGRect.init(x: width / 2.0 - rectWidth, y: lineWidth + 5.0, width: rectWidth * 2.0, height: height - lineWidth - 5.0 - lineWidth * 2.0))
         
         let image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
