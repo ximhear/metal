@@ -22,6 +22,7 @@ class ViewController: NSViewController {
     var renderingQueue: DispatchQueue?
     var jobIndex: UInt = 0
 
+    var atlas: MBEFontAtlas?
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -29,6 +30,10 @@ class ViewController: NSViewController {
         
         buildFilterGraph()
         updateImage()
+        
+        let MBEFontAtlasSize: NSInteger = 2048 * NSInteger(SCALE_FACTOR);
+        let font = NSFont.init(name: "AppleSDGothicNeo-Regular", size: 32)
+        atlas = MBEFontAtlas.init(font: font, textureSize: MBEFontAtlasSize)
     }
 
     override var representedObject: Any? {

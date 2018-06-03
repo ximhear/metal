@@ -11,6 +11,7 @@
 		8C1B0DE620A5233B0064FFB7 /* GGaussianBlur2DFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C1B0DE520A5233B0064FFB7 /* GGaussianBlur2DFilter.swift */; };
 		8C1B0DE820A52D460064FFB7 /* GSaturationAdjustmentFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C1B0DE720A52D460064FFB7 /* GSaturationAdjustmentFilter.swift */; };
 		8C1B0DEA20A536160064FFB7 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 8C1B0DE920A536160064FFB7 /* Shaders.metal */; };
+		8CD989EB20C458500076E7EE /* MBEFontAtlas.m in Sources */ = {isa = PBXBuildFile; fileRef = 8CD989EA20C458500076E7EE /* MBEFontAtlas.m */; };
 		ECBBEC4820A4AA8A00F0C048 /* GContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBBEC4720A4AA8A00F0C048 /* GContext.swift */; };
 		ECBBEC4A20A4AC9C00F0C048 /* GTextureProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBBEC4920A4AC9C00F0C048 /* GTextureProvider.swift */; };
 		ECBBEC4C20A4AD7900F0C048 /* MainBundleTextureProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBBEC4B20A4AD7900F0C048 /* MainBundleTextureProvider.swift */; };
@@ -27,6 +28,9 @@
 		8C1B0DE520A5233B0064FFB7 /* GGaussianBlur2DFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GGaussianBlur2DFilter.swift; sourceTree = "<group>"; };
 		8C1B0DE720A52D460064FFB7 /* GSaturationAdjustmentFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GSaturationAdjustmentFilter.swift; sourceTree = "<group>"; };
 		8C1B0DE920A536160064FFB7 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
+		8CD989E820C4584F0076E7EE /* sdfgenerator-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "sdfgenerator-Bridging-Header.h"; sourceTree = "<group>"; };
+		8CD989E920C458500076E7EE /* MBEFontAtlas.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MBEFontAtlas.h; sourceTree = "<group>"; };
+		8CD989EA20C458500076E7EE /* MBEFontAtlas.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MBEFontAtlas.m; sourceTree = "<group>"; };
 		ECBBEC4720A4AA8A00F0C048 /* GContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GContext.swift; sourceTree = "<group>"; };
 		ECBBEC4920A4AC9C00F0C048 /* GTextureProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTextureProvider.swift; sourceTree = "<group>"; };
 		ECBBEC4B20A4AD7900F0C048 /* MainBundleTextureProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainBundleTextureProvider.swift; sourceTree = "<group>"; };
@@ -86,6 +90,9 @@
 				8C1B0DE520A5233B0064FFB7 /* GGaussianBlur2DFilter.swift */,
 				8C1B0DE720A52D460064FFB7 /* GSaturationAdjustmentFilter.swift */,
 				8C1B0DE920A536160064FFB7 /* Shaders.metal */,
+				8CD989E920C458500076E7EE /* MBEFontAtlas.h */,
+				8CD989EA20C458500076E7EE /* MBEFontAtlas.m */,
+				8CD989E820C4584F0076E7EE /* sdfgenerator-Bridging-Header.h */,
 			);
 			path = sdfgenerator;
 			sourceTree = "<group>";
@@ -122,6 +129,7 @@
 				TargetAttributes = {
 					ECC41B6A20A4A4CB00B421EF = {
 						CreatedOnToolsVersion = 9.3;
+						LastSwiftMigration = 0940;
 					};
 				};
 			};
@@ -169,6 +177,7 @@
 				8C1B0DE820A52D460064FFB7 /* GSaturationAdjustmentFilter.swift in Sources */,
 				8C1B0DE420A51B6B0064FFB7 /* GImageFilter.swift in Sources */,
 				8C1B0DEA20A536160064FFB7 /* Shaders.metal in Sources */,
+				8CD989EB20C458500076E7EE /* MBEFontAtlas.m in Sources */,
 				ECBBEC4A20A4AC9C00F0C048 /* GTextureProvider.swift in Sources */,
 				ECC41B6F20A4A4CB00B421EF /* AppDelegate.swift in Sources */,
 			);
@@ -305,6 +314,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = sdfgenerator/sdfgenerator.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -316,6 +326,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = g.sdfgenerator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "sdfgenerator/sdfgenerator-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
@@ -324,6 +336,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = sdfgenerator/sdfgenerator.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
@@ -335,6 +348,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = g.sdfgenerator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "sdfgenerator/sdfgenerator-Bridging-Header.h";
 				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
