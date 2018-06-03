@@ -31,13 +31,13 @@
 		ECBBEC4920A4AC9C00F0C048 /* GTextureProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTextureProvider.swift; sourceTree = "<group>"; };
 		ECBBEC4B20A4AD7900F0C048 /* MainBundleTextureProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainBundleTextureProvider.swift; sourceTree = "<group>"; };
 		ECBBEC4D20A4BA5C00F0C048 /* NSImage-extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSImage-extension.swift"; sourceTree = "<group>"; };
-		ECC41B6B20A4A4CB00B421EF /* imageprocessing01.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = imageprocessing01.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		ECC41B6B20A4A4CB00B421EF /* sdfgenerator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sdfgenerator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECC41B6E20A4A4CB00B421EF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		ECC41B7020A4A4CB00B421EF /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		ECC41B7220A4A4CC00B421EF /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		ECC41B7520A4A4CC00B421EF /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		ECC41B7720A4A4CC00B421EF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		ECC41B7820A4A4CC00B421EF /* imageprocessing01.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = imageprocessing01.entitlements; sourceTree = "<group>"; };
+		ECC41B7820A4A4CC00B421EF /* sdfgenerator.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = sdfgenerator.entitlements; sourceTree = "<group>"; };
 		ECC41B7E20A4A73300B421EF /* GZLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GZLog.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -55,7 +55,7 @@
 		ECC41B6220A4A4CB00B421EF = {
 			isa = PBXGroup;
 			children = (
-				ECC41B6D20A4A4CB00B421EF /* imageprocessing01 */,
+				ECC41B6D20A4A4CB00B421EF /* sdfgenerator */,
 				ECC41B6C20A4A4CB00B421EF /* Products */,
 			);
 			sourceTree = "<group>";
@@ -63,12 +63,12 @@
 		ECC41B6C20A4A4CB00B421EF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				ECC41B6B20A4A4CB00B421EF /* imageprocessing01.app */,
+				ECC41B6B20A4A4CB00B421EF /* sdfgenerator.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		ECC41B6D20A4A4CB00B421EF /* imageprocessing01 */ = {
+		ECC41B6D20A4A4CB00B421EF /* sdfgenerator */ = {
 			isa = PBXGroup;
 			children = (
 				ECC41B7E20A4A73300B421EF /* GZLog.swift */,
@@ -77,7 +77,7 @@
 				ECC41B7220A4A4CC00B421EF /* Assets.xcassets */,
 				ECC41B7420A4A4CC00B421EF /* Main.storyboard */,
 				ECC41B7720A4A4CC00B421EF /* Info.plist */,
-				ECC41B7820A4A4CC00B421EF /* imageprocessing01.entitlements */,
+				ECC41B7820A4A4CC00B421EF /* sdfgenerator.entitlements */,
 				ECBBEC4720A4AA8A00F0C048 /* GContext.swift */,
 				ECBBEC4920A4AC9C00F0C048 /* GTextureProvider.swift */,
 				ECBBEC4B20A4AD7900F0C048 /* MainBundleTextureProvider.swift */,
@@ -87,15 +87,15 @@
 				8C1B0DE720A52D460064FFB7 /* GSaturationAdjustmentFilter.swift */,
 				8C1B0DE920A536160064FFB7 /* Shaders.metal */,
 			);
-			path = imageprocessing01;
+			path = sdfgenerator;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		ECC41B6A20A4A4CB00B421EF /* imageprocessing01 */ = {
+		ECC41B6A20A4A4CB00B421EF /* sdfgenerator */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = ECC41B7B20A4A4CC00B421EF /* Build configuration list for PBXNativeTarget "imageprocessing01" */;
+			buildConfigurationList = ECC41B7B20A4A4CC00B421EF /* Build configuration list for PBXNativeTarget "sdfgenerator" */;
 			buildPhases = (
 				ECC41B6720A4A4CB00B421EF /* Sources */,
 				ECC41B6820A4A4CB00B421EF /* Frameworks */,
@@ -105,9 +105,9 @@
 			);
 			dependencies = (
 			);
-			name = imageprocessing01;
-			productName = imageprocessing01;
-			productReference = ECC41B6B20A4A4CB00B421EF /* imageprocessing01.app */;
+			name = sdfgenerator;
+			productName = sdfgenerator;
+			productReference = ECC41B6B20A4A4CB00B421EF /* sdfgenerator.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -125,7 +125,7 @@
 					};
 				};
 			};
-			buildConfigurationList = ECC41B6620A4A4CB00B421EF /* Build configuration list for PBXProject "imageprocessing01" */;
+			buildConfigurationList = ECC41B6620A4A4CB00B421EF /* Build configuration list for PBXProject "sdfgenerator" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -138,7 +138,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				ECC41B6A20A4A4CB00B421EF /* imageprocessing01 */,
+				ECC41B6A20A4A4CB00B421EF /* sdfgenerator */,
 			);
 		};
 /* End PBXProject section */
@@ -305,11 +305,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = imageprocessing01/imageprocessing01.entitlements;
+				CODE_SIGN_ENTITLEMENTS = sdfgenerator/sdfgenerator.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = J8647L48BZ;
-				INFOPLIST_FILE = imageprocessing01/Info.plist;
+				INFOPLIST_FILE = sdfgenerator/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -324,11 +324,11 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_ENTITLEMENTS = imageprocessing01/imageprocessing01.entitlements;
+				CODE_SIGN_ENTITLEMENTS = sdfgenerator/sdfgenerator.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = J8647L48BZ;
-				INFOPLIST_FILE = imageprocessing01/Info.plist;
+				INFOPLIST_FILE = sdfgenerator/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
@@ -342,7 +342,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		ECC41B6620A4A4CB00B421EF /* Build configuration list for PBXProject "imageprocessing01" */ = {
+		ECC41B6620A4A4CB00B421EF /* Build configuration list for PBXProject "sdfgenerator" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				ECC41B7920A4A4CC00B421EF /* Debug */,
@@ -351,7 +351,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		ECC41B7B20A4A4CC00B421EF /* Build configuration list for PBXNativeTarget "imageprocessing01" */ = {
+		ECC41B7B20A4A4CC00B421EF /* Build configuration list for PBXNativeTarget "sdfgenerator" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				ECC41B7C20A4A4CC00B421EF /* Debug */,
