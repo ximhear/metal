@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14109" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14109"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -719,14 +719,14 @@
                             </imageView>
                             <slider focusRingType="none" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="H3j-Lo-QyH">
                                 <rect key="frame" x="14" y="255" width="484" height="19"/>
-                                <sliderCell key="cell" state="on" focusRingType="none" alignment="left" maxValue="7" doubleValue="1" tickMarkPosition="above" sliderType="linear" id="Ukj-os-RUg"/>
+                                <sliderCell key="cell" continuous="YES" state="on" focusRingType="none" alignment="left" maxValue="7" doubleValue="1" tickMarkPosition="above" sliderType="linear" id="Ukj-os-RUg"/>
                                 <connections>
                                     <action selector="blurChanged:" target="XfG-lQ-9wD" id="e9Q-yM-Bmy"/>
                                 </connections>
                             </slider>
                             <slider verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="hsN-zm-KOD">
                                 <rect key="frame" x="14" y="176" width="484" height="19"/>
-                                <sliderCell key="cell" state="on" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="above" sliderType="linear" id="dUU-XD-uFz"/>
+                                <sliderCell key="cell" continuous="YES" state="on" alignment="left" maxValue="1" doubleValue="1" tickMarkPosition="above" sliderType="linear" id="dUU-XD-uFz"/>
                                 <connections>
                                     <action selector="saturationChanged:" target="XfG-lQ-9wD" id="Tfk-AU-gzn"/>
                                 </connections>
