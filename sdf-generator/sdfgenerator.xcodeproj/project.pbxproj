@@ -7,14 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8C1B0DE420A51B6B0064FFB7 /* GImageFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C1B0DE320A51B6B0064FFB7 /* GImageFilter.swift */; };
-		8C1B0DE620A5233B0064FFB7 /* GGaussianBlur2DFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C1B0DE520A5233B0064FFB7 /* GGaussianBlur2DFilter.swift */; };
-		8C1B0DE820A52D460064FFB7 /* GSaturationAdjustmentFilter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C1B0DE720A52D460064FFB7 /* GSaturationAdjustmentFilter.swift */; };
-		8C1B0DEA20A536160064FFB7 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 8C1B0DE920A536160064FFB7 /* Shaders.metal */; };
+		8C46F56120C5892C008D6838 /* AAPLRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C46F55E20C5892C008D6838 /* AAPLRenderer.m */; };
+		8C46F56220C5892C008D6838 /* AAPLShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 8C46F56020C5892C008D6838 /* AAPLShaders.metal */; };
 		8CD989EB20C458500076E7EE /* MBEFontAtlas.m in Sources */ = {isa = PBXBuildFile; fileRef = 8CD989EA20C458500076E7EE /* MBEFontAtlas.m */; };
-		ECBBEC4820A4AA8A00F0C048 /* GContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBBEC4720A4AA8A00F0C048 /* GContext.swift */; };
-		ECBBEC4A20A4AC9C00F0C048 /* GTextureProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBBEC4920A4AC9C00F0C048 /* GTextureProvider.swift */; };
-		ECBBEC4C20A4AD7900F0C048 /* MainBundleTextureProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBBEC4B20A4AD7900F0C048 /* MainBundleTextureProvider.swift */; };
 		ECBBEC4E20A4BA5C00F0C048 /* NSImage-extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBBEC4D20A4BA5C00F0C048 /* NSImage-extension.swift */; };
 		ECC41B6F20A4A4CB00B421EF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECC41B6E20A4A4CB00B421EF /* AppDelegate.swift */; };
 		ECC41B7120A4A4CB00B421EF /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECC41B7020A4A4CB00B421EF /* ViewController.swift */; };
@@ -24,16 +19,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8C1B0DE320A51B6B0064FFB7 /* GImageFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GImageFilter.swift; sourceTree = "<group>"; };
-		8C1B0DE520A5233B0064FFB7 /* GGaussianBlur2DFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GGaussianBlur2DFilter.swift; sourceTree = "<group>"; };
-		8C1B0DE720A52D460064FFB7 /* GSaturationAdjustmentFilter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GSaturationAdjustmentFilter.swift; sourceTree = "<group>"; };
-		8C1B0DE920A536160064FFB7 /* Shaders.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
+		8C46F55D20C5892C008D6838 /* AAPLRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLRenderer.h; sourceTree = "<group>"; };
+		8C46F55E20C5892C008D6838 /* AAPLRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLRenderer.m; sourceTree = "<group>"; };
+		8C46F55F20C5892C008D6838 /* AAPLShaderTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLShaderTypes.h; sourceTree = "<group>"; };
+		8C46F56020C5892C008D6838 /* AAPLShaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = AAPLShaders.metal; sourceTree = "<group>"; };
 		8CD989E820C4584F0076E7EE /* sdfgenerator-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "sdfgenerator-Bridging-Header.h"; sourceTree = "<group>"; };
 		8CD989E920C458500076E7EE /* MBEFontAtlas.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MBEFontAtlas.h; sourceTree = "<group>"; };
 		8CD989EA20C458500076E7EE /* MBEFontAtlas.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MBEFontAtlas.m; sourceTree = "<group>"; };
-		ECBBEC4720A4AA8A00F0C048 /* GContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GContext.swift; sourceTree = "<group>"; };
-		ECBBEC4920A4AC9C00F0C048 /* GTextureProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GTextureProvider.swift; sourceTree = "<group>"; };
-		ECBBEC4B20A4AD7900F0C048 /* MainBundleTextureProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainBundleTextureProvider.swift; sourceTree = "<group>"; };
 		ECBBEC4D20A4BA5C00F0C048 /* NSImage-extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSImage-extension.swift"; sourceTree = "<group>"; };
 		ECC41B6B20A4A4CB00B421EF /* sdfgenerator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sdfgenerator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		ECC41B6E20A4A4CB00B421EF /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -56,6 +48,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8C46F55C20C5892C008D6838 /* Renderer */ = {
+			isa = PBXGroup;
+			children = (
+				8C46F55D20C5892C008D6838 /* AAPLRenderer.h */,
+				8C46F55E20C5892C008D6838 /* AAPLRenderer.m */,
+				8C46F55F20C5892C008D6838 /* AAPLShaderTypes.h */,
+				8C46F56020C5892C008D6838 /* AAPLShaders.metal */,
+			);
+			path = Renderer;
+			sourceTree = "<group>";
+		};
 		ECC41B6220A4A4CB00B421EF = {
 			isa = PBXGroup;
 			children = (
@@ -75,6 +78,7 @@
 		ECC41B6D20A4A4CB00B421EF /* sdfgenerator */ = {
 			isa = PBXGroup;
 			children = (
+				8C46F55C20C5892C008D6838 /* Renderer */,
 				ECC41B7E20A4A73300B421EF /* GZLog.swift */,
 				ECC41B6E20A4A4CB00B421EF /* AppDelegate.swift */,
 				ECC41B7020A4A4CB00B421EF /* ViewController.swift */,
@@ -82,14 +86,7 @@
 				ECC41B7420A4A4CC00B421EF /* Main.storyboard */,
 				ECC41B7720A4A4CC00B421EF /* Info.plist */,
 				ECC41B7820A4A4CC00B421EF /* sdfgenerator.entitlements */,
-				ECBBEC4720A4AA8A00F0C048 /* GContext.swift */,
-				ECBBEC4920A4AC9C00F0C048 /* GTextureProvider.swift */,
-				ECBBEC4B20A4AD7900F0C048 /* MainBundleTextureProvider.swift */,
 				ECBBEC4D20A4BA5C00F0C048 /* NSImage-extension.swift */,
-				8C1B0DE320A51B6B0064FFB7 /* GImageFilter.swift */,
-				8C1B0DE520A5233B0064FFB7 /* GGaussianBlur2DFilter.swift */,
-				8C1B0DE720A52D460064FFB7 /* GSaturationAdjustmentFilter.swift */,
-				8C1B0DE920A536160064FFB7 /* Shaders.metal */,
 				8CD989E920C458500076E7EE /* MBEFontAtlas.h */,
 				8CD989EA20C458500076E7EE /* MBEFontAtlas.m */,
 				8CD989E820C4584F0076E7EE /* sdfgenerator-Bridging-Header.h */,
@@ -169,16 +166,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				ECC41B7120A4A4CB00B421EF /* ViewController.swift in Sources */,
-				ECBBEC4820A4AA8A00F0C048 /* GContext.swift in Sources */,
+				8C46F56120C5892C008D6838 /* AAPLRenderer.m in Sources */,
+				8C46F56220C5892C008D6838 /* AAPLShaders.metal in Sources */,
 				ECC41B7F20A4A73300B421EF /* GZLog.swift in Sources */,
-				8C1B0DE620A5233B0064FFB7 /* GGaussianBlur2DFilter.swift in Sources */,
-				ECBBEC4C20A4AD7900F0C048 /* MainBundleTextureProvider.swift in Sources */,
 				ECBBEC4E20A4BA5C00F0C048 /* NSImage-extension.swift in Sources */,
-				8C1B0DE820A52D460064FFB7 /* GSaturationAdjustmentFilter.swift in Sources */,
-				8C1B0DE420A51B6B0064FFB7 /* GImageFilter.swift in Sources */,
-				8C1B0DEA20A536160064FFB7 /* Shaders.metal in Sources */,
 				8CD989EB20C458500076E7EE /* MBEFontAtlas.m in Sources */,
-				ECBBEC4A20A4AC9C00F0C048 /* GTextureProvider.swift in Sources */,
 				ECC41B6F20A4A4CB00B421EF /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

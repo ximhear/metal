@@ -713,7 +713,7 @@
                                 <rect key="frame" x="0.0" y="0.0" width="283" height="283"/>
                                 <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="D3K-BD-whv"/>
                             </imageView>
-                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="HSW-8y-nZh">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="HSW-8y-nZh" customClass="MTKView">
                                 <rect key="frame" x="283" y="0.0" width="282" height="283"/>
                             </customView>
                         </subviews>
@@ -730,6 +730,7 @@
                     </view>
                     <connections>
                         <outlet property="imageView" destination="HL2-he-59M" id="6L3-Kw-Dk8"/>
+                        <outlet property="mtkview" destination="HSW-8y-nZh" id="Ghk-XO-s5S"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

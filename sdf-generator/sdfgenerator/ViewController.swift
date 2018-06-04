@@ -7,29 +7,29 @@
 //
 
 import Cocoa
+import MetalKit
 
 class ViewController: NSViewController {
 
-    var context: GContext?
-    var imageProvider: GTextureProvider?
-    var desaturateFilter: GSaturationAdjustmentFilter?
-    var blurFilter: GGaussianBlur2DFilter?
     @IBOutlet weak var imageView: NSImageView!
+    @IBOutlet weak var mtkview: MTKView!
     
-    var renderingQueue: DispatchQueue?
-    var jobIndex: UInt = 0
-
     var atlas: MBEFontAtlas?
+    var renderer: AAPLRenderer?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.renderingQueue = DispatchQueue.init(label: "Rendering")
-        
         let MBEFontAtlasSize: NSInteger = 64/*2048*/ * NSInteger(SCALE_FACTOR);
         let font = NSFont.init(name: "AppleSDGothicNeo-Regular", size: 64)
         atlas = MBEFontAtlas.init(font: font, textureSize: MBEFontAtlasSize)
         
         self.imageView.image = atlas?.fontImage
+        
+        mtkview.device = MTLCreateSystemDefaultDevice()
+        renderer = AAPLRenderer.init(metalKitView: mtkview, atlas: atlas)
+        renderer?.mtkView(mtkview, drawableSizeWillChange: mtkview.drawableSize)
+        self.mtkview.delegate = renderer
     }
 
     override var representedObject: Any? {
