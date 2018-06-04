@@ -202,7 +202,7 @@ static NSString *const MBEGlyphDescriptorsKey = @"glyphDescriptors";
     CGContextSetRGBFillColor(context, 0, 0, 0, 1);
     CGContextFillRect(context, CGRectMake(0, 0, width, height));
 
-    _fontPointSize = 100;//[self pointSizeThatFitsForFont:font inAtlasRect:CGRectMake(0, 0, width, height)];
+    _fontPointSize = 64;//[self pointSizeThatFitsForFont:font inAtlasRect:CGRectMake(0, 0, width, height)];
     CTFontRef ctFont = CTFontCreateWithName((__bridge CFStringRef)font.fontName, _fontPointSize, NULL);
     _parentFont = [NSFont fontWithName:font.fontName size:_fontPointSize];
 
@@ -462,6 +462,9 @@ static NSString *const MBEGlyphDescriptorsKey = @"glyphDescriptors";
             float clampDist = fmax(-normalizationFactor, fmin(dist, normalizationFactor));
             float scaledDist = clampDist / normalizationFactor;
             uint8_t value = ((scaledDist + 1) / 2) * UINT8_MAX;
+            if (value != 0) {
+                NSLog(@"not 0");
+            }
             outData[y * width + x] = value;
         }
     }
