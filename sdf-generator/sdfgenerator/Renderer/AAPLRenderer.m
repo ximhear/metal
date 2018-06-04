@@ -160,7 +160,7 @@ static float MBEFontAtlasSize = 64 * SCALE_FACTOR;
     float minT = glyphInfo.topLeftTexCoord.y;
     float maxT = glyphInfo.bottomRightTexCoord.y;
     
-    float value = 300;
+    float value = 275;
     AAPLVertex triangleVertices[] =
     {
         // 2D positions,    RGBA colors
