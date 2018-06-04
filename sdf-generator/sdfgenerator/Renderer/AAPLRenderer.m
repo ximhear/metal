@@ -17,9 +17,12 @@ Implementation of our platform independent renderer class, which performs Metal 
 static float MBEFontAtlasSize = 64 * SCALE_FACTOR;
 
 @interface AAPLRenderer ()
+
 @property (nonatomic, strong) id<MTLTexture> fontTexture;
 @property (nonatomic, strong) id<MTLBuffer> uniformBuffer;
 @property (nonatomic, strong) id<MTLSamplerState> sampler;
+@property (nonatomic, strong) id<MTLTexture> depthTexture;
+
 @end
 
 // Main class performing the rendering
@@ -66,6 +69,15 @@ static float MBEFontAtlasSize = 64 * SCALE_FACTOR;
         pipelineStateDescriptor.vertexFunction = vertexFunction;
         pipelineStateDescriptor.fragmentFunction = fragmentFunction;
         pipelineStateDescriptor.colorAttachments[0].pixelFormat = mtkView.colorPixelFormat;
+        pipelineStateDescriptor.colorAttachments[0].blendingEnabled = YES;
+        pipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
+        pipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+        pipelineStateDescriptor.colorAttachments[0].rgbBlendOperation = MTLBlendOperationAdd;
+        pipelineStateDescriptor.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorSourceAlpha;
+        pipelineStateDescriptor.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+        pipelineStateDescriptor.colorAttachments[0].alphaBlendOperation = MTLBlendOperationAdd;
+
+        pipelineStateDescriptor.depthAttachmentPixelFormat = MTLPixelFormatDepth32Float;
 
         _pipelineState = [_device newRenderPipelineStateWithDescriptor:pipelineStateDescriptor
                                                                  error:&error];
@@ -104,6 +116,16 @@ static float MBEFontAtlasSize = 64 * SCALE_FACTOR;
                                               options:MTLResourceOptionCPUCacheModeDefault];
         [_uniformBuffer setLabel:@"Uniform Buffer"];
 
+        CGSize drawableSize = mtkView.drawableSize;
+        MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatDepth32Float
+                                                                                              width:drawableSize.width
+                                                                                             height:drawableSize.height
+                                                                                          mipmapped:NO];
+        descriptor.usage = MTLTextureUsageRenderTarget;
+        descriptor.resourceOptions = MTLResourceStorageModePrivate;
+        self.depthTexture = [_device newTextureWithDescriptor:descriptor];
+        [self.depthTexture setLabel:@"Depth Texture"];
+
     }
 
     return self;
@@ -113,7 +135,7 @@ static float MBEFontAtlasSize = 64 * SCALE_FACTOR;
 {
     MBEUniforms uniforms;
     
-    vector_float4 MBETextColor = { 0.9, 0.1, 0.1, 1 };
+    vector_float4 MBETextColor = { 0.1, 0.9, 0.1, 1 };
     uniforms.foregroundColor = MBETextColor;
     
     memcpy([self.uniformBuffer contents], &uniforms, sizeof(MBEUniforms));
@@ -137,15 +159,17 @@ static float MBEFontAtlasSize = 64 * SCALE_FACTOR;
     float maxS = glyphInfo.bottomRightTexCoord.x;
     float minT = glyphInfo.topLeftTexCoord.y;
     float maxT = glyphInfo.bottomRightTexCoord.y;
+    
+    float value = 300;
     AAPLVertex triangleVertices[] =
     {
         // 2D positions,    RGBA colors
-        { {  250,  -250 }, { maxS, maxT} },
-        { { -250,  -250 }, { minS, maxT} },
-        { { -250,   250 }, { minS, minT} },
-        { { -250,   250 }, { minS, minT} },
-        { {  250,   250 }, { maxS, minT} },
-        { {  250,  -250 }, { maxS, maxT} },
+        { {  value,  -value }, { maxS, maxT} },
+        { { -value,  -value }, { minS, maxT} },
+        { { -value,   value }, { minS, minT} },
+        { { -value,   value }, { minS, minT} },
+        { {  value,   value }, { maxS, minT} },
+        { {  value,  -value }, { maxS, maxT} },
     };
 
     // Create a new command buffer for each render pass to the current drawable
@@ -159,8 +183,15 @@ static float MBEFontAtlasSize = 64 * SCALE_FACTOR;
     {
 
         MTLClearColor MBEClearColor = { 1, 1, 1, 1 };
+        renderPassDescriptor.colorAttachments[0].loadAction = MTLLoadActionClear;
+        renderPassDescriptor.colorAttachments[0].storeAction = MTLStoreActionStore;
         renderPassDescriptor.colorAttachments[0].clearColor = MBEClearColor;
         
+        renderPassDescriptor.depthAttachment.texture = self.depthTexture;
+        renderPassDescriptor.depthAttachment.loadAction = MTLLoadActionClear;
+        renderPassDescriptor.depthAttachment.storeAction = MTLStoreActionStore;
+        renderPassDescriptor.depthAttachment.clearDepth = 1.0;
+
         [self updateUniforms];
 
         // Create a render command encoder so we can render into something

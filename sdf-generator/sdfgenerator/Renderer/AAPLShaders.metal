@@ -68,7 +68,7 @@ vertexShader(uint vertexID [[vertex_id]],
 fragment half4 fragmentShader(RasterizerData vert [[stage_in]],
                               constant MBEUniforms &uniforms [[buffer(0)]],
                               sampler samplr [[sampler(0)]],
-                              texture2d<float, access::sample> texture [[texture(0)]])
+                              texture2d<float> texture [[texture(0)]])
 {
     float4 color = uniforms.foregroundColor;
     // Outline of glyph is the isocontour with value 50%
