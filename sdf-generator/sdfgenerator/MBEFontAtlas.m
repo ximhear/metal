@@ -6,7 +6,7 @@
 // This is the size at which the font atlas will be generated, ideally a large power of two. Even though
 // we later downscale the distance field, it's better to render it at as high a resolution as possible in
 // order to capture all of the fine details.
-static const NSInteger MBEFontAtlasSize = 4096 * SCALE_FACTOR;
+static const NSInteger MBEFontAtlasSize = 128/*4096*/ * SCALE_FACTOR;
 
 static NSString *const MBEGlyphIndexKey = @"glyphIndex";
 static NSString *const MBELeftTexCoordKey = @"leftTexCoord";
@@ -202,7 +202,7 @@ static NSString *const MBEGlyphDescriptorsKey = @"glyphDescriptors";
     CGContextSetRGBFillColor(context, 0, 0, 0, 1);
     CGContextFillRect(context, CGRectMake(0, 0, width, height));
 
-    _fontPointSize = [self pointSizeThatFitsForFont:font inAtlasRect:CGRectMake(0, 0, width, height)];
+    _fontPointSize = 100;//[self pointSizeThatFitsForFont:font inAtlasRect:CGRectMake(0, 0, width, height)];
     CTFontRef ctFont = CTFontCreateWithName((__bridge CFStringRef)font.fontName, _fontPointSize, NULL);
     _parentFont = [NSFont fontWithName:font.fontName size:_fontPointSize];
 
@@ -221,8 +221,11 @@ static NSString *const MBEGlyphDescriptorsKey = @"glyphDescriptors";
 
     CGPoint origin = CGPointMake(0, fontAscent);
     CGFloat maxYCoordForLine = -1;
-    for (CGGlyph glyph = 0; glyph < fontGlyphCount; ++glyph)
+    for (CGGlyph glyph = 0; glyph < fontGlyphCount && glyph < 100; ++glyph)
     {
+        if (glyph != 34) {
+            continue;
+        }
         CGRect boundingRect;
         CTFontGetBoundingRectsForGlyphs(ctFont, kCTFontOrientationHorizontal, &glyph, &boundingRect, 1);
 
@@ -275,8 +278,7 @@ static NSString *const MBEGlyphDescriptorsKey = @"glyphDescriptors";
 #if MBE_GENERATE_DEBUG_ATLAS_IMAGE
     CGImageRef contextImage = CGBitmapContextCreateImage(context);
     // Break here to view the generated font atlas bitmap
-    NSImage *fontImage = [[NSImage alloc] initWithCGImage:contextImage size:NSMakeSize(width, height)];
-    fontImage = nil;
+    self.fontImage = [[NSImage alloc] initWithCGImage:contextImage size:NSMakeSize(width, height)];
     CGImageRelease(contextImage);
 #endif
 
