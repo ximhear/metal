@@ -145,8 +145,10 @@ static NSString *const MBEGlyphDescriptorsKey = @"glyphDescriptors";
 
 - (CGFloat)estimatedLineWidthForFont:(NSFont *)font
 {
-    CGFloat estimatedStrokeWidth = [@"!" sizeWithAttributes:@{ NSFontAttributeName : font }].width;
-    return ceilf(estimatedStrokeWidth);
+//    return 50;
+    CGFloat estimatedStrokeWidth = ceilf([@"!" sizeWithAttributes:@{ NSFontAttributeName : font }].width);
+//    CGFloat estimatedStrokeHeight = ceilf([@"A" sizeWithAttributes:@{ NSFontAttributeName : font }].height);
+    return estimatedStrokeWidth;
 }
 
 - (BOOL)font:(NSFont *)font atSize:(CGFloat)size isLikelyToFitInAtlasRect:(CGRect)rect
@@ -202,7 +204,7 @@ static NSString *const MBEGlyphDescriptorsKey = @"glyphDescriptors";
     CGContextSetRGBFillColor(context, 0, 0, 0, 1);
     CGContextFillRect(context, CGRectMake(0, 0, width, height));
 
-    _fontPointSize = 100;//[self pointSizeThatFitsForFont:font inAtlasRect:CGRectMake(0, 0, width, height)];
+    _fontPointSize = 80;//[self pointSizeThatFitsForFont:font inAtlasRect:CGRectMake(0, 0, width, height)];
     CTFontRef ctFont = CTFontCreateWithName((__bridge CFStringRef)font.fontName, _fontPointSize, NULL);
     _parentFont = [NSFont fontWithName:font.fontName size:_fontPointSize];
 
@@ -285,6 +287,19 @@ static NSString *const MBEGlyphDescriptorsKey = @"glyphDescriptors";
     CFRelease(ctFont);
     CGContextRelease(context);
     CGColorSpaceRelease(colorSpace);
+    
+//    for (int y = 0 ; y < height; y++) {
+//        NSString* line = @"";
+//        for (int x = 0 ; x < width; x++) {
+//            if (x == 0) {
+//                line = [[NSString alloc] initWithFormat:@"%x,", imageData[y*width + x]];
+//            }
+//            else {
+//                line = [[NSString alloc] initWithFormat:@"%@%x,", line, imageData[y*width + x]];
+//            }
+//        }
+//        NSLog(@"%@", line);
+//    }
 
     return imageData;
 }
@@ -367,6 +382,20 @@ static NSString *const MBEGlyphDescriptorsKey = @"glyphDescriptors";
         }
     }
 
+//    for (long y = 0; y < height; ++y) {
+//        NSString* line = @"";
+//        for (long x = 0; x < width; ++x) {
+//            if (x == 0) {
+//                line = [[NSString alloc] initWithFormat:@"%f,", distance(x, y)];
+//            }
+//            else {
+//                line = [[NSString alloc] initWithFormat:@"%@%f,", line, distance(x, y)];
+//            }
+//        }
+//        NSLog(@"%@", line);
+//    }
+//    NSLog(@"");
+
     // Backward dead-reckoning pass
     for (long y = height - 2; y >= 1; --y)
     {
@@ -395,6 +424,20 @@ static NSString *const MBEGlyphDescriptorsKey = @"glyphDescriptors";
         }
     }
 
+//    for (long y = 0; y < height; ++y) {
+//        NSString* line = @"";
+//        for (long x = 0; x < width; ++x) {
+//            if (x == 0) {
+//                line = [[NSString alloc] initWithFormat:@"%f,", distance(x, y)];
+//            }
+//            else {
+//                line = [[NSString alloc] initWithFormat:@"%@%f,", line, distance(x, y)];
+//            }
+//        }
+//        NSLog(@"%@", line);
+//    }
+//    NSLog(@"");
+
     // Interior distance negation pass; distances outside the figure are considered negative
     for (long y = 0; y < height; ++y)
     {
@@ -405,6 +448,20 @@ static NSString *const MBEGlyphDescriptorsKey = @"glyphDescriptors";
         }
     }
 
+//    for (long y = 0; y < height; ++y) {
+//        NSString* line = @"";
+//        for (long x = 0; x < width; ++x) {
+//            if (x == 0) {
+//                line = [[NSString alloc] initWithFormat:@"%f,", distance(x, y)];
+//            }
+//            else {
+//                line = [[NSString alloc] initWithFormat:@"%@%f,", line, distance(x, y)];
+//            }
+//        }
+//        NSLog(@"%@", line);
+//    }
+//    NSLog(@"");
+    
     free(boundaryPointMap);
 
     return distanceMap;
@@ -444,6 +501,20 @@ static NSString *const MBEGlyphDescriptorsKey = @"glyphDescriptors";
         }
     }
 
+//    for (long y = 0; y < scaledHeight; ++y) {
+//        NSString* line = @"";
+//        for (long x = 0; x < scaledWidth; ++x) {
+//            if (x == 0) {
+//                line = [[NSString alloc] initWithFormat:@"%f,", outData[y*scaledWidth + x]];
+//            }
+//            else {
+//                line = [[NSString alloc] initWithFormat:@"%@%f,", line, outData[y*scaledWidth + x]];
+//            }
+//        }
+//        NSLog(@"%@", line);
+//    }
+//    NSLog(@"");
+
     return outData;
 }
 
@@ -462,12 +533,23 @@ static NSString *const MBEGlyphDescriptorsKey = @"glyphDescriptors";
             float clampDist = fmax(-normalizationFactor, fmin(dist, normalizationFactor));
             float scaledDist = clampDist / normalizationFactor;
             uint8_t value = ((scaledDist + 1) / 2) * UINT8_MAX;
-            if (value != 0) {
-                NSLog(@"not 0");
-            }
             outData[y * width + x] = value;
         }
     }
+
+    for (long y = 0; y < height; ++y) {
+        NSString* line = @"";
+        for (long x = 0; x < width; ++x) {
+            if (x == 0) {
+                line = [[NSString alloc] initWithFormat:@"%x,", outData[y*width + x]];
+            }
+            else {
+                line = [[NSString alloc] initWithFormat:@"%@%x,", line, outData[y*width + x]];
+            }
+        }
+        NSLog(@"%@", line);
+    }
+    NSLog(@"");
 
     return outData;
 }

@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14113" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="14269.12" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14113"/>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="14269.12"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -684,7 +685,7 @@
         <scene sceneID="R2V-B0-nI4">
             <objects>
                 <windowController id="B8D-0N-5wS" sceneMemberID="viewController">
-                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
+                    <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
                         <rect key="contentRect" x="196" y="240" width="480" height="270"/>
@@ -706,25 +707,36 @@
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="ViewController" customModule="sdfgenerator" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" wantsLayer="YES" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="565" height="283"/>
+                        <rect key="frame" x="0.0" y="0.0" width="801" height="483"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="HL2-he-59M">
-                                <rect key="frame" x="0.0" y="0.0" width="283" height="283"/>
-                                <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="D3K-BD-whv"/>
-                            </imageView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="HSW-8y-nZh" customClass="MTKView">
-                                <rect key="frame" x="283" y="0.0" width="282" height="283"/>
+                                <rect key="frame" x="401" y="0.0" width="400" height="483"/>
+                            </customView>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="ziW-av-NJ0">
+                                <rect key="frame" x="0.0" y="0.0" width="401" height="483"/>
+                                <subviews>
+                                    <imageView horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="HL2-he-59M">
+                                        <rect key="frame" x="0.0" y="0.0" width="401" height="483"/>
+                                        <imageCell key="cell" refusesFirstResponder="YES" alignment="left" imageScaling="proportionallyUpOrDown" id="D3K-BD-whv"/>
+                                    </imageView>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="HL2-he-59M" secondAttribute="bottom" id="3FG-Bs-zpe"/>
+                                    <constraint firstItem="HL2-he-59M" firstAttribute="top" secondItem="ziW-av-NJ0" secondAttribute="top" id="ESd-zJ-gjw"/>
+                                    <constraint firstItem="HL2-he-59M" firstAttribute="leading" secondItem="ziW-av-NJ0" secondAttribute="leading" id="HQH-Bu-PTa"/>
+                                    <constraint firstAttribute="trailing" secondItem="HL2-he-59M" secondAttribute="trailing" id="IeG-Aa-Pec"/>
+                                </constraints>
                             </customView>
                         </subviews>
                         <constraints>
                             <constraint firstItem="HSW-8y-nZh" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="73Y-uZ-GcK"/>
-                            <constraint firstItem="HSW-8y-nZh" firstAttribute="width" secondItem="HL2-he-59M" secondAttribute="width" id="NRh-eC-BhO"/>
-                            <constraint firstItem="HL2-he-59M" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="Tfm-rk-bsq"/>
+                            <constraint firstItem="HSW-8y-nZh" firstAttribute="width" secondItem="ziW-av-NJ0" secondAttribute="width" id="9zi-T6-JRs"/>
                             <constraint firstAttribute="bottom" secondItem="HSW-8y-nZh" secondAttribute="bottom" id="Z3F-cu-iTr"/>
-                            <constraint firstItem="HSW-8y-nZh" firstAttribute="leading" secondItem="HL2-he-59M" secondAttribute="trailing" id="Zoh-OL-6Yj"/>
-                            <constraint firstItem="HL2-he-59M" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="beH-82-bIP"/>
-                            <constraint firstAttribute="bottom" secondItem="HL2-he-59M" secondAttribute="bottom" id="ePw-Xi-ERv"/>
+                            <constraint firstItem="ziW-av-NJ0" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="bDF-iV-zCJ"/>
+                            <constraint firstItem="HSW-8y-nZh" firstAttribute="leading" secondItem="ziW-av-NJ0" secondAttribute="trailing" id="gfP-dV-YmU"/>
+                            <constraint firstItem="ziW-av-NJ0" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="jDM-vT-NrM"/>
+                            <constraint firstAttribute="bottom" secondItem="ziW-av-NJ0" secondAttribute="bottom" id="tLk-l1-Es1"/>
                             <constraint firstAttribute="trailing" secondItem="HSW-8y-nZh" secondAttribute="trailing" id="ylh-FF-mt0"/>
                         </constraints>
                     </view>
@@ -735,7 +747,7 @@
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="105.5" y="612.5"/>
+            <point key="canvasLocation" x="223.5" y="712.5"/>
         </scene>
     </scenes>
 </document>

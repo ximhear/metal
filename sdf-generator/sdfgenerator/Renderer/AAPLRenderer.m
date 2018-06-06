@@ -14,7 +14,7 @@ Implementation of our platform independent renderer class, which performs Metal 
 //   uses these types as inputs to the shaders
 #import "AAPLShaderTypes.h"
 
-static float MBEFontAtlasSize = 64 * SCALE_FACTOR;
+static float MBEFontAtlasSize = 64/*2048*/ * SCALE_FACTOR;
 
 @interface AAPLRenderer ()
 
@@ -116,16 +116,6 @@ static float MBEFontAtlasSize = 64 * SCALE_FACTOR;
                                               options:MTLResourceOptionCPUCacheModeDefault];
         [_uniformBuffer setLabel:@"Uniform Buffer"];
 
-        CGSize drawableSize = mtkView.drawableSize;
-        MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatDepth32Float
-                                                                                              width:drawableSize.width
-                                                                                             height:drawableSize.height
-                                                                                          mipmapped:NO];
-        descriptor.usage = MTLTextureUsageRenderTarget;
-        descriptor.resourceOptions = MTLResourceStorageModePrivate;
-        self.depthTexture = [_device newTextureWithDescriptor:descriptor];
-        [self.depthTexture setLabel:@"Depth Texture"];
-
     }
 
     return self;
@@ -160,7 +150,9 @@ static float MBEFontAtlasSize = 64 * SCALE_FACTOR;
     float minT = glyphInfo.topLeftTexCoord.y;
     float maxT = glyphInfo.bottomRightTexCoord.y;
     
-    float value = 275;
+//    float value = 275;
+    float value = fminf(_viewportSize.x, _viewportSize.y) * 0.9 / 2;
+    
     AAPLVertex triangleVertices[] =
     {
         // 2D positions,    RGBA colors
@@ -171,6 +163,18 @@ static float MBEFontAtlasSize = 64 * SCALE_FACTOR;
         { {  value,   value }, { maxS, minT} },
         { {  value,  -value }, { maxS, maxT} },
     };
+    
+    CGSize drawableSize = view.drawableSize;
+    if (self.depthTexture == nil || (self.depthTexture.width != drawableSize.width || self.depthTexture.height != drawableSize.height)) {
+        MTLTextureDescriptor *descriptor = [MTLTextureDescriptor texture2DDescriptorWithPixelFormat:MTLPixelFormatDepth32Float
+                                                                                              width:drawableSize.width
+                                                                                             height:drawableSize.height
+                                                                                          mipmapped:NO];
+        descriptor.usage = MTLTextureUsageRenderTarget;
+        descriptor.resourceOptions = MTLResourceStorageModePrivate;
+        self.depthTexture = [_device newTextureWithDescriptor:descriptor];
+        [self.depthTexture setLabel:@"Depth Texture"];
+    }
 
     // Create a new command buffer for each render pass to the current drawable
     id<MTLCommandBuffer> commandBuffer = [_commandQueue commandBuffer];
