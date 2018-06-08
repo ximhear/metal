@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8C1EEBCA20CA1617004B73DB /* FontAtlasGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C1EEBC920CA1617004B73DB /* FontAtlasGenerator.swift */; };
 		8C46F56120C5892C008D6838 /* AAPLRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C46F55E20C5892C008D6838 /* AAPLRenderer.m */; };
 		8C46F56220C5892C008D6838 /* AAPLShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 8C46F56020C5892C008D6838 /* AAPLShaders.metal */; };
 		8CD989EB20C458500076E7EE /* MBEFontAtlas.m in Sources */ = {isa = PBXBuildFile; fileRef = 8CD989EA20C458500076E7EE /* MBEFontAtlas.m */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8C1EEBC920CA1617004B73DB /* FontAtlasGenerator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontAtlasGenerator.swift; sourceTree = "<group>"; };
 		8C46F55D20C5892C008D6838 /* AAPLRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLRenderer.h; sourceTree = "<group>"; };
 		8C46F55E20C5892C008D6838 /* AAPLRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLRenderer.m; sourceTree = "<group>"; };
 		8C46F55F20C5892C008D6838 /* AAPLShaderTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLShaderTypes.h; sourceTree = "<group>"; };
@@ -90,6 +92,7 @@
 				8CD989E920C458500076E7EE /* MBEFontAtlas.h */,
 				8CD989EA20C458500076E7EE /* MBEFontAtlas.m */,
 				8CD989E820C4584F0076E7EE /* sdfgenerator-Bridging-Header.h */,
+				8C1EEBC920CA1617004B73DB /* FontAtlasGenerator.swift */,
 			);
 			path = sdfgenerator;
 			sourceTree = "<group>";
@@ -171,6 +174,7 @@
 				ECC41B7F20A4A73300B421EF /* GZLog.swift in Sources */,
 				ECBBEC4E20A4BA5C00F0C048 /* NSImage-extension.swift in Sources */,
 				8CD989EB20C458500076E7EE /* MBEFontAtlas.m in Sources */,
+				8C1EEBCA20CA1617004B73DB /* FontAtlasGenerator.swift in Sources */,
 				ECC41B6F20A4A4CB00B421EF /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

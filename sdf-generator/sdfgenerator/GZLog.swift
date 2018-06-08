@@ -34,6 +34,10 @@ private func fileNameOfFile(_ file: String) -> String {
     return ""
 }
 
+func GZLog(_ message: @autoclosure () -> Any? = "", function: String = #function, file: String = #file, line: Int = #line) {
+    GZLogFunc(message, function: function, file: file, line: line)
+}
+
 func GZLogFunc(_ message: @autoclosure () -> Any? = "", function: String = #function, file: String = #file, line: Int = #line) -> Void {
     if GZLOG_FLAG == false {
         return
