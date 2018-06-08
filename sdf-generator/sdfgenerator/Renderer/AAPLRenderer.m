@@ -189,9 +189,7 @@ static float MBEFontAtlasSize = 64/*2048*/ * SCALE_FACTOR;
         MTLRegion region = MTLRegionMake2D(0, 0, MBEFontAtlasSize, MBEFontAtlasSize);
         _fontTexture = [_device newTextureWithDescriptor:textureDesc];
         [_fontTexture setLabel:@"Font Atlas"];
-        NSLog(@"%@", _atlasGenerator);
         NSLog(@"\n%@", _atlasGenerator.textureData);
-        NSLog(@"%d", [_atlasGenerator.textureData length]);
         [_fontTexture replaceRegion:region mipmapLevel:0 withBytes:_atlasGenerator.textureData.bytes bytesPerRow:MBEFontAtlasSize];
         
         _uniformBuffer = [_device newBufferWithLength:sizeof(MBEUniforms)
