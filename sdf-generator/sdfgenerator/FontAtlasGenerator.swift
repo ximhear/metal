@@ -190,7 +190,7 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
         context?.setFillColor(red: 0, green: 0, blue: 0, alpha: 1)
         context?.fill(CGRect.init(x: 0, y: 0, width: width, height: height))
         
-        fontPointSize = 80;//[self pointSizeThatFitsForFont:font inAtlasRect:CGRectMake(0, 0, width, height)];
+        fontPointSize = 64;//[self pointSizeThatFitsForFont:font inAtlasRect:CGRectMake(0, 0, width, height)];
         let ctFont = CTFontCreateWithName(font.fontName as CFString, fontPointSize, nil)
         parentFont = NSFont.init(name: font.fontName, size: fontPointSize)
         

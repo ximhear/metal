@@ -24,7 +24,7 @@ class ViewController: NSViewController {
         mtkview.device = MTLCreateSystemDefaultDevice()
 
         let MBEFontAtlasSize: NSInteger = 64/*2048*/ * NSInteger(SCALE_FACTOR);
-        let font = NSFont.init(name: "AppleSDGothicNeo-Regular", size: 80)
+        let font = NSFont.init(name: "AppleSDGothicNeo-Regular", size: 64)
         
 //        atlas = MBEFontAtlas.init(font: font, textureSize: MBEFontAtlasSize)
 //        self.imageView.image = atlas?.fontImage
