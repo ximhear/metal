@@ -26,13 +26,13 @@ class ViewController: NSViewController {
         let MBEFontAtlasSize: NSInteger = 64/*2048*/ * NSInteger(SCALE_FACTOR);
         let font = NSFont.init(name: "AppleSDGothicNeo-Regular", size: 64)
         
-        atlas = MBEFontAtlas.init(font: font, textureSize: MBEFontAtlasSize)
-        self.imageView.image = atlas?.fontImage
-        renderer = AAPLRenderer.init(metalKitView: mtkview, atlas: atlas)
+//        atlas = MBEFontAtlas.init(font: font, textureSize: MBEFontAtlasSize)
+//        self.imageView.image = atlas?.fontImage
+//        renderer = AAPLRenderer.init(metalKitView: mtkview, atlas: atlas)
 
-//        atlasGenerator = FontAtlasGenerator.init(font: font!, textureSize: MBEFontAtlasSize)
-//        self.imageView.image = atlasGenerator?.fontImage
-//        renderer = AAPLRenderer.init(metalKitView: mtkview, atlasGenerator: atlasGenerator)
+        atlasGenerator = FontAtlasGenerator.init(font: font!, textureSize: MBEFontAtlasSize)
+        self.imageView.image = atlasGenerator?.fontImage
+        renderer = AAPLRenderer.init(metalKitView: mtkview, atlasGenerator: atlasGenerator)
 
         renderer?.mtkView(mtkview, drawableSizeWillChange: mtkview.drawableSize)
         self.mtkview.delegate = renderer

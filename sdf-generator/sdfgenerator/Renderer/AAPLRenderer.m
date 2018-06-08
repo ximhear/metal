@@ -224,12 +224,25 @@ static float MBEFontAtlasSize = 64/*2048*/ * SCALE_FACTOR;
 - (void)drawInMTKView:(nonnull MTKView *)view
 {
     
-    MBEGlyphDescriptor *glyphInfo = _atlas.glyphDescriptors[0];
-    float minS = glyphInfo.topLeftTexCoord.x;
-    float maxS = glyphInfo.bottomRightTexCoord.x;
-    float minT = glyphInfo.topLeftTexCoord.y;
-    float maxT = glyphInfo.bottomRightTexCoord.y;
-    
+    float minS = 0;
+    float maxS = 0;
+    float minT = 0;
+    float maxT = 0;
+    if (_atlas != nil) {
+        MBEGlyphDescriptor *glyphInfo = _atlas.glyphDescriptors[0];
+        minS = glyphInfo.topLeftTexCoord.x;
+        maxS = glyphInfo.bottomRightTexCoord.x;
+        minT = glyphInfo.topLeftTexCoord.y;
+        maxT = glyphInfo.bottomRightTexCoord.y;
+    }
+    else if (_atlasGenerator != nil) {
+        GlyphDescriptor *glyphInfo = [_atlasGenerator glyphDescriptorAt:0];
+        minS = glyphInfo.topLeftTexCoord.x;
+        maxS = glyphInfo.bottomRightTexCoord.x;
+        minT = glyphInfo.topLeftTexCoord.y;
+        maxT = glyphInfo.bottomRightTexCoord.y;
+    }
+
 //    float value = 275;
     float value = fminf(_viewportSize.x, _viewportSize.y) * 0.9 / 2;
     

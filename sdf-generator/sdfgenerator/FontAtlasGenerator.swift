@@ -28,8 +28,8 @@ let MBE_GENERATE_DEBUG_ATLAS_IMAGE = 1
 
 class GlyphDescriptor : NSObject, NSSecureCoding {
     var glyphIndex: CGGlyph = 0
-    var topLeftTexCoord = CGPoint.zero
-    var bottomRightTexCoord = CGPoint.zero
+    @objc var topLeftTexCoord = CGPoint.zero
+    @objc var bottomRightTexCoord = CGPoint.zero
     
     required init?(coder aDecoder: NSCoder) {
         super.init()
@@ -65,6 +65,10 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
     var glyphDescriptors = [GlyphDescriptor]()
     @objc var textureData: Data?
     var fontImage: NSImage?
+    
+    @objc func glyphDescriptor(at index: Int) -> GlyphDescriptor {
+        return glyphDescriptors[index]
+    }
 
     init(font: NSFont, textureSize: Int) {
         super.init()
