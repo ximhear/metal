@@ -561,8 +561,6 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
         
         let fontGlyphCount: CFIndex = CTFontGetGlyphCount(ctFont)
         
-        let glyphMargin: CGFloat = 0.0
-        
         for glyph in 0..<fontGlyphCount {
             GZLog(glyph)
 //            if (glyph > 300) {
@@ -631,6 +629,7 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
 
 extension NSImage {
     
+    @discardableResult
     func writeToFile(file: String, atomically: Bool, usingType type: NSBitmapImageRep.FileType) -> Bool {
         let properties = [NSBitmapImageRep.PropertyKey.compressionFactor: 1.0]
         guard
