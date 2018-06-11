@@ -8,6 +8,7 @@
 
 import Foundation
 import AppKit
+import CoreText
 
 fileprivate let SCALE_FACTOR = 1
 fileprivate let MBEFontAtlasSize = 128/*4096*/ * SCALE_FACTOR;
@@ -198,7 +199,12 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
         fontPointSize = 64;//[self pointSizeThatFitsForFont:font inAtlasRect:CGRectMake(0, 0, width, height)];
         let ctFont = CTFontCreateWithName(font.fontName as CFString, fontPointSize, nil)
         parentFont = NSFont.init(name: font.fontName, size: fontPointSize)
+        let data = CTFontCopyTable(ctFont, CTFontTableTag(kCTFontTableCmap), CTFontTableOptions.init(rawValue: 0))
+        let set = CTFontCopyCharacterSet(ctFont) as NSCharacterSet
         
+        GZLog(data)
+        GZLog(set.)
+        GZLog()
         let fontGlyphCount: CFIndex = CTFontGetGlyphCount(ctFont)
         
         let glyphMargin = self.estimatedLineWidth(for: parentFont!)
@@ -215,7 +221,9 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
         var maxYCoordForLine: CGFloat = -1
         for glyph in 0..<fontGlyphCount {
             
-            if (glyph != 34) {
+            // A : 34
+            //
+            if (glyph != 2633) {
                 continue
             }
             
