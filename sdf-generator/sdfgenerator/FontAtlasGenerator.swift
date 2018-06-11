@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import AppKit
 
 fileprivate let SCALE_FACTOR = 1
 fileprivate let MBEFontAtlasSize = 128/*4096*/ * SCALE_FACTOR;
@@ -551,10 +552,85 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
         textureData = Data.init(bytes: texture, count: textureByteCount)
         texture.deallocate()
     }
+
+    
+    func createFontImage(for font: NSFont) -> Void {
+        let colorSpace = CGColorSpaceCreateDeviceGray()
+        
+        let ctFont = CTFontCreateWithName(font.fontName as CFString, font.pointSize, nil)
+        
+        let fontGlyphCount: CFIndex = CTFontGetGlyphCount(ctFont)
+        
+        let glyphMargin: CGFloat = 0.0
+        
+        for glyph in 0..<fontGlyphCount {
+            GZLog(glyph)
+//            if (glyph > 300) {
+//                break
+//            }
+            
+            var boundingRect: CGRect = .zero
+            var g = CGGlyph(glyph)
+            CTFontGetBoundingRectsForGlyphs(ctFont, CTFontOrientation.horizontal, &g, &boundingRect, 1);
+            
+            let width = Int(ceilf(Float(boundingRect.width)))
+            let height = Int(ceilf(Float(boundingRect.height)))
+//            GZLog(width)
+//            GZLog(height)
+            if width == 0 || height == 0 {
+                continue
+            }
+            let imageData = UnsafeMutablePointer<UInt8>.allocate(capacity: width * height)
+            let context = CGContext.init(data: imageData,
+                                         width: width,
+                                         height: height,
+                                         bitsPerComponent: 8,
+                                         bytesPerRow: width,
+                                         space: colorSpace,
+                                         bitmapInfo: 0)
+            
+            
+            // Turn off antialiasing so we only get fully-on or fully-off pixels.
+            // This implicitly disables subpixel antialiasing and hinting.
+            context?.setAllowsAntialiasing(false)
+            
+            // Flip context coordinate space so y increases downward
+//            context?.translateBy(x: 0, y: CGFloat(height))
+//            context?.scaleBy(x: 1, y: -1)
+            
+            // Fill the context with an opaque black color
+            context?.setFillColor(red: 0, green: 0, blue: 0, alpha: 1)
+            context?.fill(CGRect.init(x: 0, y: 0, width: width, height: height))
+            
+            // Set fill color so that glyphs are solid white
+            context?.setFillColor(red: 1, green: 1, blue: 1, alpha: 1)
+            
+            //            var glyphTransform = CGAffineTransform.init(a: 1, b: 0, c: 0, d: -1, tx: glyphOriginX, ty: glyphOriginY)
+            var glyphTransform = CGAffineTransform.init(a: 1, b: 0, c: 0, d: 1, tx: -boundingRect.origin.x, ty: -boundingRect.origin.y)
+            
+            let path = CTFontCreatePathForGlyph(ctFont, g, &glyphTransform)
+            context?.addPath(path!)
+            context?.fillPath()
+            
+            let contextImage = context?.makeImage()
+            // Break here to view the generated font atlas bitmap
+            let image = NSImage.init(cgImage: contextImage!, size: NSSize.init(width: width, height: height))
+            
+            do {
+                try FileManager.default.createDirectory(at: URL.init(fileURLWithPath: "/Users/gzonelee/temp/font-atlas/\(glyph)"), withIntermediateDirectories: true, attributes: nil)
+            }
+            catch {
+                GZLog(error)
+            }
+            image.writeToFile(file: "file:///Users/gzonelee/temp/font-atlas/\(glyph)/char.jpg", atomically: true, usingType: NSBitmapImageRep.FileType.jpeg) // as jpg
+            imageData.deallocate()
+        }
+    }
 }
 
 
 extension NSImage {
+    
     func writeToFile(file: String, atomically: Bool, usingType type: NSBitmapImageRep.FileType) -> Bool {
         let properties = [NSBitmapImageRep.PropertyKey.compressionFactor: 1.0]
         guard
