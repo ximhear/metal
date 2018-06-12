@@ -10,6 +10,7 @@
 		8C1EEBCA20CA1617004B73DB /* FontAtlasGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C1EEBC920CA1617004B73DB /* FontAtlasGenerator.swift */; };
 		8C46F56120C5892C008D6838 /* AAPLRenderer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C46F55E20C5892C008D6838 /* AAPLRenderer.m */; };
 		8C46F56220C5892C008D6838 /* AAPLShaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 8C46F56020C5892C008D6838 /* AAPLShaders.metal */; };
+		8C4A342520CFCA0C009946B4 /* Char2Index.m in Sources */ = {isa = PBXBuildFile; fileRef = 8C4A342420CFCA0B009946B4 /* Char2Index.m */; };
 		8CD989EB20C458500076E7EE /* MBEFontAtlas.m in Sources */ = {isa = PBXBuildFile; fileRef = 8CD989EA20C458500076E7EE /* MBEFontAtlas.m */; };
 		ECBBEC4E20A4BA5C00F0C048 /* NSImage-extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECBBEC4D20A4BA5C00F0C048 /* NSImage-extension.swift */; };
 		ECC41B6F20A4A4CB00B421EF /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = ECC41B6E20A4A4CB00B421EF /* AppDelegate.swift */; };
@@ -25,6 +26,8 @@
 		8C46F55E20C5892C008D6838 /* AAPLRenderer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AAPLRenderer.m; sourceTree = "<group>"; };
 		8C46F55F20C5892C008D6838 /* AAPLShaderTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AAPLShaderTypes.h; sourceTree = "<group>"; };
 		8C46F56020C5892C008D6838 /* AAPLShaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = AAPLShaders.metal; sourceTree = "<group>"; };
+		8C4A342320CFCA0B009946B4 /* Char2Index.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Char2Index.h; sourceTree = "<group>"; };
+		8C4A342420CFCA0B009946B4 /* Char2Index.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Char2Index.m; sourceTree = "<group>"; };
 		8CD989E820C4584F0076E7EE /* sdfgenerator-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "sdfgenerator-Bridging-Header.h"; sourceTree = "<group>"; };
 		8CD989E920C458500076E7EE /* MBEFontAtlas.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MBEFontAtlas.h; sourceTree = "<group>"; };
 		8CD989EA20C458500076E7EE /* MBEFontAtlas.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MBEFontAtlas.m; sourceTree = "<group>"; };
@@ -93,6 +96,8 @@
 				8CD989EA20C458500076E7EE /* MBEFontAtlas.m */,
 				8CD989E820C4584F0076E7EE /* sdfgenerator-Bridging-Header.h */,
 				8C1EEBC920CA1617004B73DB /* FontAtlasGenerator.swift */,
+				8C4A342320CFCA0B009946B4 /* Char2Index.h */,
+				8C4A342420CFCA0B009946B4 /* Char2Index.m */,
 			);
 			path = sdfgenerator;
 			sourceTree = "<group>";
@@ -169,6 +174,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				ECC41B7120A4A4CB00B421EF /* ViewController.swift in Sources */,
+				8C4A342520CFCA0C009946B4 /* Char2Index.m in Sources */,
 				8C46F56120C5892C008D6838 /* AAPLRenderer.m in Sources */,
 				8C46F56220C5892C008D6838 /* AAPLShaders.metal in Sources */,
 				ECC41B7F20A4A73300B421EF /* GZLog.swift in Sources */,
