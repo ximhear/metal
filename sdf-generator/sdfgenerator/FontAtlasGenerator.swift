@@ -199,12 +199,9 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
         fontPointSize = 64;//[self pointSizeThatFitsForFont:font inAtlasRect:CGRectMake(0, 0, width, height)];
         let ctFont = CTFontCreateWithName(font.fontName as CFString, fontPointSize, nil)
         parentFont = NSFont.init(name: font.fontName, size: fontPointSize)
-        let data = CTFontCopyTable(ctFont, CTFontTableTag(kCTFontTableCmap), CTFontTableOptions.init(rawValue: 0))
-        let set = CTFontCopyCharacterSet(ctFont) as NSCharacterSet
+//        let data = CTFontCopyTable(ctFont, CTFontTableTag(kCTFontTableCmap), CTFontTableOptions.init(rawValue: 0))
+//        let set = CTFontCopyCharacterSet(ctFont) as NSCharacterSet
         
-        GZLog(data)
-        GZLog(set.)
-        GZLog()
         let fontGlyphCount: CFIndex = CTFontGetGlyphCount(ctFont)
         
         let glyphMargin = self.estimatedLineWidth(for: parentFont!)
