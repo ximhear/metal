@@ -566,6 +566,18 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
         
         let fontGlyphCount: CFIndex = CTFontGetGlyphCount(ctFont)
         
+        let a = Char2Index()
+        var pair = [Int: Int]()
+        if let dic = a.dic as? [Int: Int] {
+            for key in dic.keys {
+                pair[dic[key]!] = key
+            }
+        }
+        
+        GZLog(a.dic.count)
+        GZLog(pair.count)
+        GZLog()
+        
         for glyph in 0..<fontGlyphCount {
             GZLog(glyph)
 //            if (glyph > 300) {
@@ -619,13 +631,17 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
             // Break here to view the generated font atlas bitmap
             let image = NSImage.init(cgImage: contextImage!, size: NSSize.init(width: width, height: height))
             
-            do {
-                try FileManager.default.createDirectory(at: URL.init(fileURLWithPath: "/Users/gzonelee/temp/font-atlas/\(glyph)"), withIntermediateDirectories: true, attributes: nil)
+            if let value = pair[glyph], let char = Unicode.Scalar.init(value) {
+                let folderName = String.init(char)
+                GZLog(folderName)
+                do {
+                    try FileManager.default.createDirectory(at: URL.init(fileURLWithPath: "/Users/chlee/temp/font-atlas/\(value)"), withIntermediateDirectories: true, attributes: nil)
+                }
+                catch {
+                    GZLog(error)
+                }
+                image.writeToFile(file: "file:///Users/chlee/temp/font-atlas/\(value)/char.jpg", atomically: true, usingType: NSBitmapImageRep.FileType.jpeg) // as jpg
             }
-            catch {
-                GZLog(error)
-            }
-            image.writeToFile(file: "file:///Users/gzonelee/temp/font-atlas/\(glyph)/char.jpg", atomically: true, usingType: NSBitmapImageRep.FileType.jpeg) // as jpg
             imageData.deallocate()
         }
     }
@@ -644,7 +660,9 @@ extension NSImage {
                 return false
         }
         do {
-            try fileData.write(to: URL.init(string: file)!)
+            if let url = URL.init(string: file) {
+                try fileData.write(to: url)
+            }
         }
         catch {
             GZLog(error)

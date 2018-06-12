@@ -4,3 +4,4 @@
 
 #import "MBEFontAtlas.h"
 #import "AAPLRenderer.h"
+#import "Char2Index.h"
