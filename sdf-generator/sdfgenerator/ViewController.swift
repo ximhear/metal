@@ -30,14 +30,15 @@ class ViewController: NSViewController {
 //        self.imageView.image = atlas?.fontImage
 //        renderer = AAPLRenderer.init(metalKitView: mtkview, atlas: atlas)
 
-        atlasGenerator = FontAtlasGenerator.init(font: font!, textureSize: MBEFontAtlasSize)
+//        atlasGenerator = FontAtlasGenerator.init(font: font!, textureSize: MBEFontAtlasSize)
+        atlasGenerator = FontAtlasGenerator.init(font: font!)
+        atlasGenerator?.createFontImage(for: font!, string: "VM")
         self.imageView.image = atlasGenerator?.fontImage
+//        renderer = AAPLRenderer.init(metalKitView: mtkview, atlasGenerator: atlasGenerator)
         renderer = AAPLRenderer.init(metalKitView: mtkview, atlasGenerator: atlasGenerator)
 
         renderer?.mtkView(mtkview, drawableSizeWillChange: mtkview.drawableSize)
         self.mtkview.delegate = renderer
-        
-        atlasGenerator?.createFontImage(for: font!)
     }
 
     override var representedObject: Any? {

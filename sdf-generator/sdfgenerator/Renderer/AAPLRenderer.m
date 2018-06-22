@@ -201,6 +201,83 @@ static float MBEFontAtlasSize = 64/*2048*/ * SCALE_FACTOR;
     return self;
 }
 
+- (nonnull instancetype)initWithMetalKitView:(nonnull MTKView *)mtkView string:(NSString*)string atlasGenerator:(FontAtlasGenerator*)atlasGenerator {
+    self = [super init];
+    if(self)
+    {
+        NSError *error = NULL;
+        
+        _device = mtkView.device;
+        _atlasGenerator = atlasGenerator;
+        
+        // Load all the shader files with a .metal file extension in the project
+        id<MTLLibrary> defaultLibrary = [_device newDefaultLibrary];
+        
+        // Load the vertex function from the library
+        id<MTLFunction> vertexFunction = [defaultLibrary newFunctionWithName:@"vertexShader"];
+        
+        // Load the fragment function from the library
+        id<MTLFunction> fragmentFunction = [defaultLibrary newFunctionWithName:@"fragmentShader"];
+        
+        // Configure a pipeline descriptor that is used to create a pipeline state
+        MTLRenderPipelineDescriptor *pipelineStateDescriptor = [[MTLRenderPipelineDescriptor alloc] init];
+        pipelineStateDescriptor.label = @"Simple Pipeline";
+        pipelineStateDescriptor.vertexFunction = vertexFunction;
+        pipelineStateDescriptor.fragmentFunction = fragmentFunction;
+        pipelineStateDescriptor.colorAttachments[0].pixelFormat = mtkView.colorPixelFormat;
+        pipelineStateDescriptor.colorAttachments[0].blendingEnabled = YES;
+        pipelineStateDescriptor.colorAttachments[0].sourceRGBBlendFactor = MTLBlendFactorSourceAlpha;
+        pipelineStateDescriptor.colorAttachments[0].destinationRGBBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+        pipelineStateDescriptor.colorAttachments[0].rgbBlendOperation = MTLBlendOperationAdd;
+        pipelineStateDescriptor.colorAttachments[0].sourceAlphaBlendFactor = MTLBlendFactorSourceAlpha;
+        pipelineStateDescriptor.colorAttachments[0].destinationAlphaBlendFactor = MTLBlendFactorOneMinusSourceAlpha;
+        pipelineStateDescriptor.colorAttachments[0].alphaBlendOperation = MTLBlendOperationAdd;
+        
+        pipelineStateDescriptor.depthAttachmentPixelFormat = MTLPixelFormatDepth32Float;
+        
+        _pipelineState = [_device newRenderPipelineStateWithDescriptor:pipelineStateDescriptor
+                                                                 error:&error];
+        if (!_pipelineState)
+        {
+            // Pipeline State creation could fail if we haven't properly set up our pipeline descriptor.
+            //  If the Metal API validation is enabled, we can find out more information about what
+            //  went wrong.  (Metal API validation is enabled by default when a debug build is run
+            //  from Xcode)
+            NSLog(@"Failed to created pipeline state, error %@", error);
+            return nil;
+        }
+        
+        MTLSamplerDescriptor *samplerDescriptor = [MTLSamplerDescriptor new];
+        samplerDescriptor.minFilter = MTLSamplerMinMagFilterNearest;
+        samplerDescriptor.magFilter = MTLSamplerMinMagFilterLinear;
+        samplerDescriptor.sAddressMode = MTLSamplerAddressModeClampToZero;
+        samplerDescriptor.tAddressMode = MTLSamplerAddressModeClampToZero;
+        _sampler = [_device newSamplerStateWithDescriptor:samplerDescriptor];
+        
+        // Create the command queue
+        _commandQueue = [_device newCommandQueue];
+        
+        MTLTextureDescriptor *textureDesc = [MTLTextureDescriptor
+                                             texture2DDescriptorWithPixelFormat:MTLPixelFormatR8Unorm
+                                             width:MBEFontAtlasSize
+                                             height:MBEFontAtlasSize
+                                             mipmapped:NO];
+        textureDesc.usage = MTLTextureUsageShaderRead;
+        MTLRegion region = MTLRegionMake2D(0, 0, MBEFontAtlasSize, MBEFontAtlasSize);
+        _fontTexture = [_device newTextureWithDescriptor:textureDesc];
+        [_fontTexture setLabel:@"Font Atlas"];
+        NSLog(@"\n%@", _atlasGenerator.textureData);
+        [_fontTexture replaceRegion:region mipmapLevel:0 withBytes:_atlasGenerator.textureData.bytes bytesPerRow:MBEFontAtlasSize];
+        
+        _uniformBuffer = [_device newBufferWithLength:sizeof(MBEUniforms)
+                                              options:MTLResourceOptionCPUCacheModeDefault];
+        [_uniformBuffer setLabel:@"Uniform Buffer"];
+        
+    }
+    
+    return self;
+}
+
 - (void)updateUniforms
 {
     MBEUniforms uniforms;

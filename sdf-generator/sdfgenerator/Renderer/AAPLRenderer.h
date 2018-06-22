@@ -14,5 +14,6 @@ Header for our platform independent renderer class, which performs Metal setup a
 
 - (nonnull instancetype)initWithMetalKitView:(nonnull MTKView *)mtkView atlas:(MBEFontAtlas*)atlas;
 - (nonnull instancetype)initWithMetalKitView:(nonnull MTKView *)mtkView atlasGenerator:(FontAtlasGenerator*)atlasGenerator;
+- (nonnull instancetype)initWithMetalKitView:(nonnull MTKView *)mtkView string:(NSString*)string atlasGenerator:(FontAtlasGenerator*)atlasGenerator;
 
 @end

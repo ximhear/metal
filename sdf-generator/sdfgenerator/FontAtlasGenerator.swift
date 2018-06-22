@@ -82,6 +82,14 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
         self.createTextureData()
     }
 
+    init(font: NSFont) {
+        super.init()
+        
+        parentFont = font
+        fontPointSize = font.pointSize
+        self.textureSize = 0
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         super.init()
         
@@ -134,17 +142,31 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
     
     func estimatedGlyphSize(for font: NSFont) -> CGSize {
         let exemplarString = "{ǺOJMQYZa@jmqyw" as NSString
-        let exemplarStringSize = exemplarString.size(withAttributes: [NSAttributedString.Key.font: font])
-        let averageGlyphWidth: Float = ceilf(Float(exemplarStringSize.width / CGFloat(exemplarString.length)))
-        let maxGlyphHeight: Float = ceilf(Float(exemplarStringSize.height))
-        return CGSize.init(width: CGFloat(averageGlyphWidth), height: CGFloat(maxGlyphHeight))
+        if #available(iOS 12.0, *) {
+            let exemplarStringSize = exemplarString.size(withAttributes: [NSAttributedString.Key.font: font])
+            let averageGlyphWidth: Float = ceilf(Float(exemplarStringSize.width / CGFloat(exemplarString.length)))
+            let maxGlyphHeight: Float = ceilf(Float(exemplarStringSize.height))
+            return CGSize.init(width: CGFloat(averageGlyphWidth), height: CGFloat(maxGlyphHeight))
+        }
+        else {
+            let exemplarStringSize = exemplarString.size(withAttributes: [NSAttributedStringKey.font: font])
+            let averageGlyphWidth: Float = ceilf(Float(exemplarStringSize.width / CGFloat(exemplarString.length)))
+            let maxGlyphHeight: Float = ceilf(Float(exemplarStringSize.height))
+            return CGSize.init(width: CGFloat(averageGlyphWidth), height: CGFloat(maxGlyphHeight))
+        }
     }
     
     func estimatedLineWidth(for font: NSFont) -> CGFloat {
     //    return 50;
         let exemplarString = "!" as NSString
-        let exemplarStringSize = exemplarString.size(withAttributes: [NSAttributedString.Key.font: font])
-        return CGFloat(ceilf(Float(exemplarStringSize.width)))
+        if #available(iOS 12.0, *) {
+            let exemplarStringSize = exemplarString.size(withAttributes: [NSAttributedString.Key.font: font])
+            return CGFloat(ceilf(Float(exemplarStringSize.width)))
+        }
+        else {
+            let exemplarStringSize = exemplarString.size(withAttributes: [NSAttributedStringKey.font: font])
+            return CGFloat(ceilf(Float(exemplarStringSize.width)))
+        }
     }
     
     func font(_ font: NSFont, atSize size: CGFloat, isLikelyToFitInAtlasRect rect: CGRect) -> Bool {
@@ -559,8 +581,10 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
     }
 
     
-    func createFontImage(for font: NSFont) -> Void {
+    func createFontImage(for font: NSFont, string: String) -> Void {
+
         let colorSpace = CGColorSpaceCreateDeviceGray()
+        let lineSpacing: CGFloat = 3
         
         let ctFont = CTFontCreateWithName(font.fontName as CFString, font.pointSize, nil)
         
@@ -579,6 +603,7 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
         GZLog()
         
         for glyph in 0..<fontGlyphCount {
+            
             GZLog(glyph)
 //            if (glyph > 300) {
 //                break
