@@ -706,6 +706,7 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
             totalHeight += height
         }
         totalHeight += (string.count - 1) * lineSpacing
+        maxWidth = maxWidth * 11 / 10
 
         let imageData = UnsafeMutablePointer<UInt8>.allocate(capacity: maxWidth * totalHeight)
         let context = CGContext.init(data: imageData,
@@ -718,7 +719,7 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
 
         // Turn off antialiasing so we only get fully-on or fully-off pixels.
         // This implicitly disables subpixel antialiasing and hinting.
-        context?.setAllowsAntialiasing(false)
+        context?.setAllowsAntialiasing(true)
         
         // Flip context coordinate space so y increases downward
         //            context?.translateBy(x: 0, y: CGFloat(height))
@@ -791,7 +792,7 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
             
             distanceField?.deallocate()
             
-            let spread: Float = Float(self.estimatedLineWidth(for: self.parentFont!) * 0.5)
+            let spread: Float = 10//Float(self.estimatedLineWidth(for: self.parentFont!) * 0.5)
             // Quantize the downsampled distance field into an 8-bit grayscale array suitable for use as a texture
             let texture = self.createQuantizedDistanceField(scaledField,
                                                             width: height,
