@@ -581,10 +581,9 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
     }
 
     
-    func createFontImage(for font: NSFont, string: String) -> Void {
+    func createFontImage(for font: NSFont) -> Void {
 
         let colorSpace = CGColorSpaceCreateDeviceGray()
-        let lineSpacing: CGFloat = 3
         
         let ctFont = CTFontCreateWithName(font.fontName as CFString, font.pointSize, nil)
         
@@ -660,17 +659,115 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
                 let folderName = String.init(char)
                 GZLog(folderName)
                 do {
-                    try FileManager.default.createDirectory(at: URL.init(fileURLWithPath: "/Users/chlee/temp/font-atlas/\(value)"), withIntermediateDirectories: true, attributes: nil)
+                    try FileManager.default.createDirectory(at: URL.init(fileURLWithPath: "/Users/gzonelee/temp/font-atlas/\(value)"), withIntermediateDirectories: true, attributes: nil)
                 }
                 catch {
                     GZLog(error)
                 }
-                image.writeToFile(file: "file:///Users/chlee/temp/font-atlas/\(value)/char.jpg", atomically: true, usingType: NSBitmapImageRep.FileType.jpeg) // as jpg
+                image.writeToFile(file: "file:///Users/gzonelee/temp/font-atlas/\(value)/char.jpg", atomically: true, usingType: NSBitmapImageRep.FileType.jpeg) // as jpg
             }
             imageData.deallocate()
         }
     }
+
+    func createFontImage(for font: NSFont, string: String) -> Void {
+        
+        let colorSpace = CGColorSpaceCreateDeviceGray()
+        let lineSpacing: Int = 3
+        
+        let ctFont = CTFontCreateWithName(font.fontName as CFString, font.pointSize, nil)
+
+        let characters = string.unicodeScalars.map { (scalar) in
+            return UniChar.init(scalar.value)
+        }
+        var glyphs = Array<CGGlyph>.init(repeating: CGGlyph(0), count: string.count)
+        CTFontGetGlyphsForCharacters(ctFont, characters, &glyphs, string.count)
+
+        var maxWidth: Int = 0
+        var totalHeight: Int = 0
+        for glyph in glyphs {
+            
+            GZLog(glyph)
+            var rect: CGRect = .zero
+            var g = glyph
+            CTFontGetBoundingRectsForGlyphs(ctFont, CTFontOrientation.horizontal, &g, &rect, 1)
+            let width = Int(ceilf(Float(rect.width)))
+            let height = Int(ceilf(Float(rect.height)))
+            if width == 0 || height == 0 {
+                continue
+            }
+            if maxWidth < width {
+                maxWidth = width
+            }
+            totalHeight += height
+        }
+        totalHeight += (string.count - 1) * lineSpacing
+
+        let imageData = UnsafeMutablePointer<UInt8>.allocate(capacity: maxWidth * totalHeight)
+        let context = CGContext.init(data: imageData,
+                                     width: maxWidth,
+                                     height: totalHeight,
+                                     bitsPerComponent: 8,
+                                     bytesPerRow: maxWidth,
+                                     space: colorSpace,
+                                     bitmapInfo: 0)
+
+        // Turn off antialiasing so we only get fully-on or fully-off pixels.
+        // This implicitly disables subpixel antialiasing and hinting.
+        context?.setAllowsAntialiasing(false)
+        
+        // Flip context coordinate space so y increases downward
+        //            context?.translateBy(x: 0, y: CGFloat(height))
+        //            context?.scaleBy(x: 1, y: -1)
+        
+        // Fill the context with an opaque black color
+        context?.setFillColor(red: 0, green: 0, blue: 0, alpha: 1)
+        context?.fill(CGRect.init(x: 0, y: 0, width: maxWidth, height: totalHeight))
+        
+        // Set fill color so that glyphs are solid white
+        context?.setFillColor(red: 1, green: 1, blue: 1, alpha: 1)
+        
+        var y: CGFloat = 0
+        for glyph in glyphs {
+            
+            GZLog(glyph)
+            var boundingRect: CGRect = .zero
+            var g = glyph
+            CTFontGetBoundingRectsForGlyphs(ctFont, CTFontOrientation.horizontal, &g, &boundingRect, 1);
+            
+            let width = Int(ceilf(Float(boundingRect.width)))
+            let height = Int(ceilf(Float(boundingRect.height)))
+            //            GZLog(width)
+            //            GZLog(height)
+            if width == 0 || height == 0 {
+                continue
+            }
+            
+            //            var glyphTransform = CGAffineTransform.init(a: 1, b: 0, c: 0, d: -1, tx: glyphOriginX, ty: glyphOriginY)
+            var glyphTransform = CGAffineTransform.init(a: 1, b: 0, c: 0, d: 1, tx: -boundingRect.origin.x, ty: -boundingRect.origin.y + y)
+            
+            let path = CTFontCreatePathForGlyph(ctFont, g, &glyphTransform)
+            context?.addPath(path!)
+            
+            y += CGFloat(height) + CGFloat(lineSpacing)
+        }
+        context?.fillPath()
+        
+        let contextImage = context?.makeImage()
+        // Break here to view the generated font atlas bitmap
+        let image = NSImage.init(cgImage: contextImage!, size: NSSize.init(width: maxWidth, height: totalHeight))
+        
+        do {
+            try FileManager.default.createDirectory(at: URL.init(fileURLWithPath: "/Users/gzonelee/temp/font-atlas"), withIntermediateDirectories: true, attributes: nil)
+        }
+        catch {
+            GZLog(error)
+        }
+        image.writeToFile(file: "file:///Users/gzonelee/temp/font-atlas/text.jpg", atomically: true, usingType: NSBitmapImageRep.FileType.jpeg) // as jpg
+        imageData.deallocate()
+    }
 }
+
 
 
 extension NSImage {
