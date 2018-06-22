@@ -32,7 +32,7 @@ class ViewController: NSViewController {
 
         atlasGenerator = FontAtlasGenerator.init(font: font!, textureSize: MBEFontAtlasSize)
 //        atlasGenerator = FontAtlasGenerator.init(font: font!)
-        atlasGenerator?.createFontImage(for: font!, string: "월드컵")
+        atlasGenerator?.createFontImage(for: font!, string: "a월드컵")
         self.imageView.image = atlasGenerator?.fontImage
 //        renderer = AAPLRenderer.init(metalKitView: mtkview, atlasGenerator: atlasGenerator)
         renderer = AAPLRenderer.init(metalKitView: mtkview, atlasGenerator: atlasGenerator)

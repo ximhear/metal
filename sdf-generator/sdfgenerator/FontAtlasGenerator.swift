@@ -744,7 +744,7 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
             }
             
             //            var glyphTransform = CGAffineTransform.init(a: 1, b: 0, c: 0, d: -1, tx: glyphOriginX, ty: glyphOriginY)
-            var glyphTransform = CGAffineTransform.init(a: 1, b: 0, c: 0, d: 1, tx: -boundingRect.origin.x, ty: -boundingRect.origin.y + y)
+            var glyphTransform = CGAffineTransform.init(a: 1, b: 0, c: 0, d: 1, tx: -boundingRect.origin.x, ty: CGFloat(totalHeight) - boundingRect.maxY - y)
             
             let path = CTFontCreatePathForGlyph(ctFont, g, &glyphTransform)
             context?.addPath(path!)
