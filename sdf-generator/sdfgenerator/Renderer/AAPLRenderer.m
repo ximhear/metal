@@ -259,15 +259,15 @@ static float MBEFontAtlasSize = 64/*2048*/ * SCALE_FACTOR;
         
         MTLTextureDescriptor *textureDesc = [MTLTextureDescriptor
                                              texture2DDescriptorWithPixelFormat:MTLPixelFormatR8Unorm
-                                             width:MBEFontAtlasSize
-                                             height:MBEFontAtlasSize
+                                             width: _atlasGenerator.textureWidth
+                                             height: _atlasGenerator.textureHeight
                                              mipmapped:NO];
         textureDesc.usage = MTLTextureUsageShaderRead;
-        MTLRegion region = MTLRegionMake2D(0, 0, MBEFontAtlasSize, MBEFontAtlasSize);
+        MTLRegion region = MTLRegionMake2D(0, 0, _atlasGenerator.textureWidth, _atlasGenerator.textureHeight);
         _fontTexture = [_device newTextureWithDescriptor:textureDesc];
         [_fontTexture setLabel:@"Font Atlas"];
         NSLog(@"\n%@", _atlasGenerator.textureData);
-        [_fontTexture replaceRegion:region mipmapLevel:0 withBytes:_atlasGenerator.textureData.bytes bytesPerRow:MBEFontAtlasSize];
+        [_fontTexture replaceRegion:region mipmapLevel:0 withBytes:_atlasGenerator.textureData.bytes bytesPerRow:_atlasGenerator.textureWidth];
         
         _uniformBuffer = [_device newBufferWithLength:sizeof(MBEUniforms)
                                               options:MTLResourceOptionCPUCacheModeDefault];
@@ -321,17 +321,28 @@ static float MBEFontAtlasSize = 64/*2048*/ * SCALE_FACTOR;
     }
 
 //    float value = 275;
-    float value = fminf(_viewportSize.x, _viewportSize.y) * 0.9 / 2;
+    float valueX = _viewportSize.x * 0.9 / 2;
+    float valueY = _viewportSize.y * 0.9 / 2;
     
+    float aspect1 = _viewportSize.y / _viewportSize.x;
+    float aspect2 = (float)_atlasGenerator.textureHeight / (float)_atlasGenerator.textureWidth;
+    
+    if (aspect1 < aspect2) {
+        valueX = valueY / aspect2;
+    }
+    else {
+        valueY = valueX * aspect2;
+    }
+
     AAPLVertex triangleVertices[] =
     {
         // 2D positions,    RGBA colors
-        { {  value,  -value }, { maxS, maxT} },
-        { { -value,  -value }, { minS, maxT} },
-        { { -value,   value }, { minS, minT} },
-        { { -value,   value }, { minS, minT} },
-        { {  value,   value }, { maxS, minT} },
-        { {  value,  -value }, { maxS, maxT} },
+        { {  valueX,  -valueY }, { maxS, maxT} },
+        { { -valueX,  -valueY }, { minS, maxT} },
+        { { -valueX,   valueY }, { minS, minT} },
+        { { -valueX,   valueY }, { minS, minT} },
+        { {  valueX,   valueY }, { maxS, minT} },
+        { {  valueX,  -valueY }, { maxS, maxT} },
     };
     
     CGSize drawableSize = view.drawableSize;

@@ -63,9 +63,10 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
     var parentFont: NSFont?
     var fontPointSize: CGFloat = 0
     var spread: CGFloat = 0
-    var textureSize: Int = 0
     var glyphDescriptors = [GlyphDescriptor]()
     @objc var textureData: Data?
+    @objc var textureWidth: Int = 0
+    @objc var textureHeight: Int = 0
     var fontImage: NSImage?
     
     @objc func glyphDescriptor(at index: Int) -> GlyphDescriptor {
@@ -78,8 +79,9 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
         parentFont = font
         fontPointSize = font.pointSize
         spread = estimatedLineWidth(for: font) * 0.5
-        self.textureSize = textureSize
-        self.createTextureData()
+        self.textureWidth = textureSize
+        self.textureHeight = textureSize
+//        self.createTextureData()
     }
 
     init(font: NSFont) {
@@ -87,7 +89,8 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
         
         parentFont = font
         fontPointSize = font.pointSize
-        self.textureSize = 0
+        self.textureWidth = 0
+        self.textureHeight = 0
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -119,7 +122,8 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
             return nil
         }
     
-        self.textureSize = width
+        self.textureWidth = width
+        self.textureHeight = height
         self.textureData = aDecoder.decodeObject(forKey: MBETextureDataKey) as? Data
         if self.textureData == nil {
             GZLog("Encountered invalid persisted font (texture data is empty). Aborting...")
@@ -131,8 +135,8 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
         aCoder.encode(Float(self.fontPointSize), forKey: MBEFontSizeKey)
         aCoder.encode(Float(self.spread), forKey: MBEFontSpreadKey)
         aCoder.encode(self.textureData, forKey: MBETextureDataKey)
-        aCoder.encode(self.textureSize, forKey: MBETextureWidthKey)
-        aCoder.encode(self.textureSize, forKey: MBETextureHeightKey)
+        aCoder.encode(self.textureWidth, forKey: MBETextureWidthKey)
+        aCoder.encode(self.textureHeight, forKey: MBETextureHeightKey)
         aCoder.encode(self.glyphDescriptors, forKey: MBEGlyphDescriptorsKey)
     }
     
@@ -542,18 +546,18 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
 
     func createTextureData() {
         
-        assert(MBEFontAtlasSize >= self.textureSize,
-               "Requested font atlas texture size \(MBEFontAtlasSize) must be smaller than intermediate texture size \(self.textureSize)")
+        assert(MBEFontAtlasSize >= self.textureWidth,
+               "Requested font atlas texture size \(MBEFontAtlasSize) must be smaller than intermediate texture size \(self.textureWidth)")
         
-        assert(MBEFontAtlasSize % self.textureSize == 0,
-               "Requested font atlas texture size \(MBEFontAtlasSize) does not evenly divide intermediate texture size \(self.textureSize)")
+        assert(MBEFontAtlasSize % self.textureWidth == 0,
+               "Requested font atlas texture size \(MBEFontAtlasSize) does not evenly divide intermediate texture size \(self.textureWidth)")
         
         // Generate an atlas image for the font, resizing if necessary to fit in the specified size.
         let atlasData = self.createAtlas(for:self.parentFont!,
                                          width:MBEFontAtlasSize,
                                          height:MBEFontAtlasSize)
         
-        let scaleFactor = Int(MBEFontAtlasSize / self.textureSize)
+        let scaleFactor = Int(MBEFontAtlasSize / self.textureWidth)
         
         // Create the signed-distance field representation of the font atlas from the rasterized glyph image.
         let distanceField = self.createSignedDistanceFieldForGrayscaleImage(atlasData, width: MBEFontAtlasSize, height: MBEFontAtlasSize)
@@ -568,14 +572,14 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
         let spread: Float = Float(self.estimatedLineWidth(for: self.parentFont!) * 0.5)
         // Quantize the downsampled distance field into an 8-bit grayscale array suitable for use as a texture
         let texture = self.createQuantizedDistanceField(scaledField,
-                                                        width:self.textureSize,
-                                                        height:self.textureSize,
+                                                        width:self.textureWidth,
+                                                        height:self.textureHeight,
                                                         normalizationFactor:spread)
         
         scaledField.deallocate()
         
         
-        let textureByteCount = self.textureSize * self.textureSize
+        let textureByteCount = self.textureWidth * self.textureHeight
         textureData = Data.init(bytes: texture, count: textureByteCount)
         texture.deallocate()
     }
@@ -670,7 +674,7 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
         }
     }
 
-    func createFontImage(for font: NSFont, string: String) -> Void {
+    func createFontImage(for font: NSFont, string: String, completion: (_ imageData: UnsafePointer<UInt8>, _ width: Int, _ height: Int) -> Void) -> Void {
         
         let colorSpace = CGColorSpaceCreateDeviceGray()
         let lineSpacing: Int = 3
@@ -744,7 +748,7 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
             }
             
             //            var glyphTransform = CGAffineTransform.init(a: 1, b: 0, c: 0, d: -1, tx: glyphOriginX, ty: glyphOriginY)
-            var glyphTransform = CGAffineTransform.init(a: 1, b: 0, c: 0, d: 1, tx: -boundingRect.origin.x, ty: CGFloat(totalHeight) - boundingRect.maxY - y)
+            var glyphTransform = CGAffineTransform.init(a: 1, b: 0, c: 0, d: 1, tx: (CGFloat(maxWidth) - boundingRect.width - boundingRect.origin.x)/2, ty: CGFloat(totalHeight) - boundingRect.maxY - y)
             
             let path = CTFontCreatePathForGlyph(ctFont, g, &glyphTransform)
             context?.addPath(path!)
@@ -763,10 +767,52 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
         catch {
             GZLog(error)
         }
+        self.fontImage = image
         image.writeToFile(file: "file:///Users/gzonelee/temp/font-atlas/text.jpg", atomically: true, usingType: NSBitmapImageRep.FileType.jpeg) // as jpg
-        imageData.deallocate()
+
+        completion(UnsafePointer<UInt8>.init(imageData), maxWidth, totalHeight)
     }
-}
+    
+    func createTextureData(font: NSFont, string: String) {
+        
+        // Generate an atlas image for the font, resizing if necessary to fit in the specified size.
+        createFontImage(for: font, string: string) { (atlasData, width, height) in
+            
+            
+            self.textureWidth = width
+            self.textureHeight = height
+            // Create the signed-distance field representation of the font atlas from the rasterized glyph image.
+            let distanceField = self.createSignedDistanceFieldForGrayscaleImage(atlasData, width: width, height: height)
+            
+            atlasData.deallocate()
+            
+            // Downsample the signed-distance field to the expected texture resolution
+            let scaledField = self.createResampledData(distanceField!, width: width, height: height, scaleFactor: 1)
+            
+            distanceField?.deallocate()
+            
+            let spread: Float = Float(self.estimatedLineWidth(for: self.parentFont!) * 0.5)
+            // Quantize the downsampled distance field into an 8-bit grayscale array suitable for use as a texture
+            let texture = self.createQuantizedDistanceField(scaledField,
+                                                            width: height,
+                                                            height: height,
+                                                            normalizationFactor: spread)
+            
+            scaledField.deallocate()
+            
+            
+            let textureByteCount = width * height
+            textureData = Data.init(bytes: texture, count: textureByteCount)
+            texture.deallocate()
+            self.glyphDescriptors.removeAll()
+            let descriptor = GlyphDescriptor.init()
+            descriptor.glyphIndex = 0
+            descriptor.topLeftTexCoord = CGPoint.init(x: 0, y: 0)
+            descriptor.bottomRightTexCoord = CGPoint.init(x: 1, y: 1)
+            
+            self.glyphDescriptors.append(descriptor)
+        }
+    }}
 
 
 
