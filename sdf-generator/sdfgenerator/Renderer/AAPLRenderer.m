@@ -324,7 +324,7 @@ static float MBEFontAtlasSize = 64/*2048*/ * SCALE_FACTOR;
     float valueX = _viewportSize.x * 0.95 / 2;
     float valueY = _viewportSize.y * 0.95 / 2;
     
-    float aspect1 = _viewportSize.y / _viewportSize.x;
+    float aspect1 = valueY / valueX;
     float aspect2 = (float)_atlasGenerator.textureHeight / (float)_atlasGenerator.textureWidth;
     
     if (aspect1 < aspect2) {
