@@ -677,7 +677,7 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
     func createFontImage(for font: NSFont, string: String, completion: (_ imageData: UnsafePointer<UInt8>, _ width: Int, _ height: Int) -> Void) -> Void {
         
         let colorSpace = CGColorSpaceCreateDeviceGray()
-        let lineSpacing: Int = 3
+        let lineSpacing: Int = 4
         
         let ctFont = CTFontCreateWithName(font.fontName as CFString, font.pointSize, nil)
 
@@ -705,7 +705,7 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
             }
             totalHeight += height
         }
-        totalHeight += (string.count - 1) * lineSpacing
+        totalHeight += (string.count) * lineSpacing
         maxWidth = maxWidth * 11 / 10
         if totalHeight % 2 == 1 {
             totalHeight += 1
