@@ -321,8 +321,8 @@ static float MBEFontAtlasSize = 64/*2048*/ * SCALE_FACTOR;
     }
 
 //    float value = 275;
-    float valueX = _viewportSize.x * 0.9 / 2;
-    float valueY = _viewportSize.y * 0.9 / 2;
+    float valueX = _viewportSize.x * 0.95 / 2;
+    float valueY = _viewportSize.y * 0.95 / 2;
     
     float aspect1 = _viewportSize.y / _viewportSize.x;
     float aspect2 = (float)_atlasGenerator.textureHeight / (float)_atlasGenerator.textureWidth;
@@ -334,15 +334,16 @@ static float MBEFontAtlasSize = 64/*2048*/ * SCALE_FACTOR;
         valueY = valueX * aspect2;
     }
 
+    float a = 1;
     AAPLVertex triangleVertices[] =
     {
         // 2D positions,    RGBA colors
-        { {  valueX,  -valueY }, { maxS, maxT} },
-        { { -valueX,  -valueY }, { minS, maxT} },
-        { { -valueX,   valueY }, { minS, minT} },
-        { { -valueX,   valueY }, { minS, minT} },
-        { {  valueX,   valueY }, { maxS, minT} },
-        { {  valueX,  -valueY }, { maxS, maxT} },
+        { {  valueX / a,  -valueY }, { maxS, maxT} },
+        { { -valueX / a,  -valueY }, { minS, maxT} },
+        { { -valueX * a,   valueY }, { minS, minT} },
+        { { -valueX * a,   valueY }, { minS, minT} },
+        { {  valueX * a,   valueY }, { maxS, minT} },
+        { {  valueX / a,  -valueY }, { maxS, maxT} },
     };
     
     CGSize drawableSize = view.drawableSize;

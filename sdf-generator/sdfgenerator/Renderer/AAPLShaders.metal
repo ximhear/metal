@@ -79,6 +79,9 @@ fragment half4 fragmentShader(RasterizerData vert [[stage_in]],
     float edgeWidth = 0.75 * length(float2(dfdx(sampleDistance), dfdy(sampleDistance)));
     // Smooth the glyph edge by interpolating across the boundary in a band with the width determined above
     float insideness = smoothstep(edgeDistance - edgeWidth, edgeDistance + edgeWidth, sampleDistance);
+    if (insideness == 0) {
+        return half4(1, 0, 0, 1);
+    }
     return half4(color.r, color.g, color.b, insideness);
 }
 

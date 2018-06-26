@@ -688,7 +688,7 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
         CTFontGetGlyphsForCharacters(ctFont, characters, &glyphs, string.count)
 
         var maxWidth: Int = 0
-        var totalHeight: Int = 0
+        var totalHeight: Int = lineSpacing
         for glyph in glyphs {
             
             GZLog(glyph)
@@ -705,7 +705,7 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
             }
             totalHeight += height
         }
-        totalHeight += (string.count) * lineSpacing
+        totalHeight += (string.count + 1) * lineSpacing
         maxWidth = maxWidth * 11 / 10
         if totalHeight % 2 == 1 {
             totalHeight += 1
@@ -738,7 +738,7 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
         // Set fill color so that glyphs are solid white
         context?.setFillColor(red: 1, green: 1, blue: 1, alpha: 1)
         
-        var y: CGFloat = 0
+        var y: CGFloat = CGFloat(lineSpacing)
         for glyph in glyphs {
             
             GZLog(glyph)
