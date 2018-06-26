@@ -24,7 +24,8 @@ class ViewController: NSViewController {
         mtkview.device = MTLCreateSystemDefaultDevice()
 
         let MBEFontAtlasSize: NSInteger = 64/*2048*/ * NSInteger(SCALE_FACTOR);
-        let font = NSFont.init(name: "AppleSDGothicNeo-Regular", size: 64)
+        let font = NSFont.init(name: "AppleSDGothicNeo-Regular", size: 128)
+//        let font = NSFont.init(name: "HoeflerText-Regular", size: 128)
         
 //        atlas = MBEFontAtlas.init(font: font, textureSize: MBEFontAtlasSize)
 //        self.imageView.image = atlas?.fontImage
@@ -34,7 +35,7 @@ class ViewController: NSViewController {
 //        atlasGenerator?.createTextureData()
 //        atlasGenerator = FontAtlasGenerator.init(font: font!)
 //        atlasGenerator?.createFontImage(for: font!, string: "a월드컵")
-        atlasGenerator?.createTextureData(font: font!, string: "ABa월드컵")
+        atlasGenerator?.createTextureData(font: font!, string: "ABa월드컵ss")
         self.imageView.image = atlasGenerator?.fontImage
 //        renderer = AAPLRenderer.init(metalKitView: mtkview, atlasGenerator: atlasGenerator)
         renderer = AAPLRenderer.init(metalKitView: mtkview, string: "hello", atlasGenerator: atlasGenerator)

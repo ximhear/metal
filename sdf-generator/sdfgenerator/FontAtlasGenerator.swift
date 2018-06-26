@@ -707,6 +707,12 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
         }
         totalHeight += (string.count - 1) * lineSpacing
         maxWidth = maxWidth * 11 / 10
+        if totalHeight % 2 == 1 {
+            totalHeight += 1
+        }
+        if maxWidth % 2 == 1 {
+            maxWidth += 1
+        }
 
         let imageData = UnsafeMutablePointer<UInt8>.allocate(capacity: maxWidth * totalHeight)
         let context = CGContext.init(data: imageData,
@@ -780,29 +786,29 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
         createFontImage(for: font, string: string) { (atlasData, width, height) in
             
             
-            self.textureWidth = width
-            self.textureHeight = height
+            self.textureWidth = width / 2
+            self.textureHeight = height / 2
             // Create the signed-distance field representation of the font atlas from the rasterized glyph image.
             let distanceField = self.createSignedDistanceFieldForGrayscaleImage(atlasData, width: width, height: height)
             
             atlasData.deallocate()
             
             // Downsample the signed-distance field to the expected texture resolution
-            let scaledField = self.createResampledData(distanceField!, width: width, height: height, scaleFactor: 1)
+            let scaledField = self.createResampledData(distanceField!, width: width, height: height, scaleFactor: 2)
             
             distanceField?.deallocate()
             
             let spread: Float = Float(self.estimatedLineWidth(for: self.parentFont!) * 0.5)
             // Quantize the downsampled distance field into an 8-bit grayscale array suitable for use as a texture
             let texture = self.createQuantizedDistanceField(scaledField,
-                                                            width: width,
-                                                            height: height,
+                                                            width: self.textureWidth,
+                                                            height: self.textureHeight,
                                                             normalizationFactor: spread)
             
             scaledField.deallocate()
             
             
-            let textureByteCount = width * height
+            let textureByteCount = self.textureWidth * self.textureHeight
             textureData = Data.init(bytes: texture, count: textureByteCount)
             texture.deallocate()
             self.glyphDescriptors.removeAll()
