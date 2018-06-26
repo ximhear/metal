@@ -719,7 +719,7 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
 
         // Turn off antialiasing so we only get fully-on or fully-off pixels.
         // This implicitly disables subpixel antialiasing and hinting.
-        context?.setAllowsAntialiasing(true)
+        context?.setAllowsAntialiasing(false)
         
         // Flip context coordinate space so y increases downward
         //            context?.translateBy(x: 0, y: CGFloat(height))
@@ -792,10 +792,10 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
             
             distanceField?.deallocate()
             
-            let spread: Float = 10//Float(self.estimatedLineWidth(for: self.parentFont!) * 0.5)
+            let spread: Float = Float(self.estimatedLineWidth(for: self.parentFont!) * 0.5)
             // Quantize the downsampled distance field into an 8-bit grayscale array suitable for use as a texture
             let texture = self.createQuantizedDistanceField(scaledField,
-                                                            width: height,
+                                                            width: width,
                                                             height: height,
                                                             normalizationFactor: spread)
             
@@ -813,7 +813,8 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
             
             self.glyphDescriptors.append(descriptor)
         }
-    }}
+    }
+}
 
 
 
