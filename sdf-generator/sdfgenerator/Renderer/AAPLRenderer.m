@@ -334,17 +334,62 @@ static float MBEFontAtlasSize = 64/*2048*/ * SCALE_FACTOR;
         valueY = valueX * aspect2;
     }
 
-    float a = 1;
-    AAPLVertex triangleVertices[] =
-    {
-        // 2D positions,    RGBA colors
-        { {  valueX / a,  -valueY }, { maxS, maxT} },
-        { { -valueX / a,  -valueY }, { minS, maxT} },
-        { { -valueX * a,   valueY }, { minS, minT} },
-        { { -valueX * a,   valueY }, { minS, minT} },
-        { {  valueX * a,   valueY }, { maxS, minT} },
-        { {  valueX / a,  -valueY }, { maxS, maxT} },
-    };
+    float a = 1.0 / 10;
+    const int maxCount = 6;
+    AAPLVertex triangleVertices[6 * maxCount * maxCount];
+//    AAPLVertex triangleVertices[] =
+//    {
+//        // 2D positions,    RGBA colors
+//        { {  valueX / a,  -valueY }, { maxS, maxT} },
+//        { { -valueX / a,  -valueY }, { minS, maxT} },
+//        { { -valueX * a,   valueY }, { minS, minT} },
+//        { { -valueX * a,   valueY }, { minS, minT} },
+//        { {  valueX * a,   valueY }, { maxS, minT} },
+//        { {  valueX / a,  -valueY }, { maxS, maxT} },
+//    };
+    
+    float height = valueY * 2 / maxCount;
+    for (int row = 0 ; row < maxCount ; row++) {
+        float width = 0;
+        float width1 = 0;
+        
+        float x = 0;
+        float x1 = 0;
+
+        if (a == 1) {
+            width = valueX * 2 / maxCount;
+            width1 = valueX * 2 / maxCount;
+        }
+        else {
+            width = (2 * ((row * a * valueX) + (maxCount - row) * valueX) / maxCount) / maxCount;
+            width1 = (2 * (((row+1) * a * valueX) + (maxCount - row -1) * valueX) / maxCount) / maxCount;
+        }
+        
+        x = - width * maxCount / 2.0;
+        x1 = - width1 * maxCount / 2.0;
+
+
+        for (int col = 0 ; col < maxCount ; col++) {
+
+            AAPLVertex a0 = { { x1 + width1 * (col+1), valueY - height * (row+1)}, { maxS / maxCount * (col + 1), maxT / maxCount * (row+1)} };
+            triangleVertices[row * maxCount * 6 + col * 6 + 0] = a0;
+
+            AAPLVertex a1 = { { x1 + width1 * (col + 0), valueY - height * (row+1)}, { maxS / maxCount * (col + 0), maxT / maxCount * (row+1)} };
+            triangleVertices[row * maxCount * 6 + col * 6 + 1] = a1;
+            
+            AAPLVertex a2 = { { x + width * (col + 0), valueY - height * (row+0)}, { maxS / maxCount * (col + 0), maxT / maxCount * (row+0)} };
+            triangleVertices[row * maxCount * 6 + col * 6 + 2] = a2;
+            
+            AAPLVertex a3 = { {  x + width * (col + 0), valueY - height * (row+0)}, { maxS / maxCount * (col + 0), maxT / maxCount * (row+0)} };
+            triangleVertices[row * maxCount * 6 + col * 6 + 3] = a3;
+            
+            AAPLVertex a4 = { { x + width * (col + 1), valueY - height * (row+0)}, { maxS / maxCount * (col + 1), maxT / maxCount * (row+0)} };
+            triangleVertices[row * maxCount * 6 + col * 6 + 4] = a4;
+            
+            AAPLVertex a5 = { { x1 + width1 * (col+1), valueY - height * (row+1)}, { maxS / maxCount * (col + 1), maxT / maxCount * (row+1)} };
+            triangleVertices[row * maxCount * 6 + col * 6 + 5] = a5;
+        }
+    }
     
     CGSize drawableSize = view.drawableSize;
     if (self.depthTexture == nil || (self.depthTexture.width != drawableSize.width || self.depthTexture.height != drawableSize.height)) {
@@ -420,12 +465,14 @@ static float MBEFontAtlasSize = 64/*2048*/ * SCALE_FACTOR;
         [renderEncoder setFragmentSamplerState:self.sampler atIndex:0];
 
         // Draw the 3 vertices of our triangle
-        [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
-                          vertexStart:0
-                          vertexCount:3];
-        [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
-                          vertexStart:3
-                          vertexCount:3];
+        for (int index = 0 ; index < maxCount * maxCount ; index++) {
+            [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
+                              vertexStart:index * 6 + 0
+                              vertexCount:3];
+            [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
+                              vertexStart:index * 6 + 3
+                              vertexCount:3];
+        }
         
         [renderEncoder endEncoding];
 
