@@ -281,7 +281,7 @@ const int maxCount = 10;
         float maxS = 1;
         float minT = 0;
         float maxT = 1;
-        float a = 1.0 / 1;
+        float a = 1.0 / 10;
         float valueX = 0.95;
         float valueY = 0.95;
         AAPLVertex triangleVertices[4 * maxCount * maxCount];
@@ -357,12 +357,32 @@ const int maxCount = 10;
     vector_float4 MBETextColor = { 0, 1, 0, 1 };
     uniforms.foregroundColor = MBETextColor;
 
-    uniforms.projectionMatrix = [self matrix_float4x4_orthoWithleft:-2 right:2 bottom:-2 top:2 near:-1 far:1];
+    float aspect1 = (float)_viewportSize.y / (float)_viewportSize.x;
+    CGFloat valueX = 1;
+    CGFloat valueY = 1;
+    
+    if (aspect1 > 1) {
+        valueY = valueX * aspect1;
+    }
+    else {
+        valueX = valueY / aspect1;
+    }
+
+    simd_float4x4 scale = simd_diagonal_matrix(simd_make_float4(1,1,1,1));
+    float aspect2 = (float)_atlasGenerator.textureHeight / (float)_atlasGenerator.textureWidth;
+    if (aspect2 > aspect1) {
+        scale = simd_diagonal_matrix(simd_make_float4(valueY / aspect2,valueY,1,1));
+    }
+    else {
+        scale = simd_diagonal_matrix(simd_make_float4(valueX,valueX * aspect2,1,1));
+    }
+//    uniforms.projectionMatrix = [self matrix_float4x4_orthoWithLeft:-valueX right:valueX bottom:-valueY top:valueY near:-1 far:1];
+    uniforms.projectionMatrix = simd_mul([self matrix_float4x4_orthoWithLeft:-valueX right:valueX bottom:-valueY top:valueY near:-1 far:1], scale);
 
     memcpy([self.uniformBuffer contents], &uniforms, sizeof(MBEUniforms));
 }
 
--(simd_float4x4)matrix_float4x4_orthoWithleft:(CGFloat)left right:(CGFloat)right bottom:(CGFloat)bottom top:(CGFloat)top near:(CGFloat)near far:(CGFloat)far {
+-(simd_float4x4)matrix_float4x4_orthoWithLeft:(CGFloat)left right:(CGFloat)right bottom:(CGFloat)bottom top:(CGFloat)top near:(CGFloat)near far:(CGFloat)far {
     CGFloat ral = right + left;
     CGFloat rsl = right - left;
     CGFloat tab = top + bottom;
