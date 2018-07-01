@@ -31,7 +31,7 @@ typedef struct
 vertex RasterizerData
 vertexShader(uint vertexID [[vertex_id]],
              constant AAPLVertex *vertices [[buffer(AAPLVertexInputIndexVertices)]],
-             constant vector_uint2 *viewportSizePointer [[buffer(AAPLVertexInputIndexViewportSize)]])
+             constant MBEUniforms &uniforms [[buffer(AAPLVertexInputIndexViewportSize)]])
 {
     RasterizerData out;
 
@@ -41,10 +41,10 @@ vertexShader(uint vertexID [[vertex_id]],
     // Index into our array of positions to get the current vertex
     //   Our positions are specified in pixel dimensions (i.e. a value of 100 is 100 pixels from
     //   the origin)
-    float2 pixelSpacePosition = vertices[vertexID].position.xy;
+    float4 pixelSpacePosition = float4(vertices[vertexID].position.x, vertices[vertexID].position.y, 0, 1);
 
     // Dereference viewportSizePointer and cast to float so we can do floating-point division
-    vector_float2 viewportSize = vector_float2(*viewportSizePointer);
+//    vector_float2 viewportSize = vector_float2(*viewportSizePointer);
 
     // The output position of every vertex shader is in clip-space (also known as normalized device
     //   coordinate space, or NDC).   A value of (-1.0, -1.0) in clip-space represents the
@@ -54,7 +54,8 @@ vertexShader(uint vertexID [[vertex_id]],
     // Calculate and write x and y values to our clip-space position.  In order to convert from
     //   positions in pixel space to positions in clip-space, we divide the pixel coordinates by
     //   half the size of the viewport.
-    out.clipSpacePosition.xy = pixelSpacePosition / (viewportSize / 2.0);
+    float4 a = uniforms.projectionMatrix * pixelSpacePosition;
+    out.clipSpacePosition.xy = float2(a.x, a.y);// / (viewportSize / 2.0);
 
     // Pass our input color straight to our output color.  This value will be interpolated
     //   with the other color values of the vertices that make up the triangle to produce
@@ -75,8 +76,11 @@ fragment half4 fragmentShader(RasterizerData vert [[stage_in]],
     float edgeDistance = 0.5;
     // Sample the signed-distance field to find distance from this fragment to the glyph outline
     float sampleDistance = texture.sample(samplr, vert.texCoords).r;
+    float x = dfdx(sampleDistance);
+    float y = dfdy(sampleDistance);
+    float len = length(float2(x, y));
     // Use local automatic gradients to find anti-aliased anisotropic edge width, cf. Gustavson 2012
-    float edgeWidth = 0.75 * length(float2(dfdx(sampleDistance), dfdy(sampleDistance)));
+    float edgeWidth = 0.75 * len;
     // Smooth the glyph edge by interpolating across the boundary in a band with the width determined above
     float insideness = smoothstep(edgeDistance - edgeWidth, edgeDistance + edgeWidth, sampleDistance);
     if (insideness == 0) {

@@ -21,6 +21,7 @@ typedef enum AAPLVertexInputIndex
 typedef struct
 {
     vector_float4 foregroundColor;
+    matrix_float4x4 projectionMatrix;
 } MBEUniforms;
 
 

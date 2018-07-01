@@ -340,6 +340,19 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
             var y: Int
         }
         
+//        let title = (0..<width).map { (a) in
+//            return "\(a)"
+//        }
+//        print(title.joined(separator: ","))
+//        for y in 0..<height {
+//            var values = [String]()
+//            for x in 0..<width {
+//                values.append("\(imageData[y * width + x])")
+//            }
+//            print(values.joined(separator: ","))
+//        }
+//        GZLog()
+        
         let distanceMap = UnsafeMutablePointer<Float>.allocate(capacity: width * height)
         let boundaryPointMap = UnsafeMutablePointer<intpoint_t>.allocate(capacity: width * height)
         
@@ -375,6 +388,24 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
                 }
             }
         }
+        
+//        let title = (0..<width).map { (a) in
+//            return "\(a)"
+//        }
+//        print(title.joined(separator: ","))
+//        for y in 0..<height {
+//            var values = [String]()
+//            for x in 0..<width {
+//                if distanceMap[y * width + x] == 0 {
+//                    values.append("X")
+//                }
+//                else {
+//                    values.append(".")
+//                }
+//            }
+//            print(values.joined(separator: ","))
+//        }
+//        GZLog()
 
 //        for y in 0..<height {
 //            var line = "[\(y)] ";
@@ -437,7 +468,20 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
                 }
             }
         }
-        
+
+//        let title = (0..<width).map { (a) in
+//            return "\(a)"
+//        }
+//        print(title.joined(separator: ","))
+//        for y in 0..<height {
+//            var values = [String]()
+//            for x in 0..<width {
+//                values.append(String(format: "%.2f", distanceMap[y * width + x]))
+//            }
+//            print(values.joined(separator: ","))
+//        }
+//        GZLog()
+
 //        for y in 0..<height {
 //            var line = "[\(y)] ";
 //            for x in 0..<width {
@@ -455,7 +499,20 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
                 }
             }
         }
-        
+
+//        let title = (0..<width).map { (a) in
+//            return "\(a)"
+//        }
+//        print(title.joined(separator: ","))
+//        for y in 0..<height {
+//            var values = [String]()
+//            for x in 0..<width {
+//                values.append(String(format: "%.2f", distanceMap[y * width + x]))
+//            }
+//            print(values.joined(separator: ","))
+//        }
+//        GZLog()
+
 //        for y in 0..<height {
 //            var line = "[\(y)] ";
 //            for x in 0..<width {
@@ -491,6 +548,20 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
                 outData[(y / scaleFactor) * scaledWidth + (x / scaleFactor)] = accum
             }
         }
+
+//        let title = (0..<scaledWidth).map { (a) in
+//            return "\(a)"
+//        }
+//        print(title.joined(separator: ","))
+//        for y in 0..<scaledHeight {
+//            var values = [String]()
+//            for x in 0..<scaledWidth {
+//                values.append(String(format: "%.2f", outData[y * scaledWidth + x]))
+//            }
+//            print(values.joined(separator: ","))
+//        }
+//        GZLog()
+
         
 //        for y in 0..<scaledHeight {
 //            var line = "";
@@ -524,6 +595,19 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
                 line = line + "\(outData[y*width + x]),"
             }
             GZLog(line)
+        }
+        GZLog()
+
+        let title = (0..<width).map { (a) in
+            return "\(a)"
+        }
+        print(title.joined(separator: ","))
+        for y in 0..<height {
+            var values = [String]()
+            for x in 0..<width {
+                values.append("\(outData[y * width + x])")
+            }
+            print(values.joined(separator: ","))
         }
         GZLog()
 
@@ -677,7 +761,7 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
     func createFontImage(for font: NSFont, string: String, completion: (_ imageData: UnsafePointer<UInt8>, _ width: Int, _ height: Int) -> Void) -> Void {
         
         let colorSpace = CGColorSpaceCreateDeviceGray()
-        let lineSpacing: Int = 4
+        let lineSpacing: Int = 8
         
         let ctFont = CTFontCreateWithName(font.fontName as CFString, font.pointSize, nil)
 
@@ -706,7 +790,7 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
             totalHeight += height
         }
         totalHeight += (string.count + 1) * lineSpacing
-        maxWidth = maxWidth * 11 / 10
+        maxWidth = maxWidth * 14 / 10
         if totalHeight % 2 == 1 {
             totalHeight += 1
         }
@@ -725,7 +809,7 @@ class FontAtlasGenerator: NSObject, NSSecureCoding {
 
         // Turn off antialiasing so we only get fully-on or fully-off pixels.
         // This implicitly disables subpixel antialiasing and hinting.
-        context?.setAllowsAntialiasing(false)
+        context?.setAllowsAntialiasing(true)
         
         // Flip context coordinate space so y increases downward
         //            context?.translateBy(x: 0, y: CGFloat(height))

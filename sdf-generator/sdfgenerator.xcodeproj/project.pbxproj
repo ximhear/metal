@@ -326,6 +326,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				PRODUCT_BUNDLE_IDENTIFIER = g.sdfgenerator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "sdfgenerator/sdfgenerator-Bridging-Header.h";
@@ -348,6 +349,7 @@
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				PRODUCT_BUNDLE_IDENTIFIER = g.sdfgenerator;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "sdfgenerator/sdfgenerator-Bridging-Header.h";

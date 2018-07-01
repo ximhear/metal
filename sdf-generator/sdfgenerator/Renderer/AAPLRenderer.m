@@ -16,6 +16,7 @@ Implementation of our platform independent renderer class, which performs Metal 
 #import "sdfgenerator-Swift.h"
 
 static float MBEFontAtlasSize = 64/*2048*/ * SCALE_FACTOR;
+const int maxCount = 10;
 
 @interface AAPLRenderer ()
 
@@ -23,6 +24,8 @@ static float MBEFontAtlasSize = 64/*2048*/ * SCALE_FACTOR;
 @property (nonatomic, strong) id<MTLBuffer> uniformBuffer;
 @property (nonatomic, strong) id<MTLSamplerState> sampler;
 @property (nonatomic, strong) id<MTLTexture> depthTexture;
+@property (strong) id<MTLBuffer> vertexBuffer;
+@property (strong) id<MTLBuffer> indexBuffer;
 
 @end
 
@@ -272,6 +275,75 @@ static float MBEFontAtlasSize = 64/*2048*/ * SCALE_FACTOR;
         _uniformBuffer = [_device newBufferWithLength:sizeof(MBEUniforms)
                                               options:MTLResourceOptionCPUCacheModeDefault];
         [_uniformBuffer setLabel:@"Uniform Buffer"];
+
+        
+        float minS = 0;
+        float maxS = 1;
+        float minT = 0;
+        float maxT = 1;
+        float a = 1.0 / 1;
+        float valueX = 0.95;
+        float valueY = 0.95;
+        AAPLVertex triangleVertices[4 * maxCount * maxCount];
+        uint16_t triangleIndex[6 * maxCount * maxCount];
+        float height = valueY * 2 / maxCount;
+        for (int row = 0 ; row < maxCount ; row++) {
+            float width = 0;
+            float width1 = 0;
+            
+            float x = 0;
+            float x1 = 0;
+            
+            if (a == 1) {
+                width = valueX * 2 / maxCount;
+                width1 = valueX * 2 / maxCount;
+            }
+            else {
+                width = (2 * ((row * a * valueX) + (maxCount - row) * valueX) / maxCount) / maxCount;
+                width1 = (2 * (((row+1) * a * valueX) + (maxCount - row -1) * valueX) / maxCount) / maxCount;
+            }
+            
+            x = - width * maxCount / 2.0;
+            x1 = - width1 * maxCount / 2.0;
+            
+            
+            for (int col = 0 ; col < maxCount ; col++) {
+                
+                AAPLVertex a0 = { { x1 + width1 * (col+1), valueY - height * (row+1)}, { maxS / maxCount * (col + 1), maxT / maxCount * (row+1)} };
+                triangleVertices[row * maxCount * 4 + col * 4 + 0] = a0;
+                
+                AAPLVertex a1 = { { x1 + width1 * (col + 0), valueY - height * (row+1)}, { maxS / maxCount * (col + 0), maxT / maxCount * (row+1)} };
+                triangleVertices[row * maxCount * 4 + col * 4 + 1] = a1;
+                
+                AAPLVertex a2 = { { x + width * (col + 0), valueY - height * (row+0)}, { maxS / maxCount * (col + 0), maxT / maxCount * (row+0)} };
+                triangleVertices[row * maxCount * 4 + col * 4 + 2] = a2;
+                
+                AAPLVertex a4 = { { x + width * (col + 1), valueY - height * (row+0)}, { maxS / maxCount * (col + 1), maxT / maxCount * (row+0)} };
+                triangleVertices[row * maxCount * 4 + col * 4 + 3] = a4;
+            }
+        }
+
+        for (int row = 0 ; row < maxCount ; row++) {
+            for (int col = 0 ; col < maxCount ; col++) {
+                triangleIndex[row * maxCount * 6 + col * 6 + 0] = row * maxCount * 4 + col * 4 + 0;
+                triangleIndex[row * maxCount * 6 + col * 6 + 1] = row * maxCount * 4 + col * 4 + 1;
+                triangleIndex[row * maxCount * 6 + col * 6 + 2] = row * maxCount * 4 + col * 4 + 2;
+                triangleIndex[row * maxCount * 6 + col * 6 + 3] = row * maxCount * 4 + col * 4 + 2;
+                triangleIndex[row * maxCount * 6 + col * 6 + 4] = row * maxCount * 4 + col * 4 + 3;
+                triangleIndex[row * maxCount * 6 + col * 6 + 5] = row * maxCount * 4 + col * 4 + 0;
+            }
+        }
+
+        _vertexBuffer = [_device newBufferWithBytes:triangleVertices
+                                                 length:sizeof(triangleVertices)
+                                                options:MTLResourceOptionCPUCacheModeDefault];
+        [_vertexBuffer setLabel:@"Vertices"];
+        
+        _indexBuffer = [_device newBufferWithBytes:triangleIndex
+                                                length:sizeof(triangleIndex)
+                                               options:MTLResourceOptionCPUCacheModeDefault];
+        [_indexBuffer setLabel:@"Indices"];
+
         
     }
     
@@ -282,11 +354,31 @@ static float MBEFontAtlasSize = 64/*2048*/ * SCALE_FACTOR;
 {
     MBEUniforms uniforms;
     
-    vector_float4 MBETextColor = { 0.1, 0.9, 0.1, 1 };
+    vector_float4 MBETextColor = { 0, 1, 0, 1 };
     uniforms.foregroundColor = MBETextColor;
-    
+
+    uniforms.projectionMatrix = [self matrix_float4x4_orthoWithleft:-2 right:2 bottom:-2 top:2 near:-1 far:1];
+
     memcpy([self.uniformBuffer contents], &uniforms, sizeof(MBEUniforms));
 }
+
+-(simd_float4x4)matrix_float4x4_orthoWithleft:(CGFloat)left right:(CGFloat)right bottom:(CGFloat)bottom top:(CGFloat)top near:(CGFloat)near far:(CGFloat)far {
+    CGFloat ral = right + left;
+    CGFloat rsl = right - left;
+    CGFloat tab = top + bottom;
+    CGFloat tsb = top - bottom;
+    CGFloat fan = far + near;
+    CGFloat fsn = far - near;
+    
+    simd_float4 P = simd_make_float4( 2.0 / rsl, 0, 0, 0 );
+    simd_float4 Q = simd_make_float4( 0.0, 2.0 / tsb, 0.0, 0.0 );
+    simd_float4 R = simd_make_float4( 0.0, 0.0, -2.0 / fsn, 0.0 );
+    simd_float4 S = simd_make_float4( -ral / rsl, -tab / tsb, -fan / fsn, 1.0 );
+    
+    simd_float4x4 mat = simd_matrix(P, Q, R, S );
+    return mat;
+}
+
 
 /// Called whenever view changes orientation or is resized
 - (void)mtkView:(nonnull MTKView *)view drawableSizeWillChange:(CGSize)size
@@ -334,9 +426,6 @@ static float MBEFontAtlasSize = 64/*2048*/ * SCALE_FACTOR;
         valueY = valueX * aspect2;
     }
 
-    float a = 1.0 / 10;
-    const int maxCount = 6;
-    AAPLVertex triangleVertices[6 * maxCount * maxCount];
 //    AAPLVertex triangleVertices[] =
 //    {
 //        // 2D positions,    RGBA colors
@@ -347,49 +436,6 @@ static float MBEFontAtlasSize = 64/*2048*/ * SCALE_FACTOR;
 //        { {  valueX * a,   valueY }, { maxS, minT} },
 //        { {  valueX / a,  -valueY }, { maxS, maxT} },
 //    };
-    
-    float height = valueY * 2 / maxCount;
-    for (int row = 0 ; row < maxCount ; row++) {
-        float width = 0;
-        float width1 = 0;
-        
-        float x = 0;
-        float x1 = 0;
-
-        if (a == 1) {
-            width = valueX * 2 / maxCount;
-            width1 = valueX * 2 / maxCount;
-        }
-        else {
-            width = (2 * ((row * a * valueX) + (maxCount - row) * valueX) / maxCount) / maxCount;
-            width1 = (2 * (((row+1) * a * valueX) + (maxCount - row -1) * valueX) / maxCount) / maxCount;
-        }
-        
-        x = - width * maxCount / 2.0;
-        x1 = - width1 * maxCount / 2.0;
-
-
-        for (int col = 0 ; col < maxCount ; col++) {
-
-            AAPLVertex a0 = { { x1 + width1 * (col+1), valueY - height * (row+1)}, { maxS / maxCount * (col + 1), maxT / maxCount * (row+1)} };
-            triangleVertices[row * maxCount * 6 + col * 6 + 0] = a0;
-
-            AAPLVertex a1 = { { x1 + width1 * (col + 0), valueY - height * (row+1)}, { maxS / maxCount * (col + 0), maxT / maxCount * (row+1)} };
-            triangleVertices[row * maxCount * 6 + col * 6 + 1] = a1;
-            
-            AAPLVertex a2 = { { x + width * (col + 0), valueY - height * (row+0)}, { maxS / maxCount * (col + 0), maxT / maxCount * (row+0)} };
-            triangleVertices[row * maxCount * 6 + col * 6 + 2] = a2;
-            
-            AAPLVertex a3 = { {  x + width * (col + 0), valueY - height * (row+0)}, { maxS / maxCount * (col + 0), maxT / maxCount * (row+0)} };
-            triangleVertices[row * maxCount * 6 + col * 6 + 3] = a3;
-            
-            AAPLVertex a4 = { { x + width * (col + 1), valueY - height * (row+0)}, { maxS / maxCount * (col + 1), maxT / maxCount * (row+0)} };
-            triangleVertices[row * maxCount * 6 + col * 6 + 4] = a4;
-            
-            AAPLVertex a5 = { { x1 + width1 * (col+1), valueY - height * (row+1)}, { maxS / maxCount * (col + 1), maxT / maxCount * (row+1)} };
-            triangleVertices[row * maxCount * 6 + col * 6 + 5] = a5;
-        }
-    }
     
     CGSize drawableSize = view.drawableSize;
     if (self.depthTexture == nil || (self.depthTexture.width != drawableSize.width || self.depthTexture.height != drawableSize.height)) {
@@ -447,32 +493,46 @@ static float MBEFontAtlasSize = 64/*2048*/ * SCALE_FACTOR;
         // The `AAPLVertexInputIndexVertices` enum value corresponds to the `vertexArray`
         // argument in the `vertexShader` function because its buffer attribute also uses
         // the `AAPLVertexInputIndexVertices` enum value for its index
-        [renderEncoder setVertexBytes:triangleVertices
-                               length:sizeof(triangleVertices)
-                              atIndex:AAPLVertexInputIndexVertices];
+//        [renderEncoder setVertexBytes:triangleVertices
+//                               length:sizeof(triangleVertices)
+//                              atIndex:AAPLVertexInputIndexVertices];
+        [renderEncoder setVertexBuffer:self.vertexBuffer offset:0 atIndex:AAPLVertexInputIndexVertices];
+        [renderEncoder setVertexBuffer:self.uniformBuffer offset:0 atIndex:AAPLVertexInputIndexViewportSize];
 
         // You send a pointer to `_viewportSize` and also indicate its size
         // The `AAPLVertexInputIndexViewportSize` enum value corresponds to the
         // `viewportSizePointer` argument in the `vertexShader` function because its
         //  buffer attribute also uses the `AAPLVertexInputIndexViewportSize` enum value
         //  for its index
-        [renderEncoder setVertexBytes:&_viewportSize
-                               length:sizeof(_viewportSize)
-                              atIndex:AAPLVertexInputIndexViewportSize];
+//        [renderEncoder setVertexBytes:&_viewportSize
+//                               length:sizeof(_viewportSize)
+//                              atIndex:AAPLVertexInputIndexViewportSize];
 
         [renderEncoder setFragmentBuffer:self.uniformBuffer offset:0 atIndex:0];
         [renderEncoder setFragmentTexture:self.fontTexture atIndex:0];
         [renderEncoder setFragmentSamplerState:self.sampler atIndex:0];
 
         // Draw the 3 vertices of our triangle
-        for (int index = 0 ; index < maxCount * maxCount ; index++) {
-            [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
-                              vertexStart:index * 6 + 0
-                              vertexCount:3];
-            [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
-                              vertexStart:index * 6 + 3
-                              vertexCount:3];
-        }
+//        NSLog(@"%d", [self.indexBuffer length] / sizeof(uint16_t));
+//        NSLog(@"hello");
+        [renderEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle
+                                  indexCount:[self.indexBuffer length] / sizeof(uint16_t)
+                                   indexType:MTLIndexTypeUInt16
+                                 indexBuffer:self.indexBuffer
+                           indexBufferOffset:0];
+//        for (int index = 0 ; index < maxCount * maxCount ; index++) {
+//            [renderEncoder drawIndexedPrimitives:MTLPrimitiveTypeTriangle
+//                                      indexCount:6
+//                                       indexType:MTLIndexTypeUInt16
+//                                     indexBuffer:self.indexBuffer
+//                               indexBufferOffset:index * 6];
+////            [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
+////                              vertexStart:index * 6 + 0
+////                              vertexCount:3];
+////            [renderEncoder drawPrimitives:MTLPrimitiveTypeTriangle
+////                              vertexStart:index * 6 + 3
+////                              vertexCount:3];
+//        }
         
         [renderEncoder endEncoding];
 
