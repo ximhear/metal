@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14269.14" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14252.5"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Game View Controller-->
+        <scene sceneID="tXr-a1-R10">
+            <objects>
+                <viewController id="BV1-FR-VrT" customClass="GameViewController" customModule="TextTexture" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="3se-qz-xqx">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="ucf-Br-C5b">
+                                <rect key="frame" x="0.0" y="20" width="375" height="480.5"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="ajv-eR-OQ6">
+                                        <rect key="frame" x="0.0" y="0.0" width="187.5" height="480.5"/>
+                                    </imageView>
+                                    <mtkView contentMode="scaleToFill" colorPixelFormat="BGRA8Unorm" depthStencilPixelFormat="Depth32Float" translatesAutoresizingMaskIntoConstraints="NO" id="94b-ys-TZz">
+                                        <rect key="frame" x="187.5" y="0.0" width="187.5" height="480.5"/>
+                                    </mtkView>
+                                </subviews>
+                            </stackView>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstItem="ucf-Br-C5b" firstAttribute="top" secondItem="rZh-zQ-HcR" secondAttribute="top" id="4Ip-QP-Foe"/>
+                            <constraint firstItem="ucf-Br-C5b" firstAttribute="bottom" secondItem="3se-qz-xqx" secondAttribute="bottom" multiplier="0.75" id="EXE-PN-qry"/>
+                            <constraint firstAttribute="trailing" secondItem="ucf-Br-C5b" secondAttribute="trailing" id="NUL-qQ-AOD"/>
+                            <constraint firstItem="ucf-Br-C5b" firstAttribute="leading" secondItem="rZh-zQ-HcR" secondAttribute="leading" id="lDc-5Q-mgC"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="rZh-zQ-HcR"/>
+                    </view>
+                    <connections>
+                        <outlet property="imageView" destination="ajv-eR-OQ6" id="guh-C7-z2E"/>
+                        <outlet property="mtkView" destination="94b-ys-TZz" id="5Yk-xK-LST"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="SZV-WD-TEh" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="732" y="115.59220389805098"/>
+        </scene>
+    </scenes>
+</document>
