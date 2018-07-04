@@ -31,7 +31,7 @@ class GameViewController: UIViewController {
         let font = UIFont.init(name: "AppleSDGothicNeo-Regular", size: 128)
         
         atlasGenerator = FontAtlasGenerator.init()
-        atlasGenerator?.createTextureData(font: font!, string: "송선AB")
+        atlasGenerator?.createTextureData(font: font!, string: "Pandas")
         self.imageView.image = atlasGenerator?.fontImage
 
         mtkView.device = defaultDevice
