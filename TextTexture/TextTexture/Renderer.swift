@@ -29,7 +29,7 @@ class Renderer: NSObject, MTKViewDelegate {
     var pipelineState: MTLRenderPipelineState
     var depthState: MTLDepthStencilState
     var fontTexture: MTLTexture
-    let maxCount = 1
+    let maxCount = 10
 
     
     let inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
@@ -88,7 +88,7 @@ class Renderer: NSObject, MTKViewDelegate {
         depthState = state
         
         let samplerDescriptor = MTLSamplerDescriptor.init()
-        samplerDescriptor.minFilter = .nearest
+        samplerDescriptor.minFilter = .linear
         samplerDescriptor.magFilter = .linear
         samplerDescriptor.sAddressMode = .clampToZero
         samplerDescriptor.tAddressMode = .clampToZero
@@ -292,7 +292,7 @@ class Renderer: NSObject, MTKViewDelegate {
                 
                 renderEncoder.setCullMode(.back)
                 
-                renderEncoder.setFrontFacing(.counterClockwise)
+                renderEncoder.setFrontFacing(.clockwise)
                 
                 renderEncoder.setRenderPipelineState(pipelineState)
                 
