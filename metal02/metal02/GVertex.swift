@@ -10,11 +10,12 @@ import Foundation
 import simd
 
 struct GVertex {
-    let position: vector_float4
-    let color: vector_float4
+    var position: vector_float4 = vector_float4()
+    var color: vector_float4 = vector_float4()
     var texture: float2 = float2(0, 0)
-    var col0: vector_float4
-    var col1: vector_float4
-    var col2: vector_float4
-    var col3: vector_float4
+    var col0: vector_float4 = vector_float4()
+    var col1: vector_float4 = vector_float4()
+    var col2: vector_float4 = vector_float4()
+    var col3: vector_float4 = vector_float4()
+    var fragmentOption: simd_long1 = 1
 }

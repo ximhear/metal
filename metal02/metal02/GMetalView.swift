@@ -30,8 +30,13 @@ class GMetalView: UIView {
     
     var device: MTLDevice?
     var commandQueue: MTLCommandQueue?
+
     var vertexBuffer: MTLBuffer?
     var indexBuffer: MTLBuffer?
+
+    var vertexBuffer1: MTLBuffer?
+    var indexBuffer1: MTLBuffer?
+
     var uniformBuffer: MTLBuffer
     var pipeline: MTLRenderPipelineState?
     var depthStencilState : MTLDepthStencilState?
@@ -55,10 +60,16 @@ class GMetalView: UIView {
     var uniformBufferOffset = 0
     var uniformBufferIndex = 0
     var uniforms: UnsafeMutablePointer<GUniforms>
+
     var vertices: UnsafeMutablePointer<GVertex>
+    var vertices1: UnsafeMutablePointer<GVertex>
 
     var textures: [MTLTexture]?
     var samplerState: MTLSamplerState?
+    var sampler: MTLSamplerState?
+    
+    var atlasGenerator: FontAtlasGenerator?
+    var fontTexture: MTLTexture?
 
     required init?(coder aDecoder: NSCoder) {
  
@@ -76,11 +87,29 @@ class GMetalView: UIView {
         vertexBuffer = device?.makeBuffer(length: 3 * MemoryLayout<GVertex>.stride * 6, options: .cpuCacheModeWriteCombined)
         vertices = UnsafeMutableRawPointer(vertexBuffer!.contents()).bindMemory(to:GVertex.self, capacity:3)
 
+        vertexBuffer1 = device?.makeBuffer(length: maxCount * maxCount * MemoryLayout<GVertex>.stride * 4, options: .cpuCacheModeWriteCombined)
+        vertices1 = UnsafeMutableRawPointer(vertexBuffer1!.contents()).bindMemory(to:GVertex.self, capacity: maxCount * maxCount * 4)
+
         super.init(coder: aDecoder)
         
         makeDevice()
 
         textures = [MTLTexture].init()
+        
+        let font = UIFont.init(name: "AppleSDGothicNeo-Regular", size: 128)
+        atlasGenerator = FontAtlasGenerator.init()
+        atlasGenerator?.createTextureData(font: font!, string: "Pandas")
+
+        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r8Unorm, width: atlasGenerator!.textureWidth, height: atlasGenerator!.textureHeight, mipmapped: false)
+        textureDescriptor.usage = .shaderRead
+        let region = MTLRegionMake2D(0, 0, atlasGenerator!.textureWidth, atlasGenerator!.textureHeight)
+        
+        fontTexture = device!.makeTexture(descriptor: textureDescriptor)
+        _ = atlasGenerator!.textureData?.withUnsafeBytes({ (bytes: UnsafePointer<UInt8>) -> Int  in
+            fontTexture?.replace(region: region, mipmapLevel: 0, withBytes: bytes, bytesPerRow: atlasGenerator!.textureWidth)
+            return 0
+        })
+        
         var image = generateCircularSector(radius: UIScreen.main.bounds.size.width / 2.0, count: 3, borderColor: UIColor.blue, fillColor: UIColor.yellow)
         var texture = getTexture(device: device!, cgImage: image!.cgImage!)
         textures?.append(texture!)
@@ -122,14 +151,38 @@ class GMetalView: UIView {
         descriptor.magFilter = .linear
         descriptor.normalizedCoordinates = true
         samplerState = self.device!.makeSamplerState(descriptor: descriptor)
+        
+        let samplerDescriptor = MTLSamplerDescriptor.init()
+        samplerDescriptor.minFilter = .linear
+        samplerDescriptor.magFilter = .linear
+        samplerDescriptor.sAddressMode = .clampToZero
+        samplerDescriptor.tAddressMode = .clampToZero
+        sampler = device!.makeSamplerState(descriptor: samplerDescriptor)
     }
 
     let indices: [UInt16] = [
         0, 1, 2
     ]
-    
+
+    let maxCount = 10
+
     func makeBuffers() {
         indexBuffer = device?.makeBuffer(bytes: indices, length: indices.count * MemoryLayout<UInt16>.stride, options: .cpuCacheModeWriteCombined)
+
+        
+        var triangleIndex = [UInt16].init(repeating: 0, count: 6 * maxCount * maxCount)
+        for row in 0..<maxCount {
+            for col in 0..<maxCount {
+                triangleIndex[row * maxCount * 6 + col * 6 + 0] = UInt16(row * maxCount * 4 + col * 4 + 0)
+                triangleIndex[row * maxCount * 6 + col * 6 + 1] = UInt16(row * maxCount * 4 + col * 4 + 1)
+                triangleIndex[row * maxCount * 6 + col * 6 + 2] = UInt16(row * maxCount * 4 + col * 4 + 2)
+                triangleIndex[row * maxCount * 6 + col * 6 + 3] = UInt16(row * maxCount * 4 + col * 4 + 2)
+                triangleIndex[row * maxCount * 6 + col * 6 + 4] = UInt16(row * maxCount * 4 + col * 4 + 3)
+                triangleIndex[row * maxCount * 6 + col * 6 + 5] = UInt16(row * maxCount * 4 + col * 4 + 0)
+            }
+        }
+        
+        indexBuffer1 = device?.makeBuffer(bytes: triangleIndex, length: triangleIndex.count * MemoryLayout<UInt16>.stride, options: .cpuCacheModeWriteCombined)
     }
     
     func makePipeline() {
@@ -268,14 +321,20 @@ class GMetalView: UIView {
         let encoder = commandBuffer?.makeRenderCommandEncoder(descriptor: passDescriptor)
         encoder?.setRenderPipelineState(self.pipeline!)
         encoder?.setDepthStencilState(self.depthStencilState)
-        encoder?.setFragmentSamplerState(samplerState, index: 0)
-        encoder?.setFrontFacing(.counterClockwise)
         encoder?.setCullMode(.back)
 
         uniforms = UnsafeMutableRawPointer(uniformBuffer.contents() + uniformBufferOffset).bindMemory(to:GUniforms.self, capacity:1)
 
+        encoder?.setFrontFacing(.clockwise)
+        encoder?.setFragmentSamplerState(sampler, index: 0)
+        encoder?.setFragmentTexture(fontTexture!, index: 0)
+        drawPie1(encoder: encoder, index: 0, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix, modelMatrix: modelMatrix)
+        
+        encoder?.setFrontFacing(.counterClockwise)
+        encoder?.setFragmentSamplerState(samplerState, index: 0)
         encoder?.setFragmentTexture(self.textures![0], index: 0)
         drawPie(encoder: encoder, index: 0, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix, modelMatrix: modelMatrix)
+
         encoder?.setFragmentTexture(self.textures![1], index: 0)
         drawPie(encoder: encoder, index: 1, projectionMatrix: projectionMatrix, viewMatrix: viewMatrix, modelMatrix: modelMatrix)
         encoder?.setFragmentTexture(self.textures![2], index: 0)
@@ -293,6 +352,99 @@ class GMetalView: UIView {
         commandBuffer?.commit()
     }
     
+    func drawPie1(encoder: MTLRenderCommandEncoder?, index: Int, projectionMatrix: matrix_float4x4, viewMatrix: matrix_float4x4, modelMatrix: matrix_float4x4) {
+        let zAxis = vector_float3(0, 0, 1)
+        var zRot = matrix_float4x4_rotation(axis: zAxis, angle: Float.pi * 2 / 6 * Float(index))
+        
+        var modelMatrix1 = matrix_multiply(zRot, modelMatrix)
+        
+        uniforms[0].modelViewProjectionMatrix = matrix_multiply(matrix_multiply(projectionMatrix, viewMatrix), modelMatrix)
+        let m = matrix_multiply(matrix_multiply(projectionMatrix, viewMatrix), modelMatrix1)
+        
+        vertices1 = UnsafeMutableRawPointer(vertexBuffer1!.contents()).bindMemory(to:GVertex.self, capacity: maxCount * maxCount * 4)
+
+        let minS: Float = 0
+        let maxS: Float = 1
+        let minT: Float = 0
+        let maxT: Float = 1
+        let a: Float = 1.0 / 1
+        let valueX: Float = 0.95
+        let valueY: Float = 0.95
+        let height = valueY * 2 / Float(maxCount)
+        let fMaxCount = Float(maxCount)
+        for row in 0..<maxCount {
+            var width: Float = 0
+            var width1: Float = 0
+            
+            var x: Float = 0
+            var x1: Float = 0
+            
+            if a == 1 {
+                width = valueX * 2 / fMaxCount
+                width1 = valueX * 2 / fMaxCount
+            }
+            else {
+                width = (2 * ((Float(row) * a * valueX) + (fMaxCount - Float(row)) * valueX) / fMaxCount) / fMaxCount
+                width1 = (2 * ((Float(row + 1) * a * valueX) + (fMaxCount - Float(row) - 1) * valueX) / fMaxCount) / fMaxCount
+            }
+            
+            x = -width * fMaxCount / 2.0;
+            x1 = -width1 * fMaxCount / 2.0;
+            
+            var vertexIndex: Int = 0
+            for col in 0..<maxCount {
+                
+                var a0 = GVertex()
+                a0.position = vector_float4.init(x1 + width1 * Float(col + 1), valueY - height * Float(row + 1), 0 , 1)
+                a0.texture = vector_float2.init(maxS / fMaxCount * Float(col + 1), maxT / fMaxCount * Float(row + 1))
+                a0.fragmentOption = -1
+                vertices1[row * maxCount * 4 + col * 4 + 0] = a0;
+                vertexIndex = row * maxCount * 4 + col * 4 + 0
+                self.vertices1[vertexIndex].col0 = m.columns.0
+                self.vertices1[vertexIndex].col1 = m.columns.1
+                self.vertices1[vertexIndex].col2 = m.columns.2
+                self.vertices1[vertexIndex].col3 = m.columns.3
+                //
+                var a1 = GVertex()
+                a1.position = vector_float4.init(x1 + width1 * Float(col + 0), valueY - height * Float(row + 1), 0 , 1)
+                a1.texture = vector_float2.init(maxS / fMaxCount * Float(col + 0), maxT / fMaxCount * Float(row + 1))
+                a1.fragmentOption = -1
+                vertices1[row * maxCount * 4 + col * 4 + 1] = a1;
+                vertexIndex = row * maxCount * 4 + col * 4 + 1
+                self.vertices1[vertexIndex].col0 = m.columns.0
+                self.vertices1[vertexIndex].col1 = m.columns.1
+                self.vertices1[vertexIndex].col2 = m.columns.2
+                self.vertices1[vertexIndex].col3 = m.columns.3
+                //
+                var a2 = GVertex()
+                a2.position = vector_float4.init(x + width * Float(col + 0), valueY - height * Float(row+0), 0 , 1)
+                a2.texture = vector_float2.init(maxS / fMaxCount * Float(col + 0), maxT / fMaxCount * Float(row+0))
+                a2.fragmentOption = -1
+                vertices1[row * maxCount * 4 + col * 4 + 2] = a2;
+                vertexIndex = row * maxCount * 4 + col * 4 + 2
+                self.vertices1[vertexIndex].col0 = m.columns.0
+                self.vertices1[vertexIndex].col1 = m.columns.1
+                self.vertices1[vertexIndex].col2 = m.columns.2
+                self.vertices1[vertexIndex].col3 = m.columns.3
+                //
+                var a3 = GVertex()
+                a3.position = vector_float4.init(x + width * Float(col + 1), valueY - height * Float(row + 0), 0 , 1)
+                a3.texture = vector_float2.init(maxS / fMaxCount * Float(col + 1), maxT / fMaxCount * Float(row + 0))
+                a3.fragmentOption = -1
+                vertices1[row * maxCount * 4 + col * 4 + 3] = a3;
+                vertexIndex = row * maxCount * 4 + col * 4 + 3
+                self.vertices1[vertexIndex].col0 = m.columns.0
+                self.vertices1[vertexIndex].col1 = m.columns.1
+                self.vertices1[vertexIndex].col2 = m.columns.2
+                self.vertices1[vertexIndex].col3 = m.columns.3
+            }
+        }
+        
+        encoder?.setVertexBuffer(self.vertexBuffer1, offset: 0, index: 0)
+        encoder?.setVertexBuffer(uniformBuffer, offset:uniformBufferOffset, index: 1)
+        encoder?.drawIndexedPrimitives(type: .triangle, indexCount: self.indexBuffer1!.length / MemoryLayout<UInt16>.size, indexType: .uint16, indexBuffer: self.indexBuffer1!, indexBufferOffset: 0)
+    }
+    
     func drawPie(encoder: MTLRenderCommandEncoder?, index: Int, projectionMatrix: matrix_float4x4, viewMatrix: matrix_float4x4, modelMatrix: matrix_float4x4) {
         let zAxis = vector_float3(0, 0, 1)
         var zRot = matrix_float4x4_rotation(axis: zAxis, angle: Float.pi * 2 / 6 * Float(index))
@@ -302,9 +454,9 @@ class GMetalView: UIView {
         uniforms[0].modelViewProjectionMatrix = matrix_multiply(matrix_multiply(projectionMatrix, viewMatrix), modelMatrix)
         let m = matrix_multiply(matrix_multiply(projectionMatrix, viewMatrix), modelMatrix1)
         vertices = UnsafeMutableRawPointer(vertexBuffer!.contents() + 3 * MemoryLayout<GVertex>.stride * index).bindMemory(to:GVertex.self, capacity:3)
-        vertices[0] = GVertex.init(position: .init(0, 0, 0, 1), color: .init(0, 1, 1, 1), texture:float2(0.5 ,1), col0: vector_float4(), col1: vector_float4(), col2: vector_float4(), col3: vector_float4())
-        vertices[1] = GVertex.init(position: .init(1, sqrt(3), 0, 1), color: .init(1, 0, 1, 1), texture:float2(1, 0), col0: vector_float4(), col1: vector_float4(), col2: vector_float4(), col3: vector_float4())
-        vertices[2] = GVertex.init(position: .init(-1, sqrt(3), 0, 1), color: .init(0, 0, 1, 1), texture:float2(0, 0), col0: vector_float4(), col1: vector_float4(), col2: vector_float4(), col3: vector_float4())
+        vertices[0] = GVertex.init(position: .init(0, 0, 0, 1), color: .init(0, 1, 1, 1), texture:float2(0.5 ,1), col0: vector_float4(), col1: vector_float4(), col2: vector_float4(), col3: vector_float4(), fragmentOption: index)
+        vertices[1] = GVertex.init(position: .init(1, sqrt(3), 0, 1), color: .init(1, 0, 1, 1), texture:float2(1, 0), col0: vector_float4(), col1: vector_float4(), col2: vector_float4(), col3: vector_float4(), fragmentOption: index)
+        vertices[2] = GVertex.init(position: .init(-1, sqrt(3), 0, 1), color: .init(0, 0, 1, 1), texture:float2(0, 0), col0: vector_float4(), col1: vector_float4(), col2: vector_float4(), col3: vector_float4(), fragmentOption: index)
         self.vertices[0].col0 = m.columns.0;
         self.vertices[0].col1 = m.columns.1;
         self.vertices[0].col2 = m.columns.2;

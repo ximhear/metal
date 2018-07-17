@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8CA3BC0B20FE3792008CE56E /* FontAtlasGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA3BC0A20FE3792008CE56E /* FontAtlasGenerator.swift */; };
 		EC0A32E720ADEFBD00A5D9D6 /* GZLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0A32E620ADEFBC00A5D9D6 /* GZLog.swift */; };
 		EC0A32EC20AE032300A5D9D6 /* ccc.png in Resources */ = {isa = PBXBuildFile; fileRef = EC0A32E820AE032300A5D9D6 /* ccc.png */; };
 		EC0A32ED20AE032300A5D9D6 /* bbb.png in Resources */ = {isa = PBXBuildFile; fileRef = EC0A32E920AE032300A5D9D6 /* bbb.png */; };
@@ -24,6 +25,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8CA3BC0A20FE3792008CE56E /* FontAtlasGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontAtlasGenerator.swift; sourceTree = "<group>"; };
 		EC0A32E620ADEFBC00A5D9D6 /* GZLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GZLog.swift; path = ../../GZLog.swift; sourceTree = "<group>"; };
 		EC0A32E820AE032300A5D9D6 /* ccc.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ccc.png; sourceTree = "<group>"; };
 		EC0A32E920AE032300A5D9D6 /* bbb.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = bbb.png; sourceTree = "<group>"; };
@@ -72,6 +74,7 @@
 		ECA47AA9208A81E000DC2C61 /* metal02 */ = {
 			isa = PBXGroup;
 			children = (
+				8CA3BC0A20FE3792008CE56E /* FontAtlasGenerator.swift */,
 				EC0A32EA20AE032300A5D9D6 /* aaa.png */,
 				EC0A32E920AE032300A5D9D6 /* bbb.png */,
 				EC0A32E820AE032300A5D9D6 /* ccc.png */,
@@ -172,6 +175,7 @@
 				ECA47AAD208A81E000DC2C61 /* ViewController.swift in Sources */,
 				EC605C06208BB32C006F71AD /* g.metal in Sources */,
 				EC8C262A2094FE2F0079F7E9 /* GUniforms.swift in Sources */,
+				8CA3BC0B20FE3792008CE56E /* FontAtlasGenerator.swift in Sources */,
 				ECA47AAB208A81E000DC2C61 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -317,8 +321,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = J8647L48BZ;
+				DEVELOPMENT_TEAM = WD3LPJ2STX;
 				INFOPLIST_FILE = metal02/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -335,8 +340,9 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = J8647L48BZ;
+				DEVELOPMENT_TEAM = WD3LPJ2STX;
 				INFOPLIST_FILE = metal02/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
