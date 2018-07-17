@@ -50,9 +50,6 @@ class Renderer: NSObject, MTKViewDelegate {
     var vertexBuffer: MTLBuffer
     var indexBuffer: MTLBuffer
 
-    var vertexBuffer1: MTLBuffer
-    var indexBuffer1: MTLBuffer
-
     init?(metalKitView: MTKView, atlasGenerator: FontAtlasGenerator) {
         self.device = metalKitView.device!
         guard let queue = self.device.makeCommandQueue() else { return nil }
@@ -178,6 +175,12 @@ class Renderer: NSObject, MTKViewDelegate {
                 triangleIndex[row * maxCount * 6 + col * 6 + 5] = UInt16(row * maxCount * 4 + col * 4 + 0)
             }
         }
+        
+        guard let vb = device.makeBuffer(bytes: triangleVertices, length: triangleVertices.count * MemoryLayout<AAPLVertex>.stride, options: .cpuCacheModeWriteCombined) else {
+            return nil
+        }
+        vertexBuffer = vb
+        vertexBuffer.label = "Vertices"
         
         guard let ib = device.makeBuffer(bytes: triangleIndex, length: triangleIndex.count * MemoryLayout<UInt16>.stride, options: .cpuCacheModeWriteCombined) else {
             return nil
