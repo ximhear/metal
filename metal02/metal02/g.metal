@@ -45,7 +45,7 @@ fragment half4 textured_fragment(Vertex vertexIn [[ stage_in ]],
                                  sampler sampler2d [[ sampler(0) ]],
                                  texture2d<float> texture [[ texture(0) ]] ) {
     float4 color = texture.sample(sampler2d, vertexIn.texture);
-    if (vertexIn.fragmentOption == -1) {
+    if (vertexIn.fragmentOption == -10) {
         // Outline of glyph is the isocontour with value 50%
         float edgeDistance = 0.5;
         // Sample the signed-distance field to find distance from this fragment to the glyph outline
