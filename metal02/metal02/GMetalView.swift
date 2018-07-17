@@ -193,6 +193,14 @@ class GMetalView: UIView {
         descriptor.vertexFunction = vertexFunc
         descriptor.fragmentFunction = fragmentFunc
         descriptor.colorAttachments[0].pixelFormat = self.metalLayer.pixelFormat
+//        descriptor.colorAttachments[0].isBlendingEnabled = true
+//        descriptor.colorAttachments[0].rgbBlendOperation = .add
+//        descriptor.colorAttachments[0].alphaBlendOperation = .add
+//        descriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
+//        descriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
+//        descriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
+//        descriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
+        
         descriptor.depthAttachmentPixelFormat = .depth32Float
         pipeline = try? device!.makeRenderPipelineState(descriptor: descriptor)
         
@@ -368,8 +376,8 @@ class GMetalView: UIView {
         let minT: Float = 0
         let maxT: Float = 1
         let a: Float = 1.0 / 1
-        let valueX: Float = 0.95
-        let valueY: Float = 0.95
+        let valueY: Float = 3.95
+        let valueX: Float = valueY * Float(atlasGenerator!.textureWidth) / Float(atlasGenerator!.textureHeight)
         let height = valueY * 2 / Float(maxCount)
         let fMaxCount = Float(maxCount)
         for row in 0..<maxCount {
