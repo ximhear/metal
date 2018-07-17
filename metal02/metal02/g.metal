@@ -7,6 +7,8 @@
 //
 
 #include <metal_stdlib>
+#include <simd/simd.h>
+
 using namespace metal;
 
 struct Vertex {
@@ -59,7 +61,7 @@ fragment half4 textured_fragment(Vertex vertexIn [[ stage_in ]],
         if (insideness == 0) {
             return half4(1, 0, 0, 1);
         }
-        return half4(0, 1, 0, insideness);
+        return half4(0, 1 * insideness, 0, 0) + half4(1 * (1-insideness), 0, 0, 1);
     }
     else {
         float4 color = texture.sample(sampler2d, vertexIn.texture);
