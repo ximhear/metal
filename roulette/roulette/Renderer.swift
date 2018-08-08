@@ -116,7 +116,7 @@ class Renderer: NSObject, MTKViewDelegate {
         mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].offset = 0
         mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].bufferIndex = BufferIndex.meshGenerics.rawValue
         
-        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stride = 16
+        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stride = 12
         mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stepRate = 1
         mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stepFunction = MTLVertexStepFunction.perVertex
         
@@ -166,26 +166,53 @@ class Renderer: NSObject, MTKViewDelegate {
 
         let metalAllocator = MTKMeshBufferAllocator(device: device)
         
-        let vertexBuffer1 = metalAllocator.newBuffer(4 * MemoryLayout<vector_float3>.stride, type: .vertex) as! MTKMeshBuffer
-        let vertexBuffer2 = metalAllocator.newBuffer(4 * MemoryLayout<vector_float2>.stride, type: .vertex) as! MTKMeshBuffer
+        let vertexBuffer1 = metalAllocator.newBuffer(7 * 3 * MemoryLayout<Float>.stride, type: .vertex) as! MTKMeshBuffer
+        let vertexBuffer2 = metalAllocator.newBuffer(7 * 2 * MemoryLayout<Float>.stride, type: .vertex) as! MTKMeshBuffer
 
-        let vertices = UnsafeMutableRawPointer(vertexBuffer1.buffer.contents()).bindMemory(to:vector_float3.self, capacity:4)
+        let vertices = UnsafeMutableRawPointer(vertexBuffer1.buffer.contents()).bindMemory(to:Float.self, capacity: 7 * 3)
         var angle = Float.pi / 3.0
-        vertices[0] = vector_float3.init(0, 0, 0)
-        angle = Float.pi / 3.0 * 0
-        vertices[1] = vector_float3.init(1, 0, 0)
-        angle = Float.pi / 3.0 * 1
-        vertices[2] = vector_float3.init(cos(angle), sin(angle), 0)
-        angle = Float.pi / 3.0 * 2
-        vertices[3] = vector_float3.init(cos(angle), sin(angle), 0)
-        angle = Float.pi / 3.0 * 3
-        vertices[4] = vector_float3.init(cos(angle), sin(angle), 0)
-        angle = Float.pi / 3.0 * 4
-        vertices[5] = vector_float3.init(cos(angle), sin(angle), 0)
-        angle = Float.pi / 3.0 * 5
-        vertices[6] = vector_float3.init(cos(angle), sin(angle), 0)
+        
+        var index: Int = 0
+        vertices[index * 3 + 0] = 0
+        vertices[index * 3 + 1] = 0
+        vertices[index * 3 + 2] = 0
 
-        let vertices1 = UnsafeMutableRawPointer(vertexBuffer2.buffer.contents()).bindMemory(to:vector_float2.self, capacity:4)
+        index = 1
+        vertices[index * 3 + 0] = 1
+        vertices[index * 3 + 1] = 0
+        vertices[index * 3 + 2] = 0
+
+        index = 2
+        angle = Float.pi / 3.0 * 1
+        vertices[index * 3 + 0] = cos(angle)
+        vertices[index * 3 + 1] = sin(angle)
+        vertices[index * 3 + 2] = 0
+
+        index = 3
+        angle = Float.pi / 3.0 * 2
+        vertices[index * 3 + 0] = cos(angle)
+        vertices[index * 3 + 1] = sin(angle)
+        vertices[index * 3 + 2] = 0
+
+        index = 4
+        angle = Float.pi / 3.0 * 3
+        vertices[index * 3 + 0] = cos(angle)
+        vertices[index * 3 + 1] = sin(angle)
+        vertices[index * 3 + 2] = 0
+
+        index = 5
+        angle = Float.pi / 3.0 * 4
+        vertices[index * 3 + 0] = cos(angle)
+        vertices[index * 3 + 1] = sin(angle)
+        vertices[index * 3 + 2] = 0
+
+        index = 6
+        angle = Float.pi / 3.0 * 5
+        vertices[index * 3 + 0] = cos(angle)
+        vertices[index * 3 + 1] = sin(angle)
+        vertices[index * 3 + 2] = 0
+
+        let vertices1 = UnsafeMutableRawPointer(vertexBuffer2.buffer.contents()).bindMemory(to:vector_float2.self, capacity:7)
         vertices1[0] = vector_float2.init(0, 0)
         vertices1[1] = vector_float2.init(0, 1)
         vertices1[2] = vector_float2.init(1, 1)
@@ -264,7 +291,7 @@ class Renderer: NSObject, MTKViewDelegate {
         
         let rotationAxis = float3(0, 0, 1)
         let modelMatrix = matrix4x4_rotation(radians: rotation, axis: rotationAxis)
-        let viewMatrix = matrix4x4_translation(0.0, 0.0, -10.0)
+        let viewMatrix = matrix4x4_translation(0.0, 0.0, -3.5)
         uniforms[0].modelViewMatrix = simd_mul(viewMatrix, modelMatrix)
         rotation += 0.03
     }
