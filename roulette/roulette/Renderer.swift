@@ -166,10 +166,10 @@ class Renderer: NSObject, MTKViewDelegate {
 
         let metalAllocator = MTKMeshBufferAllocator(device: device)
         
-        let vertexBuffer1 = metalAllocator.newBuffer(7 * 3 * MemoryLayout<Float>.stride, type: .vertex) as! MTKMeshBuffer
-        let vertexBuffer2 = metalAllocator.newBuffer(7 * 2 * MemoryLayout<Float>.stride, type: .vertex) as! MTKMeshBuffer
+        let vertexBuffer1 = metalAllocator.newBuffer(8 * 3 * MemoryLayout<Float>.stride, type: .vertex) as! MTKMeshBuffer
+        let vertexBuffer2 = metalAllocator.newBuffer(8 * 2 * MemoryLayout<Float>.stride, type: .vertex) as! MTKMeshBuffer
 
-        let vertices = UnsafeMutableRawPointer(vertexBuffer1.buffer.contents()).bindMemory(to:Float.self, capacity: 7 * 3)
+        let vertices = UnsafeMutableRawPointer(vertexBuffer1.buffer.contents()).bindMemory(to:Float.self, capacity: 8 * 3)
         var angle = Float.pi / 3.0
         
         var index: Int = 0
@@ -212,7 +212,12 @@ class Renderer: NSObject, MTKViewDelegate {
         vertices[index * 3 + 1] = sin(angle)
         vertices[index * 3 + 2] = 0
 
-        let vertices1 = UnsafeMutableRawPointer(vertexBuffer2.buffer.contents()).bindMemory(to:vector_float2.self, capacity:7)
+        index = 7
+        vertices[index * 3 + 0] = 1
+        vertices[index * 3 + 1] = 0
+        vertices[index * 3 + 2] = 0
+
+        let vertices1 = UnsafeMutableRawPointer(vertexBuffer2.buffer.contents()).bindMemory(to:vector_float2.self, capacity: 8)
         vertices1[0] = vector_float2.init(0, 0)
         vertices1[1] = vector_float2.init(0, 1)
         vertices1[2] = vector_float2.init(1, 1)
@@ -220,6 +225,7 @@ class Renderer: NSObject, MTKViewDelegate {
         vertices1[4] = vector_float2.init(1, 1)
         vertices1[5] = vector_float2.init(0, 1)
         vertices1[6] = vector_float2.init(1, 1)
+        vertices1[7] = vector_float2.init(1, 0)
 
         let indexBuffer1 = metalAllocator.newBuffer(18 * MemoryLayout<UInt16>.stride, type: .index) as! MTKMeshBuffer
         let index1 = UnsafeMutableRawPointer(indexBuffer1.buffer.contents()).bindMemory(to:UInt16.self, capacity:18)
@@ -240,7 +246,7 @@ class Renderer: NSObject, MTKViewDelegate {
         index1[14] = 6
         index1[15] = 0
         index1[16] = 6
-        index1[17] = 1
+        index1[17] = 7
 
 //        let indexBuffer2 = metalAllocator.newBuffer(3 * MemoryLayout<UInt16>.stride, type: .index) as! MTKMeshBuffer
 //        let index2 = UnsafeMutableRawPointer(indexBuffer2.buffer.contents()).bindMemory(to:UInt16.self, capacity:3)
