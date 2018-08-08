@@ -170,33 +170,61 @@ class Renderer: NSObject, MTKViewDelegate {
         let vertexBuffer2 = metalAllocator.newBuffer(4 * MemoryLayout<vector_float2>.stride, type: .vertex) as! MTKMeshBuffer
 
         let vertices = UnsafeMutableRawPointer(vertexBuffer1.buffer.contents()).bindMemory(to:vector_float3.self, capacity:4)
-        vertices[0] = vector_float3.init(-1, 1, 0)
-        vertices[1] = vector_float3.init(-1, -1, 0)
-        vertices[2] = vector_float3.init(1, -1, 0)
-        vertices[3] = vector_float3.init(1, 1, 0)
+        var angle = Float.pi / 3.0
+        vertices[0] = vector_float3.init(0, 0, 0)
+        angle = Float.pi / 3.0 * 0
+        vertices[1] = vector_float3.init(1, 0, 0)
+        angle = Float.pi / 3.0 * 1
+        vertices[2] = vector_float3.init(cos(angle), sin(angle), 0)
+        angle = Float.pi / 3.0 * 2
+        vertices[3] = vector_float3.init(cos(angle), sin(angle), 0)
+        angle = Float.pi / 3.0 * 3
+        vertices[4] = vector_float3.init(cos(angle), sin(angle), 0)
+        angle = Float.pi / 3.0 * 4
+        vertices[5] = vector_float3.init(cos(angle), sin(angle), 0)
+        angle = Float.pi / 3.0 * 5
+        vertices[6] = vector_float3.init(cos(angle), sin(angle), 0)
 
         let vertices1 = UnsafeMutableRawPointer(vertexBuffer2.buffer.contents()).bindMemory(to:vector_float2.self, capacity:4)
         vertices1[0] = vector_float2.init(0, 0)
         vertices1[1] = vector_float2.init(0, 1)
         vertices1[2] = vector_float2.init(1, 1)
         vertices1[3] = vector_float2.init(1, 0)
+        vertices1[4] = vector_float2.init(1, 1)
+        vertices1[5] = vector_float2.init(0, 1)
+        vertices1[6] = vector_float2.init(1, 1)
 
-        let indexBuffer1 = metalAllocator.newBuffer(3 * MemoryLayout<UInt16>.stride, type: .index) as! MTKMeshBuffer
+        let indexBuffer1 = metalAllocator.newBuffer(18 * MemoryLayout<UInt16>.stride, type: .index) as! MTKMeshBuffer
         let index1 = UnsafeMutableRawPointer(indexBuffer1.buffer.contents()).bindMemory(to:UInt16.self, capacity:3)
         index1[0] = 0
         index1[1] = 1
         index1[2] = 2
+        index1[3] = 0
+        index1[4] = 2
+        index1[5] = 3
+        index1[6] = 0
+        index1[7] = 3
+        index1[8] = 4
+        index1[9] = 0
+        index1[10] = 4
+        index1[11] = 5
+        index1[12] = 0
+        index1[13] = 5
+        index1[14] = 6
+        index1[15] = 0
+        index1[16] = 6
+        index1[17] = 1
 
-        let indexBuffer2 = metalAllocator.newBuffer(3 * MemoryLayout<UInt16>.stride, type: .index) as! MTKMeshBuffer
-        let index2 = UnsafeMutableRawPointer(indexBuffer2.buffer.contents()).bindMemory(to:UInt16.self, capacity:3)
-        index2[0] = 0
-        index2[1] = 2
-        index2[2] = 3
+//        let indexBuffer2 = metalAllocator.newBuffer(3 * MemoryLayout<UInt16>.stride, type: .index) as! MTKMeshBuffer
+//        let index2 = UnsafeMutableRawPointer(indexBuffer2.buffer.contents()).bindMemory(to:UInt16.self, capacity:3)
+//        index2[0] = 0
+//        index2[1] = 2
+//        index2[2] = 3
         
 
-        let submesh1 = MDLSubmesh.init(indexBuffer: indexBuffer1, indexCount: 3, indexType: .uInt16, geometryType: .triangles, material: nil)
-        let submesh2 = MDLSubmesh.init(indexBuffer: indexBuffer2, indexCount: 3, indexType: .uInt16, geometryType: .triangles, material: nil)
-        let mdlMesh1 = MDLMesh.init(vertexBuffers: [vertexBuffer1, vertexBuffer2], vertexCount: 4, descriptor: mdlVertexDescriptor, submeshes: [submesh1, submesh2])
+        let submesh1 = MDLSubmesh.init(indexBuffer: indexBuffer1, indexCount: 18, indexType: .uInt16, geometryType: .triangles, material: nil)
+//        let submesh2 = MDLSubmesh.init(indexBuffer: indexBuffer2, indexCount: 3, indexType: .uInt16, geometryType: .triangles, material: nil)
+        let mdlMesh1 = MDLMesh.init(vertexBuffers: [vertexBuffer1, vertexBuffer2], vertexCount: 4, descriptor: mdlVertexDescriptor, submeshes: [submesh1])
         
         return try MTKMesh(mesh:mdlMesh1, device:device)
     }
