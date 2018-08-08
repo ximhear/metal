@@ -222,7 +222,7 @@ class Renderer: NSObject, MTKViewDelegate {
         vertices1[6] = vector_float2.init(1, 1)
 
         let indexBuffer1 = metalAllocator.newBuffer(18 * MemoryLayout<UInt16>.stride, type: .index) as! MTKMeshBuffer
-        let index1 = UnsafeMutableRawPointer(indexBuffer1.buffer.contents()).bindMemory(to:UInt16.self, capacity:3)
+        let index1 = UnsafeMutableRawPointer(indexBuffer1.buffer.contents()).bindMemory(to:UInt16.self, capacity:18)
         index1[0] = 0
         index1[1] = 1
         index1[2] = 2
