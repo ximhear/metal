@@ -13,8 +13,8 @@ import MetalKit
 import simd
 
 struct GVertex {
-    var position: vector_float4 = vector_float4()
-    var texCoord: vector_float4 = vector_float4()
+    var position: vector_float3 = vector_float3()
+    var texCoord: vector_float2 = vector_float2()
 }
 
 // The 256 byte aligned size of our uniform structure
@@ -108,19 +108,19 @@ class Renderer: NSObject, MTKViewDelegate {
         
         let mtlVertexDescriptor = MTLVertexDescriptor()
         
-        mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].format = MTLVertexFormat.float4
+        mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].format = MTLVertexFormat.float3
         mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].offset = 0
         mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].bufferIndex = BufferIndex.meshPositions.rawValue
         
-        mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].format = MTLVertexFormat.float4
-        mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].offset = 16
+        mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].format = MTLVertexFormat.float2
+        mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].offset = 0
         mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].bufferIndex = BufferIndex.meshGenerics.rawValue
         
-        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stride = 32
+        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stride = 16
         mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stepRate = 1
         mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stepFunction = MTLVertexStepFunction.perVertex
         
-        mtlVertexDescriptor.layouts[BufferIndex.meshGenerics.rawValue].stride = 32
+        mtlVertexDescriptor.layouts[BufferIndex.meshGenerics.rawValue].stride = 8
         mtlVertexDescriptor.layouts[BufferIndex.meshGenerics.rawValue].stepRate = 1
         mtlVertexDescriptor.layouts[BufferIndex.meshGenerics.rawValue].stepFunction = MTLVertexStepFunction.perVertex
         
@@ -166,74 +166,37 @@ class Renderer: NSObject, MTKViewDelegate {
 
         let metalAllocator = MTKMeshBufferAllocator(device: device)
         
-        let vertexBuffer = metalAllocator.newBuffer(4 * MemoryLayout<GVertex>.stride, type: .vertex) as! MTKMeshBuffer
-/*
-        var vertices = [GVertex].init(repeating: GVertex(), count: 4)
-        vertices[0].position = vector_float4.init(-1, 1, 0, 1)
-        vertices[0].texCoord = vector_float4.init(0, 0, 0, 0)
-        vertices[1].position = vector_float4.init(-1, -1, 0, 1)
-        vertices[1].texCoord = vector_float4.init(0, 1, 0, 0)
-        vertices[2].position = vector_float4.init(1, -1, 0, 1)
-        vertices[2].texCoord = vector_float4.init(1, 1, 0, 0)
-        vertices[3].position = vector_float4.init(1, 1, 0, 1)
-        vertices[3].texCoord = vector_float4.init(1, 0, 0, 0)
-        
+        let vertexBuffer1 = metalAllocator.newBuffer(4 * MemoryLayout<vector_float3>.stride, type: .vertex) as! MTKMeshBuffer
+        let vertexBuffer2 = metalAllocator.newBuffer(4 * MemoryLayout<vector_float2>.stride, type: .vertex) as! MTKMeshBuffer
 
-        let data = Data.init(bytes: vertices, count: 4 * MemoryLayout<GVertex>.stride)
-        vertexBuffer.fill(data, offset: 0)
-*/
+        let vertices = UnsafeMutableRawPointer(vertexBuffer1.buffer.contents()).bindMemory(to:vector_float3.self, capacity:4)
+        vertices[0] = vector_float3.init(-1, 1, 0)
+        vertices[1] = vector_float3.init(-1, -1, 0)
+        vertices[2] = vector_float3.init(1, -1, 0)
+        vertices[3] = vector_float3.init(1, 1, 0)
+
+        let vertices1 = UnsafeMutableRawPointer(vertexBuffer2.buffer.contents()).bindMemory(to:vector_float2.self, capacity:4)
+        vertices1[0] = vector_float2.init(0, 0)
+        vertices1[1] = vector_float2.init(0, 1)
+        vertices1[2] = vector_float2.init(1, 1)
+        vertices1[3] = vector_float2.init(1, 0)
+
         let indexBuffer1 = metalAllocator.newBuffer(3 * MemoryLayout<UInt16>.stride, type: .index) as! MTKMeshBuffer
-        
-        let indexBuffer2 = metalAllocator.newBuffer(3 * MemoryLayout<UInt16>.stride, type: .index) as! MTKMeshBuffer
-
-        let submesh1 = MDLSubmesh.init(indexBuffer: indexBuffer1, indexCount: 3, indexType: .uInt16, geometryType: .triangles, material: nil)
-        let submesh2 = MDLSubmesh.init(indexBuffer: indexBuffer2, indexCount: 3, indexType: .uInt16, geometryType: .triangles, material: nil)
-//        let mdlMesh1 = MDLMesh.init(bufferAllocator: metalAllocator)
-        let mdlMesh1 = MDLMesh.init(vertexBuffers: [vertexBuffer], vertexCount: 4, descriptor: mdlVertexDescriptor, submeshes: [submesh1, submesh2])
-        /*
-        mdlMesh1.vertexBuffers = [vertexBuffer]
-        mdlMesh1.vertexCount = 4
-        mdlMesh1.submeshes = [submesh1, submesh2]
-        mdlMesh1.vertexDescriptor = mdlVertexDescriptor
- */
-        GZLog(vertexBuffer.buffer.contents())
-        GZLog(mdlMesh1.vertexCount)
-        GZLog(mdlMesh1.vertexBuffers)
-
-        let vertices = UnsafeMutableRawPointer(vertexBuffer.buffer.contents()).bindMemory(to:GVertex.self, capacity:4)
-        vertices[0].position = vector_float4.init(-1, 1, 0, 1)
-        vertices[0].texCoord = vector_float4.init(0, 0, 0, 0)
-        vertices[1].position = vector_float4.init(-1, -1, 0, 1)
-        vertices[1].texCoord = vector_float4.init(0, 1, 0, 0)
-        vertices[2].position = vector_float4.init(1, -1, 0, 1)
-        vertices[2].texCoord = vector_float4.init(1, 1, 0, 0)
-        vertices[3].position = vector_float4.init(1, 1, 0, 1)
-        vertices[3].texCoord = vector_float4.init(1, 0, 0, 0)
-
-
-        let index2 = UnsafeMutableRawPointer(indexBuffer2.buffer.contents()).bindMemory(to:UInt16.self, capacity:3)
-        index2[0] = 0
-        index2[1] = 2
-        index2[2] = 3
-
         let index1 = UnsafeMutableRawPointer(indexBuffer1.buffer.contents()).bindMemory(to:UInt16.self, capacity:3)
         index1[0] = 0
         index1[1] = 1
         index1[2] = 2
 
+        let indexBuffer2 = metalAllocator.newBuffer(3 * MemoryLayout<UInt16>.stride, type: .index) as! MTKMeshBuffer
+        let index2 = UnsafeMutableRawPointer(indexBuffer2.buffer.contents()).bindMemory(to:UInt16.self, capacity:3)
+        index2[0] = 0
+        index2[1] = 2
+        index2[2] = 3
+        
 
-
-
-
-
-//        let mdlMesh = MDLMesh.newBox(withDimensions: float3(2, 2, 2),
-//                                     segments: uint3(2, 2, 2),
-//                                     geometryType: MDLGeometryType.triangles,
-//                                     inwardNormals:false,
-//                                     allocator: metalAllocator)
-//
-//
-//        mdlMesh.vertexDescriptor = mdlVertexDescriptor
+        let submesh1 = MDLSubmesh.init(indexBuffer: indexBuffer1, indexCount: 3, indexType: .uInt16, geometryType: .triangles, material: nil)
+        let submesh2 = MDLSubmesh.init(indexBuffer: indexBuffer2, indexCount: 3, indexType: .uInt16, geometryType: .triangles, material: nil)
+        let mdlMesh1 = MDLMesh.init(vertexBuffers: [vertexBuffer1, vertexBuffer2], vertexCount: 4, descriptor: mdlVertexDescriptor, submeshes: [submesh1, submesh2])
         
         return try MTKMesh(mesh:mdlMesh1, device:device)
     }
@@ -271,11 +234,11 @@ class Renderer: NSObject, MTKViewDelegate {
         
         uniforms[0].projectionMatrix = projectionMatrix
         
-        let rotationAxis = float3(1, 1, 0)
+        let rotationAxis = float3(0, 0, 1)
         let modelMatrix = matrix4x4_rotation(radians: rotation, axis: rotationAxis)
         let viewMatrix = matrix4x4_translation(0.0, 0.0, -10.0)
-        uniforms[0].modelViewMatrix = viewMatrix//simd_mul(viewMatrix, modelMatrix)
-        rotation += 0.01
+        uniforms[0].modelViewMatrix = simd_mul(viewMatrix, modelMatrix)
+        rotation += 0.03
     }
     
     func draw(in view: MTKView) {

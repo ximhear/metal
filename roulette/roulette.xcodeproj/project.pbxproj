@@ -297,7 +297,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = WD3LPJ2STX;
+				DEVELOPMENT_TEAM = J8647L48BZ;
 				INFOPLIST_FILE = roulette/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -316,7 +316,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = WD3LPJ2STX;
+				DEVELOPMENT_TEAM = J8647L48BZ;
 				INFOPLIST_FILE = roulette/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
