@@ -54,6 +54,8 @@ class Renderer: NSObject, MTKViewDelegate {
 
     var mesh: MTKMesh
     var mesh1: MTKMesh
+    
+    private var rotationStopped = false
 
     init?(metalKitView: MTKView) {
         self.device = metalKitView.device!
@@ -479,7 +481,9 @@ class Renderer: NSObject, MTKViewDelegate {
         let modelMatrix = matrix4x4_rotation(radians: rotation, axis: rotationAxis)
         let viewMatrix = matrix4x4_translation(0.0, 0.0, -3.5)
         uniforms[0].modelViewMatrix = simd_mul(viewMatrix, modelMatrix)
-        rotation += 0.01
+        if rotationStopped == false {
+            rotation += 0.01
+        }
         
         uniforms1[0].projectionMatrix = projectionMatrix
         
@@ -487,7 +491,9 @@ class Renderer: NSObject, MTKViewDelegate {
         let modelMatrix1 = matrix4x4_rotation(radians: rotation1, axis: rotationAxis1)
         let viewMatrix1 = matrix4x4_translation(0.0, 0.0, -3.6)
         uniforms1[0].modelViewMatrix = simd_mul(viewMatrix1, modelMatrix1)
-        rotation1 += 0.01 * 2
+        if rotationStopped == false {
+            rotation1 += 0.01 * 2
+        }
     }
     
     func draw(in view: MTKView) {
@@ -618,6 +624,15 @@ class Renderer: NSObject, MTKViewDelegate {
         
         let aspect = Float(size.width) / Float(size.height)
         projectionMatrix = matrix_perspective_right_hand(fovyRadians: radians_from_degrees(65), aspectRatio:aspect, nearZ: 0.1, farZ: 100.0)
+    }
+    
+    func stopRotation() {
+        if rotationStopped == true {
+            rotationStopped = false
+        }
+        else {
+            rotationStopped = true
+        }
     }
 }
 
