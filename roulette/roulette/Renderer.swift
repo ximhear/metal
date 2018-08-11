@@ -48,7 +48,8 @@ class Renderer: NSObject, MTKViewDelegate {
     var projectionMatrix: matrix_float4x4 = matrix_float4x4()
     
     var rotation: Float = 0
-    
+    var rotation1: Float = 0
+
     var mesh: MTKMesh
     var mesh1: MTKMesh
 
@@ -331,7 +332,7 @@ class Renderer: NSObject, MTKViewDelegate {
         let vertices = UnsafeMutableRawPointer(vertexBuffer1.buffer.contents()).bindMemory(to:Float.self, capacity: 8 * 3)
         var angle = Float.pi / 3.0
         let startAngle = Float.pi / 3.0 / 2.0
-        let z: Float = -0.1
+        let z: Float = 0
 
         var index: Int = 0
         vertices[index * 3 + 0] = 0
@@ -464,10 +465,15 @@ class Renderer: NSObject, MTKViewDelegate {
         uniforms[0].projectionMatrix = projectionMatrix
         
         let rotationAxis = float3(0, 0, 1)
+        let rotationAxis1 = float3(0, 1, 0)
         let modelMatrix = matrix4x4_rotation(radians: rotation, axis: rotationAxis)
+        let modelMatrix1 = matrix4x4_rotation(radians: rotation1, axis: rotationAxis1)
         let viewMatrix = matrix4x4_translation(0.0, 0.0, -3.5)
+        let viewMatrix1 = matrix4x4_translation(0.0, 0.0, -3.6)
         uniforms[0].modelViewMatrix = simd_mul(viewMatrix, modelMatrix)
-        rotation += 0.02
+        uniforms[0].modelViewMatrix1 = simd_mul(viewMatrix1, modelMatrix1)
+        rotation += 0.01
+        rotation1 += 0.01 * 2
     }
     
     func draw(in view: MTKView) {
@@ -530,6 +536,7 @@ class Renderer: NSObject, MTKViewDelegate {
 
                 }
 
+                renderEncoder.setCullMode(.none)
                 renderEncoder.setRenderPipelineState(pipelineState1)
                 
                 for (index, element) in mesh1.vertexDescriptor.layouts.enumerated() {
