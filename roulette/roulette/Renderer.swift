@@ -381,8 +381,8 @@ class Renderer: NSObject, MTKViewDelegate {
         vertices[index * 3 + 2] = z
         
         for index in 0..<8 {
-            vertices[index * 3 + 0] *= 2
-            vertices[index * 3 + 1] *= 2
+            vertices[index * 3 + 0] *= 1.25
+            vertices[index * 3 + 1] *= 1.25
         }
 
         let vertices1 = UnsafeMutableRawPointer(vertexBuffer2.buffer.contents()).bindMemory(to:vector_float2.self, capacity: 8)
