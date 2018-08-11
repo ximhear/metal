@@ -40,7 +40,19 @@ vertex ColorInOut vertexShader(Vertex in [[ stage_in ]],
     return out;
 }
 
-//vertex ColorInOut vertexShader(device Vertex* vertices [[ buffer(0) ]],
+vertex ColorInOut vertexShader1(Vertex in [[ stage_in ]],
+                               constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]])
+{
+    ColorInOut out;
+    
+    float4 position = float4(in.position, 1.0);
+    out.position = uniforms.projectionMatrix * uniforms.modelViewMatrix * position;
+    out.texCoord = in.texCoord.xy;
+    
+    return out;
+}
+
+//vertex ColorInOut vertexShader1(device Vertex* vertices [[ buffer(0) ]],
 //                               constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]],
 //                               uint vid[[vertex_id]])
 //{
@@ -64,5 +76,19 @@ fragment float4 fragmentShader(ColorInOut in [[stage_in]],
     half4 colorSample   = colorMap.sample(colorSampler, in.texCoord.xy);
 
 //    return float4(1,0,0,1);
+    return float4(colorSample);
+}
+
+fragment float4 fragmentShader1(ColorInOut in [[stage_in]],
+                               constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]],
+                               texture2d<half> colorMap     [[ texture(TextureIndexColor) ]])
+{
+    constexpr sampler colorSampler(mip_filter::linear,
+                                   mag_filter::linear,
+                                   min_filter::linear);
+    
+    half4 colorSample   = colorMap.sample(colorSampler, in.texCoord.xy);
+    
+    //    return float4(1,0,0,1);
     return float4(colorSample);
 }
