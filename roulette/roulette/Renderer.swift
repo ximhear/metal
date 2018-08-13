@@ -116,7 +116,7 @@ class Renderer: NSObject, MTKViewDelegate {
         }
 
         do {
-            mesh1 = try Renderer.buildMesh1(device: device, mtlVertexDescriptor: mtlVertexDescriptor)
+            mesh1 = try Renderer.buildMesh2 (device: device, mtlVertexDescriptor: mtlVertexDescriptor)
         } catch {
             GZLog("Unable to build MetalKit Mesh. Error info: \(error)")
             return nil
@@ -442,6 +442,92 @@ class Renderer: NSObject, MTKViewDelegate {
         return try MTKMesh(mesh:mdlMesh1, device:device)
     }
     
+    class func buildMesh2(device: MTLDevice,
+                          mtlVertexDescriptor: MTLVertexDescriptor) throws -> MTKMesh {
+        /// Create and condition mesh data to feed into a pipeline using the given vertex descriptor
+        let maxCount: Int = 10
+        let maxPlusOneCount: Int = maxCount + 1
+        let mdlVertexDescriptor = MTKModelIOVertexDescriptorFromMetal(mtlVertexDescriptor)
+        
+        guard let attributes = mdlVertexDescriptor.attributes as? [MDLVertexAttribute] else {
+            throw RendererError.badVertexDescriptor
+        }
+        attributes[VertexAttribute.position.rawValue].name = MDLVertexAttributePosition
+        attributes[VertexAttribute.texcoord.rawValue].name = MDLVertexAttributeTextureCoordinate
+        
+        let metalAllocator = MTKMeshBufferAllocator(device: device)
+        
+        let vertexBuffer1 = metalAllocator.newBuffer(maxPlusOneCount * maxPlusOneCount * 3 * MemoryLayout<Float>.stride, type: .vertex) as! MTKMeshBuffer
+        let vertexBuffer2 = metalAllocator.newBuffer(maxPlusOneCount * maxPlusOneCount * 2 * MemoryLayout<Float>.stride, type: .vertex) as! MTKMeshBuffer
+        
+        let vertices = UnsafeMutableRawPointer(vertexBuffer1.buffer.contents()).bindMemory(to:Float.self, capacity: maxPlusOneCount * maxPlusOneCount * 3)
+        let vertices1 = UnsafeMutableRawPointer(vertexBuffer2.buffer.contents()).bindMemory(to:vector_float2.self, capacity: maxPlusOneCount * maxPlusOneCount)
+        
+        let indexBuffer1 = metalAllocator.newBuffer(maxCount * maxCount * 6 * MemoryLayout<UInt16>.stride, type: .index) as! MTKMeshBuffer
+        let index1 = UnsafeMutableRawPointer(indexBuffer1.buffer.contents()).bindMemory(to:UInt16.self, capacity: maxCount * maxCount * 6)
+        
+        let z: Float = 0
+
+        let minS: Float = 0
+        let maxS: Float = 1
+        let minT: Float = 0
+        let maxT: Float = 1
+        let a: Float = 1.0 / 10
+        let valueY: Float = 1
+        let valueX: Float = 1
+        let height = valueY * 2 / Float(maxCount)
+        let fMaxCount = Float(maxCount)
+        for row in 0...maxCount {
+            var width: Float = 0
+            
+            var x: Float = 0
+            
+            if a == 1 {
+                width = valueX * 2 / fMaxCount
+            }
+            else {
+                width = (2 * ((Float(row) * a * valueX) + (fMaxCount - Float(row)) * valueX) / fMaxCount) / fMaxCount
+            }
+            
+            x = -width * fMaxCount / 2.0;
+            
+            for col in 0...maxCount {
+                
+                let position0 = vector_float3.init(x + width * Float(col), valueY - height * Float(row), z)
+                vertices[row * maxPlusOneCount * 3 + col * 3 + 0] = position0.x
+                vertices[row * maxPlusOneCount * 3 + col * 3 + 1] = position0.y
+                vertices[row * maxPlusOneCount * 3 + col * 3 + 2] = position0.z
+                
+                let texture0 = vector_float2.init(maxS / fMaxCount * Float(col), maxT / fMaxCount * Float(row))
+                vertices1[row * maxPlusOneCount + col] = texture0
+            }
+        }
+
+        for row in 0...maxCount {
+            for col in 0...maxCount {
+                index1[row * maxCount * 6 + col * 6 + 0] = UInt16((row + 0) * maxPlusOneCount + col)
+                index1[row * maxCount * 6 + col * 6 + 1] = UInt16((row + 1) * maxPlusOneCount + col)
+                index1[row * maxCount * 6 + col * 6 + 2] = UInt16((row + 1) * maxPlusOneCount + col + 1)
+                index1[row * maxCount * 6 + col * 6 + 3] = UInt16((row + 0) * maxPlusOneCount + col)
+                index1[row * maxCount * 6 + col * 6 + 4] = UInt16((row + 1) * maxPlusOneCount + col + 1)
+                index1[row * maxCount * 6 + col * 6 + 5] = UInt16((row + 0) * maxPlusOneCount + col + 1)
+            }
+        }
+
+        //        let indexBuffer2 = metalAllocator.newBuffer(3 * MemoryLayout<UInt16>.stride, type: .index) as! MTKMeshBuffer
+        //        let index2 = UnsafeMutableRawPointer(indexBuffer2.buffer.contents()).bindMemory(to:UInt16.self, capacity:3)
+        //        index2[0] = 0
+        //        index2[1] = 2
+        //        index2[2] = 3
+        
+        
+        let submesh1 = MDLSubmesh.init(indexBuffer: indexBuffer1, indexCount: maxCount * maxCount * 6, indexType: .uInt16, geometryType: .triangles, material: nil)
+        //        let submesh2 = MDLSubmesh.init(indexBuffer: indexBuffer2, indexCount: 3, indexType: .uInt16, geometryType: .triangles, material: nil)
+        let mdlMesh1 = MDLMesh.init(vertexBuffers: [vertexBuffer1, vertexBuffer2], vertexCount: maxPlusOneCount * maxPlusOneCount, descriptor: mdlVertexDescriptor, submeshes: [submesh1])
+        
+        return try MTKMesh(mesh:mdlMesh1, device:device)
+    }
+    
     class func loadTexture(device: MTLDevice,
                            textureName: String) throws -> MTLTexture {
         /// Load texture data with optimal parameters for sampling
@@ -570,6 +656,52 @@ class Renderer: NSObject, MTKViewDelegate {
                     renderEncoder.label = "Primary Render Encoder"
                     
                     renderEncoder.pushDebugGroup("Draw Box")
+                    
+                    renderEncoder.setCullMode(.none)
+                    
+                    renderEncoder.setFrontFacing(.counterClockwise)
+                    
+                    renderEncoder.setRenderPipelineState(pipelineState1)
+                    
+                    renderEncoder.setDepthStencilState(depthState)
+                    
+                    renderEncoder.setVertexBuffer(dynamicUniformBuffer1, offset:uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
+                    renderEncoder.setFragmentBuffer(dynamicUniformBuffer1, offset:uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
+                    
+                    for (index, element) in mesh1.vertexDescriptor.layouts.enumerated() {
+                        guard let layout = element as? MDLVertexBufferLayout else {
+                            return
+                        }
+                        
+                        if layout.stride != 0 {
+                            let buffer = mesh1.vertexBuffers[index]
+                            renderEncoder.setVertexBuffer(buffer.buffer, offset:buffer.offset, index: index)
+                        }
+                    }
+                    
+                    renderEncoder.setFragmentTexture(illuminati, index: TextureIndex.color.rawValue)
+                    
+                    for submesh in mesh1.submeshes {
+                        renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType,
+                                                            indexCount: submesh.indexCount,
+                                                            indexType: submesh.indexType,
+                                                            indexBuffer: submesh.indexBuffer.buffer,
+                                                            indexBufferOffset: submesh.indexBuffer.offset)
+                        
+                    }
+                    
+                    renderEncoder.popDebugGroup()
+                    
+                    renderEncoder.endEncoding()
+                    
+                }
+                
+                if let renderEncoder = parallel.makeRenderCommandEncoder() {
+                    
+                    /// Final pass rendering code here
+                    renderEncoder.label = "Text Render Encoder"
+                    
+                    renderEncoder.pushDebugGroup("Text Box")
                     
                     renderEncoder.setCullMode(.none)
                     
