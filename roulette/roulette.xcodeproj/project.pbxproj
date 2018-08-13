@@ -15,6 +15,7 @@
 		EC106310211772030038A988 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EC10630F211772030038A988 /* Assets.xcassets */; };
 		EC106313211772030038A988 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EC106311211772030038A988 /* LaunchScreen.storyboard */; };
 		EC679F4F2119F28D000CF114 /* GZLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC679F4E2119F28D000CF114 /* GZLog.swift */; };
+		EC6ED0772121F96B00ED76D1 /* FontAtlasGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6ED0762121F96B00ED76D1 /* FontAtlasGenerator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 		EC106312211772030038A988 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EC106314211772030038A988 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EC679F4E2119F28D000CF114 /* GZLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GZLog.swift; path = ../../GZLog.swift; sourceTree = "<group>"; };
+		EC6ED0762121F96B00ED76D1 /* FontAtlasGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontAtlasGenerator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,6 +63,7 @@
 		EC106302211772020038A988 /* roulette */ = {
 			isa = PBXGroup;
 			children = (
+				EC6ED0762121F96B00ED76D1 /* FontAtlasGenerator.swift */,
 				EC679F4E2119F28D000CF114 /* GZLog.swift */,
 				EC106303211772020038A988 /* AppDelegate.swift */,
 				EC106305211772020038A988 /* ShaderTypes.h */,
@@ -146,6 +149,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EC6ED0772121F96B00ED76D1 /* FontAtlasGenerator.swift in Sources */,
 				EC10630B211772020038A988 /* Shaders.metal in Sources */,
 				EC106307211772020038A988 /* Renderer.swift in Sources */,
 				EC106309211772020038A988 /* GameViewController.swift in Sources */,

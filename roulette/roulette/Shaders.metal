@@ -92,3 +92,23 @@ fragment float4 fragmentShader1(ColorInOut in [[stage_in]],
     //    return float4(1,0,0,1);
     return float4(colorSample);
 }
+
+fragment half4 signed_distance_field_fragment(ColorInOut vertexIn [[ stage_in ]],
+                                 sampler sampler2d [[ sampler(0) ]],
+                                 texture2d<float> texture [[ texture(TextureIndexColor) ]] ) {
+    // Outline of glyph is the isocontour with value 50%
+    float edgeDistance = 0.5;
+    // Sample the signed-distance field to find distance from this fragment to the glyph outline
+    float sampleDistance = texture.sample(sampler2d, vertexIn.texCoord).r;
+    float x = dfdx(sampleDistance);
+    float y = dfdy(sampleDistance);
+    float len = length(float2(x, y));
+    // Use local automatic gradients to find anti-aliased anisotropic edge width, cf. Gustavson 2012
+    float edgeWidth = 0.75 * len;
+    // Smooth the glyph edge by interpolating across the boundary in a band with the width determined above
+    float insideness = smoothstep(edgeDistance - edgeWidth, edgeDistance + edgeWidth, sampleDistance);
+    if (insideness == 0) {
+        return half4(1, 0, 0, 1);
+    }
+    return half4(0, 1 * insideness, 0, 0) + half4(1 * (1-insideness), 0, 0, 1);
+}
