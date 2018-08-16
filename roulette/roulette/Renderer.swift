@@ -163,7 +163,7 @@ class Renderer: NSObject, MTKViewDelegate {
         }
 
         do {
-            mesh2 = try Renderer.buildMesh2 (device: device, mtlVertexDescriptor: mtlVertexDescriptor)
+            mesh2 = try Renderer.buildMesh2 (device: device, mtlVertexDescriptor: mtlVertexDescriptor, ratio: 0.1)
         } catch {
             GZLog("Unable to build MetalKit Mesh. Error info: \(error)")
             return nil
@@ -531,8 +531,7 @@ class Renderer: NSObject, MTKViewDelegate {
         return try MTKMesh(mesh:mdlMesh1, device:device)
     }
     
-    class func buildMesh2(device: MTLDevice,
-                          mtlVertexDescriptor: MTLVertexDescriptor) throws -> MTKMesh {
+    class func buildMesh2(device: MTLDevice, mtlVertexDescriptor: MTLVertexDescriptor, ratio: Float) throws -> MTKMesh {
         /// Create and condition mesh data to feed into a pipeline using the given vertex descriptor
         let maxCount: Int = 10
         let maxPlusOneCount: Int = maxCount + 1
@@ -557,37 +556,30 @@ class Renderer: NSObject, MTKViewDelegate {
         
         let z: Float = 0
 
-        let minS: Float = 0
-        let maxS: Float = 1
-        let minT: Float = 0
-        let maxT: Float = 1
-        let a: Float = 1.0 / 1
-        let valueY: Float = 1
-        let valueX: Float = 1
-        let height = valueY * 2 / Float(maxCount)
         let fMaxCount = Float(maxCount)
+        let height: Float = 1.0 / fMaxCount
         for row in 0...maxCount {
             var width: Float = 0
             
             var x: Float = 0
             
-            if a == 1 {
-                width = valueX * 2 / fMaxCount
+            if ratio == 1 {
+                width = 1 / fMaxCount
             }
             else {
-                width = (2 * ((Float(row) * a * valueX) + (fMaxCount - Float(row)) * valueX) / fMaxCount) / fMaxCount
+                width = (1 * (fMaxCount - Float(row)) + ratio * Float(row)) / fMaxCount / fMaxCount
             }
             
-            x = -width * fMaxCount / 2.0;
+            x = -width * fMaxCount / 2.0
             
             for col in 0...maxCount {
                 
-                let position0 = vector_float3.init(x + width * Float(col), valueY - height * Float(row), z)
+                let position0 = vector_float3.init(x + width * Float(col), 1 - height * Float(row), z)
                 vertices[row * maxPlusOneCount * 3 + col * 3 + 0] = position0.x
                 vertices[row * maxPlusOneCount * 3 + col * 3 + 1] = position0.y
                 vertices[row * maxPlusOneCount * 3 + col * 3 + 2] = position0.z
                 
-                let texture0 = vector_float2.init(maxS / fMaxCount * Float(col), maxT / fMaxCount * Float(row))
+                let texture0 = vector_float2.init(1 / fMaxCount * Float(col), 1 / fMaxCount * Float(row))
                 vertices1[row * maxPlusOneCount + col] = texture0
             }
         }
@@ -603,15 +595,7 @@ class Renderer: NSObject, MTKViewDelegate {
             }
         }
 
-        //        let indexBuffer2 = metalAllocator.newBuffer(3 * MemoryLayout<UInt16>.stride, type: .index) as! MTKMeshBuffer
-        //        let index2 = UnsafeMutableRawPointer(indexBuffer2.buffer.contents()).bindMemory(to:UInt16.self, capacity:3)
-        //        index2[0] = 0
-        //        index2[1] = 2
-        //        index2[2] = 3
-        
-        
         let submesh1 = MDLSubmesh.init(indexBuffer: indexBuffer1, indexCount: maxCount * maxCount * 6, indexType: .uInt16, geometryType: .triangles, material: nil)
-        //        let submesh2 = MDLSubmesh.init(indexBuffer: indexBuffer2, indexCount: 3, indexType: .uInt16, geometryType: .triangles, material: nil)
         let mdlMesh1 = MDLMesh.init(vertexBuffers: [vertexBuffer1, vertexBuffer2], vertexCount: maxPlusOneCount * maxPlusOneCount, descriptor: mdlVertexDescriptor, submeshes: [submesh1])
         
         return try MTKMesh(mesh:mdlMesh1, device:device)
@@ -674,10 +658,23 @@ class Renderer: NSObject, MTKViewDelegate {
         
         uniforms2[0].projectionMatrix = projectionMatrix
         
-        let rotationAxis2 = float3(0, 1, 0)
+        let rotationAxis2 = float3(0, 0, 1)
         let modelMatrix2 = matrix4x4_rotation(radians: rotation2, axis: rotationAxis2)
-        let viewMatrix2 = matrix4x4_translation(0.0, 0.0, -3.6)
-        uniforms2[0].modelViewMatrix = simd_mul(viewMatrix2, modelMatrix2)
+        let viewMatrix2 = matrix4x4_translation(0.0, 0.0, -3.49)
+        
+        let radius: Float = 0.8
+        let theta = Float.pi / 3.0
+        let ratio: Float = 1.0 / 10.0
+        let moveY = radius * cos(theta / 2.0) * ratio
+        let scaleX = radius * sin(theta / 2.0) * 2
+        let scaleY = radius * cos(theta / 2.0) - moveY
+        let scaleZ: Float = 1
+        
+        
+        let scaleMatrix = matrix4x4_scale(scaleX, scaleY, scaleZ)
+        let transitionY = matrix4x4_translation(0, moveY, 0)
+        
+        uniforms2[0].modelViewMatrix = simd_mul(viewMatrix2, simd_mul(modelMatrix2, simd_mul(transitionY, scaleMatrix)))
         if rotationStopped == false {
             rotation2 += 0.01 * 2
         }
@@ -889,6 +886,13 @@ func matrix4x4_translation(_ translationX: Float, _ translationY: Float, _ trans
                                          vector_float4(0, 1, 0, 0),
                                          vector_float4(0, 0, 1, 0),
                                          vector_float4(translationX, translationY, translationZ, 1)))
+}
+
+func matrix4x4_scale(_ scaleX: Float, _ scaleY: Float, _ scaleZ: Float) -> matrix_float4x4 {
+    return matrix_float4x4.init(columns:(vector_float4(scaleX,  0,          0,          0),
+                                         vector_float4(0,       scaleY,     0,          0),
+                                         vector_float4(0,       0,          scaleZ,     0),
+                                         vector_float4(0,       0,          0,          1)))
 }
 
 func matrix_perspective_right_hand(fovyRadians fovy: Float, aspectRatio: Float, nearZ: Float, farZ: Float) -> matrix_float4x4 {
