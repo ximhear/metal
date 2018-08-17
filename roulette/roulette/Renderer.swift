@@ -689,14 +689,17 @@ class Renderer: NSObject, MTKViewDelegate {
         let scaleY = radius * cos(theta / 2.0) - moveY
         let scaleZ: Float = 1
         
-        
         let scaleMatrix = matrix4x4_scale(scaleX, scaleY, scaleZ)
         let transitionY = matrix4x4_translation(0, moveY, 0)
-        
+
+        let fgs = [simd_float4(1, 0, 0, 1), simd_float4(0, 1, 0, 1), simd_float4(0, 0, 1, 1), simd_float4(1, 1, 0, 1), simd_float4(1, 0, 1, 1), simd_float4(0, 1, 1, 1)]
+        let bgs = [simd_float4(0, 1, 1, 1), simd_float4(1, 0, 1, 1), simd_float4(1, 1, 0, 1), simd_float4(0, 0, 1, 1), simd_float4(0, 1, 0, 1), simd_float4(1, 0, 0, 1)]
         for x in 0..<6 {
             let modelMatrix2 = matrix4x4_rotation(radians: rotation2 + theta * Float(x), axis: rotationAxis2)
             uniforms2[x].projectionMatrix = projectionMatrix
             uniforms2[x].modelViewMatrix = simd_mul(viewMatrix2, simd_mul(modelMatrix2, simd_mul(transitionY, scaleMatrix)))
+            uniforms2[x].fg = fgs[x]
+            uniforms2[x].bg = bgs[x]
         }
 
         if rotationStopped == false {

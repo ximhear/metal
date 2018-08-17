@@ -94,6 +94,7 @@ fragment float4 fragmentShader1(ColorInOut in [[stage_in]],
 }
 
 fragment half4 signed_distance_field_fragment(ColorInOut vertexIn [[ stage_in ]],
+                                              constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]],
                                  sampler sampler2d [[ sampler(0) ]],
                                  texture2d<float> texture [[ texture(TextureIndexColor) ]] ) {
     // Outline of glyph is the isocontour with value 50%
@@ -108,7 +109,7 @@ fragment half4 signed_distance_field_fragment(ColorInOut vertexIn [[ stage_in ]]
     // Smooth the glyph edge by interpolating across the boundary in a band with the width determined above
     float insideness = smoothstep(edgeDistance - edgeWidth, edgeDistance + edgeWidth, sampleDistance);
     if (insideness == 0) {
-        return half4(1, 0, 0, 1);
+        return half4(uniforms.bg.r, uniforms.bg.g, uniforms.bg.b, uniforms.bg.a);
     }
-    return half4(0, 1 * insideness, 0, 0) + half4(1 * (1-insideness), 0, 0, 1);
+    return half4(uniforms.fg.r, uniforms.fg.g, uniforms.fg.b, 0) * insideness + half4(uniforms.bg.r * (1-insideness), uniforms.bg.g * (1-insideness), uniforms.bg.b * (1-insideness), uniforms.bg.a);
 }
