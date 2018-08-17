@@ -19,6 +19,8 @@ struct GVertex {
 
 // The 256 byte aligned size of our uniform structure
 let alignedUniformsSize = (MemoryLayout<Uniforms>.size & ~0xFF) + 0x100
+let aligned6UniformsSize = ((MemoryLayout<Uniforms>.size * 6) & ~0xFF) + 0x100
+let uniformsSize = MemoryLayout<Uniforms>.size
 
 let maxBuffersInFlight = 3
 
@@ -43,7 +45,8 @@ class Renderer: NSObject, MTKViewDelegate {
     let inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
     
     var uniformBufferOffset = 0
-    
+    var sixUniformBufferOffset = 0
+
     var uniformBufferIndex = 0
     
     var uniforms: UnsafeMutablePointer<Uniforms>
@@ -88,7 +91,7 @@ class Renderer: NSObject, MTKViewDelegate {
         
         uniforms1 = UnsafeMutableRawPointer(dynamicUniformBuffer1.contents()).bindMemory(to:Uniforms.self, capacity:1)
 
-        let uniformBufferSize2 = alignedUniformsSize * 6 * maxBuffersInFlight
+        let uniformBufferSize2 = aligned6UniformsSize * maxBuffersInFlight
         guard let buffer2 = self.device.makeBuffer(length:uniformBufferSize2, options:[MTLResourceOptions.storageModeShared]) else { return nil }
         dynamicUniformBuffer2 = buffer2
         
@@ -631,7 +634,8 @@ class Renderer: NSObject, MTKViewDelegate {
 
         uniforms1 = UnsafeMutableRawPointer(dynamicUniformBuffer1.contents() + uniformBufferOffset).bindMemory(to:Uniforms.self, capacity:1)
         
-        uniforms2 = UnsafeMutableRawPointer(dynamicUniformBuffer2.contents() + uniformBufferOffset * 6).bindMemory(to:Uniforms.self, capacity: 6)
+        sixUniformBufferOffset = aligned6UniformsSize * uniformBufferIndex
+        uniforms2 = UnsafeMutableRawPointer(dynamicUniformBuffer2.contents() + sixUniformBufferOffset).bindMemory(to:Uniforms.self, capacity: 6)
     }
     
     private func updateGameState() {
@@ -819,8 +823,8 @@ class Renderer: NSObject, MTKViewDelegate {
                         
                         renderEncoder.setFragmentTexture(fontTexture, index: TextureIndex.color.rawValue)
 
-                        renderEncoder.setVertexBuffer(dynamicUniformBuffer2, offset:uniformBufferOffset * 6 + alignedUniformsSize * x, index: BufferIndex.uniforms.rawValue)
-                        renderEncoder.setFragmentBuffer(dynamicUniformBuffer2, offset:uniformBufferOffset * 6 + alignedUniformsSize * x, index: BufferIndex.uniforms.rawValue)
+                        renderEncoder.setVertexBuffer(dynamicUniformBuffer2, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)
+                        renderEncoder.setFragmentBuffer(dynamicUniformBuffer2, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)
                         
                         for (index, element) in mesh2.vertexDescriptor.layouts.enumerated() {
                             guard let layout = element as? MDLVertexBufferLayout else {
