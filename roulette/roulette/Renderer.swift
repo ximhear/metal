@@ -387,6 +387,11 @@ class Renderer: NSObject, MTKViewDelegate {
         vertices[index * 3 + 1] = 0
         vertices[index * 3 + 2] = 0
 
+        for index in 0..<8 {
+            vertices[index * 3 + 0] *= 1.25
+            vertices[index * 3 + 1] *= 1.25
+        }
+
         let vertices1 = UnsafeMutableRawPointer(vertexBuffer2.buffer.contents()).bindMemory(to:vector_float2.self, capacity: 8)
         vertices1[0] = vector_float2.init(0, 0)
         vertices1[1] = vector_float2.init(0, 1)
@@ -671,17 +676,17 @@ class Renderer: NSObject, MTKViewDelegate {
         
         let rotationAxis1 = float3(0, 1, 0)
         let modelMatrix1 = matrix4x4_rotation(radians: rotation1, axis: rotationAxis1)
-        let viewMatrix1 = matrix4x4_translation(0.0, 0.0, -3.6)
+        let viewMatrix1 = matrix4x4_translation(0.0, 0.0, -3.55)
         uniforms1[0].modelViewMatrix = simd_mul(viewMatrix1, modelMatrix1)
         if rotationStopped == false {
-            rotation1 += 0.01 * 2
+            rotation1 += 0.01 * 0.5
         }
         
         
         let rotationAxis2 = float3(0, 0, 1)
-        let viewMatrix2 = matrix4x4_translation(0.0, 0.0, -3.49)
+        let viewMatrix2 = matrix4x4_translation(0.0, 0.0, -3.2)
         
-        let radius: Float = 0.9
+        let radius: Float = 1
         let theta = Float.pi / 3.0
         let ratio: Float = 1.0 / 10.0
         let moveY = radius * cos(theta / 2.0) * ratio
