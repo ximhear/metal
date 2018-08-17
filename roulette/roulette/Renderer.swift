@@ -65,8 +65,10 @@ class Renderer: NSObject, MTKViewDelegate {
     
     private var rotationStopped = false
 
-    var atlasGenerator: FontAtlasGenerator?
-    var fontTexture: MTLTexture?
+    var atlasGenerator1: FontAtlasGenerator?
+    var atlasGenerator2: FontAtlasGenerator?
+    var fontTexture1: MTLTexture?
+    var fontTexture2: MTLTexture?
     var samplerState: MTLSamplerState?
     var sampler: MTLSamplerState?
 
@@ -173,23 +175,37 @@ class Renderer: NSObject, MTKViewDelegate {
             return nil
         }
         
-        let font = UIFont.init(name: "AppleSDGothicNeo-Regular", size: 128)
-        atlasGenerator = FontAtlasGenerator.init()
-        atlasGenerator?.createTextureData(font: font!, string: "Pandas")
-        
-        let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r8Unorm, width: atlasGenerator!.textureWidth, height: atlasGenerator!.textureHeight, mipmapped: false)
-        textureDescriptor.usage = .shaderRead
-        let region = MTLRegionMake2D(0, 0, atlasGenerator!.textureWidth, atlasGenerator!.textureHeight)
-        
-        fontTexture = device.makeTexture(descriptor: textureDescriptor)
+        let font1 = UIFont.systemFont(ofSize: 128)
+        atlasGenerator1 = FontAtlasGenerator.init()
+        atlasGenerator1?.createTextureData(font: font1, string: "Pandas")
+
+        let font2 = UIFont.init(name: "AppleSDGothicNeo-Regular", size: 128)
+        atlasGenerator2 = FontAtlasGenerator.init()
+        atlasGenerator2?.createTextureData(font: font2!, string: "커피")
+
+        let textureDescriptor1 = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r8Unorm, width: atlasGenerator1!.textureWidth, height: atlasGenerator1!.textureHeight, mipmapped: false)
+        textureDescriptor1.usage = .shaderRead
+        let region1 = MTLRegionMake2D(0, 0, atlasGenerator1!.textureWidth, atlasGenerator1!.textureHeight)
+
+        let textureDescriptor2 = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r8Unorm, width: atlasGenerator2!.textureWidth, height: atlasGenerator2!.textureHeight, mipmapped: false)
+        textureDescriptor2.usage = .shaderRead
+        let region2 = MTLRegionMake2D(0, 0, atlasGenerator2!.textureWidth, atlasGenerator2!.textureHeight)
+
+        fontTexture1 = device.makeTexture(descriptor: textureDescriptor1)
+        fontTexture2 = device.makeTexture(descriptor: textureDescriptor2)
 
         super.init()
         
-        _ = atlasGenerator!.textureData?.withUnsafeBytes({ (bytes: UnsafePointer<UInt8>) -> Int  in
-            fontTexture?.replace(region: region, mipmapLevel: 0, withBytes: bytes, bytesPerRow: atlasGenerator!.textureWidth)
+        _ = atlasGenerator1!.textureData?.withUnsafeBytes({ (bytes: UnsafePointer<UInt8>) -> Int  in
+            fontTexture1?.replace(region: region1, mipmapLevel: 0, withBytes: bytes, bytesPerRow: atlasGenerator1!.textureWidth)
             return 0
         })
-        
+
+        _ = atlasGenerator2!.textureData?.withUnsafeBytes({ (bytes: UnsafePointer<UInt8>) -> Int  in
+            fontTexture2?.replace(region: region2, mipmapLevel: 0, withBytes: bytes, bytesPerRow: atlasGenerator2!.textureWidth)
+            return 0
+        })
+
         buildSamplerState()
     }
     
@@ -821,7 +837,12 @@ class Renderer: NSObject, MTKViewDelegate {
                         
                         renderEncoder.setFragmentSamplerState(sampler, index: 0)
                         
-                        renderEncoder.setFragmentTexture(fontTexture, index: TextureIndex.color.rawValue)
+                        if x % 2 == 0 {
+                            renderEncoder.setFragmentTexture(fontTexture1, index: TextureIndex.color.rawValue)
+                        }
+                        else {
+                            renderEncoder.setFragmentTexture(fontTexture2, index: TextureIndex.color.rawValue)
+                        }
 
                         renderEncoder.setVertexBuffer(dynamicUniformBuffer2, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)
                         renderEncoder.setFragmentBuffer(dynamicUniformBuffer2, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)
