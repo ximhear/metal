@@ -895,7 +895,9 @@ class Renderer: NSObject, MTKViewDelegate {
         /// Respond to drawable size or orientation changes here
         
         let aspect = Float(size.width) / Float(size.height)
-        projectionMatrix = matrix_perspective_right_hand(fovyRadians: radians_from_degrees(65), aspectRatio:aspect, nearZ: 0.1, farZ: 100.0)
+        projectionMatrix = matrix_float4x4_ortho(left: -1, right: 1, bottom: -1 / aspect, top: 1 / aspect, near: -5, far: 5)
+//        projectionMatrix = matrix_perspective_right_hand(fovyRadians: radians_from_degrees(65), aspectRatio: aspect, nearZ: 0.1, farZ: 100.0)
+        
     }
     
     func stopRotation() {
@@ -947,4 +949,21 @@ func matrix_perspective_right_hand(fovyRadians fovy: Float, aspectRatio: Float, 
 
 func radians_from_degrees(_ degrees: Float) -> Float {
     return (degrees / 180) * .pi
+}
+
+func matrix_float4x4_ortho(left: Float, right: Float, bottom: Float, top: Float, near: Float, far: Float) -> matrix_float4x4 {
+    let ral = right + left
+    let rsl = right - left
+    let tab = top + bottom
+    let tsb = top - bottom
+    let fan = far + near
+    let fsn = far - near
+    
+    let P = vector_float4( 2.0 / rsl, 0, 0, 0 )
+    let Q = vector_float4( 0.0, 2.0 / tsb, 0.0, 0.0 )
+    let R = vector_float4( 0.0, 0.0, -2.0 / fsn, 0.0 )
+    let S = vector_float4( -ral / rsl, -tab / tsb, -fan / fsn, 1.0 )
+    
+    let mat = matrix_float4x4(columns:( P, Q, R, S ))
+    return mat
 }
