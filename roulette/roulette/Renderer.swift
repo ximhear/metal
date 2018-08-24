@@ -58,6 +58,15 @@ class Renderer: NSObject, MTKViewDelegate {
     var rotation: Float = 0
     var rotation1: Float = 0
     var rotation2: Float = Float.pi / 2.0
+    
+    var texture1Width: Float = 0
+    var texture2Width: Float = 0
+    
+    var scale1X: Float = 1
+    var scale1Y: Float = 1
+    
+    var scale2X: Float = 1
+    var scale2Y: Float = 1
 
     var mesh: MTKMesh
     var mesh1: MTKMesh
@@ -169,7 +178,7 @@ class Renderer: NSObject, MTKViewDelegate {
         }
 
         do {
-            mesh2 = try Renderer.buildMesh2 (device: device, mtlVertexDescriptor: mtlVertexDescriptor, ratio: 0.1)
+            mesh2 = try Renderer.buildMesh2 (device: device, mtlVertexDescriptor: mtlVertexDescriptor, ratio: 1, divideCount: 1)
         } catch {
             GZLog("Unable to build MetalKit Mesh. Error info: \(error)")
             return nil
@@ -177,11 +186,31 @@ class Renderer: NSObject, MTKViewDelegate {
         
         let font1 = UIFont.systemFont(ofSize: 128)
         atlasGenerator1 = FontAtlasGenerator.init()
-        atlasGenerator1?.createTextureData(font: font1, string: "Pandas")
+        atlasGenerator1!.createTextureData(font: font1, string: "Pandas")
 
         let font2 = UIFont.init(name: "AppleSDGothicNeo-Regular", size: 128)
         atlasGenerator2 = FontAtlasGenerator.init()
-        atlasGenerator2?.createTextureData(font: font2!, string: "커피")
+        atlasGenerator2!.createTextureData(font: font2!, string: "커피")
+        
+        var x1: Float = 0
+        var x2: Float = 0
+        var p: Float = 1
+        var t: Float = 1
+        
+        p = Float(atlasGenerator1!.textureHeight) / Float(atlasGenerator1!.textureWidth)
+        t = tan(Float.pi / 2.0 - Float.pi / 6.0)
+        
+        x1 = (-p + sqrt(4 * p * p + 3)) / 2 / (p * p + 1)
+        x2 = 0.5 / (t + p)
+        scale1X = min(x1, x2) * 2
+        scale1Y = scale1X * p
+
+        p = Float(atlasGenerator2!.textureHeight) / Float(atlasGenerator2!.textureWidth)
+        
+        x1 = (-p + sqrt(4 * p * p + 3)) / 2 / (p * p + 1)
+        x2 = 0.5 / (t + p)
+        scale2X = min(x1, x2) * 2
+        scale2Y = scale2X * p
 
         let textureDescriptor1 = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r8Unorm, width: atlasGenerator1!.textureWidth, height: atlasGenerator1!.textureHeight, mipmapped: false)
         textureDescriptor1.usage = .shaderRead
@@ -556,9 +585,9 @@ class Renderer: NSObject, MTKViewDelegate {
         return try MTKMesh(mesh:mdlMesh1, device:device)
     }
     
-    class func buildMesh2(device: MTLDevice, mtlVertexDescriptor: MTLVertexDescriptor, ratio: Float) throws -> MTKMesh {
+    class func buildMesh2(device: MTLDevice, mtlVertexDescriptor: MTLVertexDescriptor, ratio: Float, divideCount: Int) throws -> MTKMesh {
         /// Create and condition mesh data to feed into a pipeline using the given vertex descriptor
-        let maxCount: Int = 10
+        let maxCount: Int = divideCount
         let maxPlusOneCount: Int = maxCount + 1
         let mdlVertexDescriptor = MTKModelIOVertexDescriptorFromMetal(mtlVertexDescriptor)
         
@@ -696,13 +725,25 @@ class Renderer: NSObject, MTKViewDelegate {
         
         let scaleMatrix = matrix4x4_scale(scaleX, scaleY, scaleZ)
         let transitionY = matrix4x4_translation(0, moveY, 0)
+        
+        let transition1Y = matrix4x4_translation(0, -0.5, 0)
+        let transition2Y = matrix4x4_translation(0, 0.5, 0)
+
+        let scaleMatrix1 = matrix4x4_scale(scale1X, scale1Y, 1)
+        let scaleMatrix2 = matrix4x4_scale(scale2X, scale2Y, 1)
 
         let fgs = [simd_float4(1, 0, 0, 1), simd_float4(0, 1, 0, 1), simd_float4(0, 0, 1, 1), simd_float4(1, 1, 0, 1), simd_float4(1, 0, 1, 1), simd_float4(0, 1, 1, 1)]
         let bgs = [simd_float4(0, 1, 1, 1), simd_float4(1, 0, 1, 1), simd_float4(1, 1, 0, 1), simd_float4(0, 0, 1, 1), simd_float4(0, 1, 0, 1), simd_float4(1, 0, 0, 1)]
         for x in 0..<6 {
             let modelMatrix2 = matrix4x4_rotation(radians: rotation2 + theta * Float(x), axis: rotationAxis2)
             uniforms2[x].projectionMatrix = projectionMatrix
-            uniforms2[x].modelViewMatrix = simd_mul(viewMatrix2, simd_mul(modelMatrix2, simd_mul(transitionY, scaleMatrix)))
+//            uniforms2[x].modelViewMatrix = simd_mul(viewMatrix2, simd_mul(modelMatrix2, simd_mul(transitionY, scaleMatrix)))
+            if x % 2 == 0 {
+                uniforms2[x].modelViewMatrix = simd_mul(viewMatrix2, simd_mul(modelMatrix2, simd_mul(transition2Y, simd_mul(scaleMatrix1, transition1Y))))
+            }
+            else {
+                uniforms2[x].modelViewMatrix = simd_mul(viewMatrix2, simd_mul(modelMatrix2, simd_mul(transition2Y, simd_mul(scaleMatrix2, transition1Y))))
+            }
             uniforms2[x].fg = fgs[x]
             uniforms2[x].bg = bgs[x]
         }
