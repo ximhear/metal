@@ -81,7 +81,7 @@ class Renderer: NSObject, MTKViewDelegate {
     var samplerState: MTLSamplerState?
     var sampler: MTLSamplerState?
 
-    init?(metalKitView: MTKView) {
+    init?(metalKitView: MTKView, t: MTLTexture) {
         self.device = metalKitView.device!
         guard let queue = self.device.makeCommandQueue() else { return nil }
         self.commandQueue = queue
@@ -170,12 +170,14 @@ class Renderer: NSObject, MTKViewDelegate {
             return nil
         }
         
-        do {
-            illuminati = try Renderer.loadTexture(device: device, textureName: "illuminati")
-        } catch {
-            GZLog("Unable to load texture. Error info: \(error)")
-            return nil
-        }
+        illuminati = t
+//        do {
+//            illuminati = try Renderer.loadTexture(device: device, texture: t)
+////            illuminati = try Renderer.loadTexture(device: device, textureName: "illuminati")
+//        } catch {
+//            GZLog("Unable to load texture. Error info: \(error)")
+//            return nil
+//        }
 
         do {
             mesh2 = try Renderer.buildMesh2 (device: device, mtlVertexDescriptor: mtlVertexDescriptor, ratio: 1, divideCount: 1)
@@ -672,6 +674,27 @@ class Renderer: NSObject, MTKViewDelegate {
                                             options: textureLoaderOptions)
         
     }
+    
+    class func loadTexture(device: MTLDevice,
+                           texture: MTLTexture) throws -> MTLTexture {
+        /// Load texture data with optimal parameters for sampling
+        
+        let textureLoader = MTKTextureLoader(device: device)
+        
+        let textureLoaderOptions = [
+            MTKTextureLoader.Option.textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
+            MTKTextureLoader.Option.textureStorageMode: NSNumber(value: MTLStorageMode.`private`.rawValue)
+        ]
+
+        let imageByteCount = texture.width * texture.height * 4
+        
+        // An empty buffer that will contain the image
+        var src = [UInt8](repeating: 0, count: Int(imageByteCount))
+        texture.getBytes(&src, bytesPerRow: texture.width * 4, from: MTLRegionMake2D(0, 0, 500, 500), mipmapLevel: 0)
+        let data = Data.init(bytes: src, count: src.count)
+        return try textureLoader.newTexture(data: data, options: textureLoaderOptions)
+    }
+
     
     private func updateDynamicBufferState() {
         /// Update the state of our uniform buffers before rendering

@@ -25,6 +25,7 @@ typedef struct
 typedef struct
 {
     float4 position [[position]];
+    float4 orgPosition;
     float2 texCoord;
 } ColorInOut;
 
@@ -35,6 +36,7 @@ vertex ColorInOut vertexShader(Vertex in [[ stage_in ]],
 
     float4 position = float4(in.position, 1.0);
     out.position = uniforms.projectionMatrix * uniforms.modelViewMatrix * position;
+    out.orgPosition = uniforms.modelViewMatrix * position;
     out.texCoord = in.texCoord.xy;
 
     return out;
@@ -47,6 +49,7 @@ vertex ColorInOut vertexShader1(Vertex in [[ stage_in ]],
     
     float4 position = float4(in.position, 1.0);
     out.position = uniforms.projectionMatrix * uniforms.modelViewMatrix * position;
+    out.orgPosition = uniforms.modelViewMatrix * position;
     out.texCoord = in.texCoord.xy;
     
     return out;
@@ -75,9 +78,31 @@ fragment float4 fragmentShader(ColorInOut in [[stage_in]],
 
     half4 colorSample   = colorMap.sample(colorSampler, in.texCoord.xy);
 
-//    return float4(1,0,0,1);
+    float len = length(in.orgPosition.xy);
+    if (len > 1) {
+        //        return half4(1,0,1,1);
+        discard_fragment();
+    }
+    if (len > 0.99) {
+        return float4(0,0,1,1);
+    }
     return float4(colorSample);
 }
+
+fragment float4 fragmentShaderOffScreen(ColorInOut in [[stage_in]],
+                               constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]])
+{
+    float len = length(in.orgPosition.xy);
+    if (len > 1) {
+        //        return half4(1,0,1,1);
+        discard_fragment();
+    }
+    if (len > 0.99) {
+        return float4(0,0,1,1);
+    }
+    return float4(1,0,1,1);
+}
+
 
 fragment float4 fragmentShader1(ColorInOut in [[stage_in]],
                                constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]],
@@ -97,6 +122,7 @@ fragment half4 signed_distance_field_fragment(ColorInOut vertexIn [[ stage_in ]]
                                               constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]],
                                  sampler sampler2d [[ sampler(0) ]],
                                  texture2d<float> texture [[ texture(TextureIndexColor) ]] ) {
+
     // Outline of glyph is the isocontour with value 50%
     float edgeDistance = 0.5;
     // Sample the signed-distance field to find distance from this fragment to the glyph outline
