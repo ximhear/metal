@@ -24,10 +24,53 @@ typedef struct
 
 typedef struct
 {
+    float3 position [[attribute(0)]];
+    float4 color [[attribute(1)]];
+} ColorVertex;
+
+typedef struct
+{
+    float4 position [[position]];
+    float4 orgPosition;
+    float4 color;
+} ColorVertexInOut;
+
+typedef struct
+{
     float4 position [[position]];
     float4 orgPosition;
     float2 texCoord;
 } ColorInOut;
+
+vertex ColorVertexInOut coloredVertexShader(ColorVertex in [[ stage_in ]],
+                               constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]])
+{
+    ColorVertexInOut out;
+    
+    float4 position = float4(in.position, 1.0);
+    out.position = uniforms.projectionMatrix * uniforms.modelViewMatrix * position;
+    out.orgPosition = uniforms.modelViewMatrix * position;
+    out.color = in.color;
+    
+    return out;
+}
+
+fragment half4 fragmentShaderOffScreen(ColorVertexInOut in [[stage_in]],
+                                        constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]])
+{
+    float len = length(in.orgPosition.xy);
+    if (len > 1) {
+        //        return half4(1,0,1,1);
+        discard_fragment();
+    }
+    if (len > 0.99) {
+        return half4(uniforms.lineColor);
+    }
+    return half4(in.color);
+}
+
+
+
 
 vertex ColorInOut vertexShader(Vertex in [[ stage_in ]],
                                constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]])
@@ -88,21 +131,6 @@ fragment float4 fragmentShader(ColorInOut in [[stage_in]],
     }
     return float4(colorSample);
 }
-
-fragment float4 fragmentShaderOffScreen(ColorInOut in [[stage_in]],
-                               constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]])
-{
-    float len = length(in.orgPosition.xy);
-    if (len > 1) {
-        //        return half4(1,0,1,1);
-        discard_fragment();
-    }
-    if (len > 0.99) {
-        return float4(0,0,1,1);
-    }
-    return float4(1,0,1,1);
-}
-
 
 fragment float4 fragmentShader1(ColorInOut in [[stage_in]],
                                constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]],
