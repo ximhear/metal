@@ -25,7 +25,7 @@ typedef struct
 typedef struct
 {
     float3 position [[attribute(0)]];
-    float4 color [[attribute(1)]];
+    float3 color [[attribute(1)]];
 } ColorVertex;
 
 typedef struct
@@ -50,7 +50,7 @@ vertex ColorVertexInOut coloredVertexShader(ColorVertex in [[ stage_in ]],
     float4 position = float4(in.position, 1.0);
     out.position = uniforms.projectionMatrix * uniforms.modelViewMatrix * position;
     out.orgPosition = uniforms.modelViewMatrix * position;
-    out.color = in.color;
+    out.color = float4(in.color, 1.0);
     
     return out;
 }
@@ -63,7 +63,7 @@ fragment half4 fragmentShaderOffScreen(ColorVertexInOut in [[stage_in]],
         //        return half4(1,0,1,1);
         discard_fragment();
     }
-    if (len > 0.99) {
+    if (len >= 0.98) {
         return half4(uniforms.lineColor);
     }
     return half4(in.color);
@@ -125,9 +125,6 @@ fragment float4 fragmentShader(ColorInOut in [[stage_in]],
     if (len > 1) {
         //        return half4(1,0,1,1);
         discard_fragment();
-    }
-    if (len > 0.99) {
-        return float4(0,0,1,1);
     }
     return float4(colorSample);
 }

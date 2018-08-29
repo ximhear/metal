@@ -57,7 +57,7 @@ class Renderer: NSObject, MTKViewDelegate {
     
     var rotation: Float = 0
     var rotation1: Float = 0
-    var rotation2: Float = Float.pi / 2.0
+    var rotation2: Float = 0//Float.pi / 2.0
     
     var texture1Width: Float = 0
     var texture2Width: Float = 0
@@ -163,13 +163,14 @@ class Renderer: NSObject, MTKViewDelegate {
             return nil
         }
 
-        do {
-            colorMap = try Renderer.loadTexture(device: device, textureName: "ColorMap")
-        } catch {
-            GZLog("Unable to load texture. Error info: \(error)")
-            return nil
-        }
+//        do {
+//            colorMap = try Renderer.loadTexture(device: device, textureName: "ColorMap")
+//        } catch {
+//            GZLog("Unable to load texture. Error info: \(error)")
+//            return nil
+//        }
         
+        colorMap = t
         illuminati = t
 //        do {
 //            illuminati = try Renderer.loadTexture(device: device, texture: t)
@@ -367,73 +368,39 @@ class Renderer: NSObject, MTKViewDelegate {
 
         let metalAllocator = MTKMeshBufferAllocator(device: device)
         
-        let vertexBuffer1 = metalAllocator.newBuffer(8 * 3 * MemoryLayout<Float>.stride, type: .vertex) as! MTKMeshBuffer
-        let vertexBuffer2 = metalAllocator.newBuffer(8 * 2 * MemoryLayout<Float>.stride, type: .vertex) as! MTKMeshBuffer
+        let vertexBuffer1 = metalAllocator.newBuffer(4 * 3 * MemoryLayout<Float>.stride, type: .vertex) as! MTKMeshBuffer
+        let vertexBuffer2 = metalAllocator.newBuffer(4 * 2 * MemoryLayout<Float>.stride, type: .vertex) as! MTKMeshBuffer
 
         let vertices = UnsafeMutableRawPointer(vertexBuffer1.buffer.contents()).bindMemory(to:Float.self, capacity: 8 * 3)
         var angle = Float.pi / 3.0
         
         var index: Int = 0
-        vertices[index * 3 + 0] = 0
-        vertices[index * 3 + 1] = 0
+        vertices[index * 3 + 0] = -1
+        vertices[index * 3 + 1] = 1
         vertices[index * 3 + 2] = 0
 
         index = 1
-        vertices[index * 3 + 0] = 1
-        vertices[index * 3 + 1] = 0
+        vertices[index * 3 + 0] = -1
+        vertices[index * 3 + 1] = -1
         vertices[index * 3 + 2] = 0
 
         index = 2
-        angle = Float.pi / 3.0 * 1
-        vertices[index * 3 + 0] = cos(angle)
-        vertices[index * 3 + 1] = sin(angle)
+        vertices[index * 3 + 0] = 1
+        vertices[index * 3 + 1] = -1
         vertices[index * 3 + 2] = 0
 
         index = 3
-        angle = Float.pi / 3.0 * 2
-        vertices[index * 3 + 0] = cos(angle)
-        vertices[index * 3 + 1] = sin(angle)
-        vertices[index * 3 + 2] = 0
-
-        index = 4
-        angle = Float.pi / 3.0 * 3
-        vertices[index * 3 + 0] = cos(angle)
-        vertices[index * 3 + 1] = sin(angle)
-        vertices[index * 3 + 2] = 0
-
-        index = 5
-        angle = Float.pi / 3.0 * 4
-        vertices[index * 3 + 0] = cos(angle)
-        vertices[index * 3 + 1] = sin(angle)
-        vertices[index * 3 + 2] = 0
-
-        index = 6
-        angle = Float.pi / 3.0 * 5
-        vertices[index * 3 + 0] = cos(angle)
-        vertices[index * 3 + 1] = sin(angle)
-        vertices[index * 3 + 2] = 0
-
-        index = 7
         vertices[index * 3 + 0] = 1
-        vertices[index * 3 + 1] = 0
+        vertices[index * 3 + 1] = 1
         vertices[index * 3 + 2] = 0
-
-        for index in 0..<8 {
-            vertices[index * 3 + 0] *= 1.25
-            vertices[index * 3 + 1] *= 1.25
-        }
 
         let vertices1 = UnsafeMutableRawPointer(vertexBuffer2.buffer.contents()).bindMemory(to:vector_float2.self, capacity: 8)
         vertices1[0] = vector_float2.init(0, 0)
         vertices1[1] = vector_float2.init(0, 1)
         vertices1[2] = vector_float2.init(1, 1)
         vertices1[3] = vector_float2.init(1, 0)
-        vertices1[4] = vector_float2.init(1, 1)
-        vertices1[5] = vector_float2.init(0, 1)
-        vertices1[6] = vector_float2.init(1, 1)
-        vertices1[7] = vector_float2.init(1, 0)
 
-        let indexBuffer1 = metalAllocator.newBuffer(18 * MemoryLayout<UInt16>.stride, type: .index) as! MTKMeshBuffer
+        let indexBuffer1 = metalAllocator.newBuffer(6 * MemoryLayout<UInt16>.stride, type: .index) as! MTKMeshBuffer
         let index1 = UnsafeMutableRawPointer(indexBuffer1.buffer.contents()).bindMemory(to:UInt16.self, capacity:18)
         index1[0] = 0
         index1[1] = 1
@@ -441,28 +408,8 @@ class Renderer: NSObject, MTKViewDelegate {
         index1[3] = 0
         index1[4] = 2
         index1[5] = 3
-        index1[6] = 0
-        index1[7] = 3
-        index1[8] = 4
-        index1[9] = 0
-        index1[10] = 4
-        index1[11] = 5
-        index1[12] = 0
-        index1[13] = 5
-        index1[14] = 6
-        index1[15] = 0
-        index1[16] = 6
-        index1[17] = 7
 
-//        let indexBuffer2 = metalAllocator.newBuffer(3 * MemoryLayout<UInt16>.stride, type: .index) as! MTKMeshBuffer
-//        let index2 = UnsafeMutableRawPointer(indexBuffer2.buffer.contents()).bindMemory(to:UInt16.self, capacity:3)
-//        index2[0] = 0
-//        index2[1] = 2
-//        index2[2] = 3
-        
-
-        let submesh1 = MDLSubmesh.init(indexBuffer: indexBuffer1, indexCount: 18, indexType: .uInt16, geometryType: .triangles, material: nil)
-//        let submesh2 = MDLSubmesh.init(indexBuffer: indexBuffer2, indexCount: 3, indexType: .uInt16, geometryType: .triangles, material: nil)
+        let submesh1 = MDLSubmesh.init(indexBuffer: indexBuffer1, indexCount: 6, indexType: .uInt16, geometryType: .triangles, material: nil)
         let mdlMesh1 = MDLMesh.init(vertexBuffers: [vertexBuffer1, vertexBuffer2], vertexCount: 4, descriptor: mdlVertexDescriptor, submeshes: [submesh1])
         
         return try MTKMesh(mesh:mdlMesh1, device:device)
@@ -721,7 +668,7 @@ class Renderer: NSObject, MTKViewDelegate {
         let viewMatrix = matrix4x4_translation(0.0, 0.0, -3.5)
         uniforms[0].modelViewMatrix = simd_mul(viewMatrix, modelMatrix)
         if rotationStopped == false {
-            rotation += 0.01
+            rotation += 0.01 * 2
         }
         
         uniforms1[0].projectionMatrix = projectionMatrix
@@ -844,51 +791,51 @@ class Renderer: NSObject, MTKViewDelegate {
 
                 }
 
-                if let renderEncoder = parallel.makeRenderCommandEncoder() {
-
-                    /// Final pass rendering code here
-                    renderEncoder.label = "Primary Render Encoder"
-
-                    renderEncoder.pushDebugGroup("Draw Box")
-
-                    renderEncoder.setCullMode(.none)
-
-                    renderEncoder.setFrontFacing(.counterClockwise)
-
-                    renderEncoder.setRenderPipelineState(pipelineState1)
-
-                    renderEncoder.setDepthStencilState(depthState)
-
-                    renderEncoder.setVertexBuffer(dynamicUniformBuffer1, offset:uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-                    renderEncoder.setFragmentBuffer(dynamicUniformBuffer1, offset:uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-
-                    for (index, element) in mesh1.vertexDescriptor.layouts.enumerated() {
-                        guard let layout = element as? MDLVertexBufferLayout else {
-                            return
-                        }
-
-                        if layout.stride != 0 {
-                            let buffer = mesh1.vertexBuffers[index]
-                            renderEncoder.setVertexBuffer(buffer.buffer, offset:buffer.offset, index: index)
-                        }
-                    }
-
-                    renderEncoder.setFragmentTexture(illuminati, index: TextureIndex.color.rawValue)
-
-                    for submesh in mesh1.submeshes {
-                        renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType,
-                                                            indexCount: submesh.indexCount,
-                                                            indexType: submesh.indexType,
-                                                            indexBuffer: submesh.indexBuffer.buffer,
-                                                            indexBufferOffset: submesh.indexBuffer.offset)
-
-                    }
-
-                    renderEncoder.popDebugGroup()
-
-                    renderEncoder.endEncoding()
-
-                }
+//                if let renderEncoder = parallel.makeRenderCommandEncoder() {
+//
+//                    /// Final pass rendering code here
+//                    renderEncoder.label = "Primary Render Encoder"
+//
+//                    renderEncoder.pushDebugGroup("Draw Box")
+//
+//                    renderEncoder.setCullMode(.none)
+//
+//                    renderEncoder.setFrontFacing(.counterClockwise)
+//
+//                    renderEncoder.setRenderPipelineState(pipelineState1)
+//
+//                    renderEncoder.setDepthStencilState(depthState)
+//
+//                    renderEncoder.setVertexBuffer(dynamicUniformBuffer1, offset:uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
+//                    renderEncoder.setFragmentBuffer(dynamicUniformBuffer1, offset:uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
+//
+//                    for (index, element) in mesh1.vertexDescriptor.layouts.enumerated() {
+//                        guard let layout = element as? MDLVertexBufferLayout else {
+//                            return
+//                        }
+//
+//                        if layout.stride != 0 {
+//                            let buffer = mesh1.vertexBuffers[index]
+//                            renderEncoder.setVertexBuffer(buffer.buffer, offset:buffer.offset, index: index)
+//                        }
+//                    }
+//
+//                    renderEncoder.setFragmentTexture(illuminati, index: TextureIndex.color.rawValue)
+//
+//                    for submesh in mesh1.submeshes {
+//                        renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType,
+//                                                            indexCount: submesh.indexCount,
+//                                                            indexType: submesh.indexType,
+//                                                            indexBuffer: submesh.indexBuffer.buffer,
+//                                                            indexBufferOffset: submesh.indexBuffer.offset)
+//
+//                    }
+//
+//                    renderEncoder.popDebugGroup()
+//
+//                    renderEncoder.endEncoding()
+//
+//                }
                 
                 for x in 0..<6 {
                     

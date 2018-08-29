@@ -425,7 +425,7 @@ class FontAtlasGenerator: NSObject {
         var totalHeight: Int = lineSpacing
         for glyph in glyphs {
             
-            GZLog(glyph)
+//            GZLog(glyph)
             var rect: CGRect = .zero
             var g = glyph
             CTFontGetBoundingRectsForGlyphs(ctFont, CTFontOrientation.horizontal, &g, &rect, 1)
