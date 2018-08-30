@@ -60,13 +60,9 @@ class GameViewController: UIViewController {
     @IBAction func rotationClicked(_ sender: Any) {
         GZLog()
         
-        renderer.stopRotation()
-//        renderer.startRotation(duration: 10.0, endingRotationZ: Double.pi * 20.5,
-//                                timingFunction:  { (tx) -> Double in
-//                                    return pow(tx-1, 3) + 1
-//        },
-//                                speedFunction: { (tx) -> Double in
-//                                    return 3 * pow(tx-1, 2)
-//        })
+        renderer.startRotation(duration: 10.0, endingRotationZ: Double.pi * 20.5,
+                                timingFunction:  { (tx) -> Double in
+                                    return pow(tx-1, 3) + 1
+        })
     }
 }

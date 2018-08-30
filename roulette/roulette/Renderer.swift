@@ -55,10 +55,6 @@ class Renderer: NSObject, MTKViewDelegate {
 
     var projectionMatrix: matrix_float4x4 = matrix_float4x4()
     
-    var rotation: Float = 0
-    var rotation1: Float = 0
-    var rotation2: Float = 0//Float.pi / 2.0
-    
     var texture1Width: Float = 0
     var texture2Width: Float = 0
     
@@ -72,14 +68,21 @@ class Renderer: NSObject, MTKViewDelegate {
     var mesh1: MTKMesh
     var mesh2: MTKMesh
     
-    private var rotationStopped = false
-
     var atlasGenerator1: FontAtlasGenerator?
     var atlasGenerator2: FontAtlasGenerator?
     var fontTexture1: MTLTexture?
     var fontTexture2: MTLTexture?
     var samplerState: MTLSamplerState?
     var sampler: MTLSamplerState?
+    
+    var timingFunction: ((_ tx: Double) -> Double)?
+    var beginingTime: Double = 0
+    var endingTime: Double = 0
+    var rotating = false
+    var beginingRotationZ: Double = 0
+    var endingRotationZ: Double = 0
+    var elapsedTime : Double = 0
+    var rotationZ : Double = 0
 
     init?(metalKitView: MTKView, t: MTLTexture) {
         self.device = metalKitView.device!
@@ -662,25 +665,32 @@ class Renderer: NSObject, MTKViewDelegate {
         /// Update any game state before rendering
         
         uniforms[0].projectionMatrix = projectionMatrix
+        
+        
+        if self.rotating == true {
+            elapsedTime = Date().timeIntervalSince1970 - self.beginingTime
+            
+            if self.beginingTime + elapsedTime >= self.endingTime {
+                self.rotationZ = self.endingRotationZ
+                self.rotating = false
+                GZLog("Rotation ended")
+            }
+            else {
+                var result: Double = 0
+                if let timingFunction = self.timingFunction {
+                    result = beginingRotationZ + timingFunction(elapsedTime/(self.endingTime - self.beginingTime)) * (self.endingRotationZ - beginingRotationZ)
+                }
+                else {
+                    result = beginingRotationZ + (self.endingRotationZ - beginingRotationZ) * elapsedTime / (self.endingTime - self.beginingTime)
+                }
+                self.rotationZ = result
+            }
+        }
 
         let rotationAxis = float3(0, 0, 1)
-        let modelMatrix = matrix4x4_rotation(radians: rotation, axis: rotationAxis)
+        let modelMatrix = matrix4x4_rotation(radians: Float(self.rotationZ), axis: rotationAxis)
         let viewMatrix = matrix4x4_translation(0.0, 0.0, -3.5)
         uniforms[0].modelViewMatrix = simd_mul(viewMatrix, modelMatrix)
-        if rotationStopped == false {
-            rotation += 0.01 * 2
-        }
-        
-        uniforms1[0].projectionMatrix = projectionMatrix
-        
-        let rotationAxis1 = float3(0, 1, 0)
-        let modelMatrix1 = matrix4x4_rotation(radians: rotation1, axis: rotationAxis1)
-        let viewMatrix1 = matrix4x4_translation(0.0, 0.0, -3.55)
-        uniforms1[0].modelViewMatrix = simd_mul(viewMatrix1, modelMatrix1)
-        if rotationStopped == false {
-            rotation1 += 0.01 * 0.5
-        }
-        
         
         let rotationAxis2 = float3(0, 0, 1)
         let viewMatrix2 = matrix4x4_translation(0.0, 0.0, -3.2)
@@ -705,7 +715,7 @@ class Renderer: NSObject, MTKViewDelegate {
         let fgs = [simd_float4(1, 0, 0, 1), simd_float4(0, 1, 0, 1), simd_float4(0, 0, 1, 1), simd_float4(1, 1, 0, 1), simd_float4(1, 0, 1, 1), simd_float4(0, 1, 1, 1)]
         let bgs = [simd_float4(0, 1, 1, 1), simd_float4(1, 0, 1, 1), simd_float4(1, 1, 0, 1), simd_float4(0, 0, 1, 1), simd_float4(0, 1, 0, 1), simd_float4(1, 0, 0, 1)]
         for x in 0..<6 {
-            let modelMatrix2 = matrix4x4_rotation(radians: rotation2 + theta * Float(x), axis: rotationAxis2)
+            let modelMatrix2 = matrix4x4_rotation(radians: Float(self.rotationZ) + theta * Float(x), axis: rotationAxis2)
             uniforms2[x].projectionMatrix = projectionMatrix
 //            uniforms2[x].modelViewMatrix = simd_mul(viewMatrix2, simd_mul(modelMatrix2, simd_mul(transitionY, scaleMatrix)))
             if x % 2 == 0 {
@@ -716,10 +726,6 @@ class Renderer: NSObject, MTKViewDelegate {
             }
             uniforms2[x].fg = fgs[x]
             uniforms2[x].bg = bgs[x]
-        }
-
-        if rotationStopped == false {
-            rotation2 += 0.01 * 2
         }
     }
     
@@ -916,12 +922,23 @@ class Renderer: NSObject, MTKViewDelegate {
         
     }
     
-    func stopRotation() {
-        if rotationStopped == true {
-            rotationStopped = false
+    func startRotation(duration: Double, endingRotationZ: Double, timingFunction: ((_ tx: Double) -> Double)?) {
+        GZLog("Rotation started")
+        
+        self.timingFunction = timingFunction
+        if duration > 0 {
+            self.beginingTime = Date().timeIntervalSince1970
+            GZLog(self.beginingTime)
+            GZLog(Date().timeIntervalSince1970)
+            self.elapsedTime = 0
+            self.endingTime = self.beginingTime + duration
+            self.rotating = true
+            self.rotationZ = self.rotationZ.truncatingRemainder(dividingBy: Double.pi * 2.0)
+            self.beginingRotationZ = self.rotationZ
+            self.endingRotationZ = endingRotationZ
         }
         else {
-            rotationStopped = true
+            self.rotating = false
         }
     }
 }
