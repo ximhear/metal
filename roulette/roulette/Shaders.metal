@@ -69,6 +69,11 @@ fragment half4 fragmentShaderOffScreen(ColorVertexInOut in [[stage_in]],
     return half4(in.color);
 }
 
+fragment half4 coloredFragmentShader(ColorVertexInOut in [[stage_in]],
+                                       constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]])
+{
+    return half4(in.color);
+}
 
 
 
