@@ -756,7 +756,8 @@ class Renderer: NSObject, MTKViewDelegate {
         
         
         uniforms1[0].projectionMatrix = projectionMatrix
-        uniforms1[0].modelViewMatrix = uniforms[0].modelViewMatrix
+        let viewMatrix1 = matrix4x4_translation(0.0, 0.0, -3.3)
+        uniforms1[0].modelViewMatrix = simd_mul(viewMatrix1, modelMatrix)
     }
     
     func draw(in view: MTKView) {
@@ -781,51 +782,51 @@ class Renderer: NSObject, MTKViewDelegate {
             
             if let renderPassDescriptor = renderPassDescriptor, let parallel = commandBuffer.makeParallelRenderCommandEncoder(descriptor: renderPassDescriptor) {
                 
-//                if let renderEncoder = parallel.makeRenderCommandEncoder() {
-//
-//                    /// Final pass rendering code here
-//                    renderEncoder.label = "Primary Render Encoder"
-//
-//                    renderEncoder.pushDebugGroup("Draw Box")
-//
-//                    renderEncoder.setCullMode(.back)
-//
-//                    renderEncoder.setFrontFacing(.counterClockwise)
-//
-//                    renderEncoder.setRenderPipelineState(pipelineState)
-//
-//                    renderEncoder.setDepthStencilState(depthState)
-//
-//                    renderEncoder.setVertexBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-//                    renderEncoder.setFragmentBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-//
-//                    for (index, element) in mesh.vertexDescriptor.layouts.enumerated() {
-//                        guard let layout = element as? MDLVertexBufferLayout else {
-//                            return
-//                        }
-//
-//                        if layout.stride != 0 {
-//                            let buffer = mesh.vertexBuffers[index]
-//                            renderEncoder.setVertexBuffer(buffer.buffer, offset:buffer.offset, index: index)
-//                        }
-//                    }
-//
-//                    renderEncoder.setFragmentTexture(colorMap, index: TextureIndex.color.rawValue)
-//
-//                    for submesh in mesh.submeshes {
-//                        renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType,
-//                                                            indexCount: submesh.indexCount,
-//                                                            indexType: submesh.indexType,
-//                                                            indexBuffer: submesh.indexBuffer.buffer,
-//                                                            indexBufferOffset: submesh.indexBuffer.offset)
-//
-//                    }
-//
-//                    renderEncoder.popDebugGroup()
-//
-//                    renderEncoder.endEncoding()
-//
-//                }
+                if let renderEncoder = parallel.makeRenderCommandEncoder() {
+
+                    /// Final pass rendering code here
+                    renderEncoder.label = "Primary Render Encoder"
+
+                    renderEncoder.pushDebugGroup("Draw Box")
+
+                    renderEncoder.setCullMode(.back)
+
+                    renderEncoder.setFrontFacing(.counterClockwise)
+
+                    renderEncoder.setRenderPipelineState(pipelineState)
+
+                    renderEncoder.setDepthStencilState(depthState)
+
+                    renderEncoder.setVertexBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
+                    renderEncoder.setFragmentBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
+
+                    for (index, element) in mesh.vertexDescriptor.layouts.enumerated() {
+                        guard let layout = element as? MDLVertexBufferLayout else {
+                            return
+                        }
+
+                        if layout.stride != 0 {
+                            let buffer = mesh.vertexBuffers[index]
+                            renderEncoder.setVertexBuffer(buffer.buffer, offset:buffer.offset, index: index)
+                        }
+                    }
+
+                    renderEncoder.setFragmentTexture(colorMap, index: TextureIndex.color.rawValue)
+
+                    for submesh in mesh.submeshes {
+                        renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType,
+                                                            indexCount: submesh.indexCount,
+                                                            indexType: submesh.indexType,
+                                                            indexBuffer: submesh.indexBuffer.buffer,
+                                                            indexBufferOffset: submesh.indexBuffer.offset)
+
+                    }
+
+                    renderEncoder.popDebugGroup()
+
+                    renderEncoder.endEncoding()
+
+                }
 
                 if let renderEncoder = parallel.makeRenderCommandEncoder() {
 
@@ -871,60 +872,60 @@ class Renderer: NSObject, MTKViewDelegate {
 
                 }
                 
-//                for x in 0..<6 {
-//
-//                    if let renderEncoder = parallel.makeRenderCommandEncoder() {
-//
-//                        /// Final pass rendering code here
-//                        renderEncoder.label = "Text Render Encoder"
-//
-//                        renderEncoder.pushDebugGroup("Draw Box")
-//
-//                        renderEncoder.setCullMode(.back)
-//
-//                        renderEncoder.setFrontFacing(.counterClockwise)
-//
-//                        renderEncoder.setRenderPipelineState(pipelineState2)
-//
-//                        renderEncoder.setDepthStencilState(depthState)
-//
-//                        renderEncoder.setFragmentSamplerState(sampler, index: 0)
-//
-//                        if x % 2 == 0 {
-//                            renderEncoder.setFragmentTexture(fontTexture1, index: TextureIndex.color.rawValue)
-//                        }
-//                        else {
-//                            renderEncoder.setFragmentTexture(fontTexture2, index: TextureIndex.color.rawValue)
-//                        }
-//
-//                        renderEncoder.setVertexBuffer(dynamicUniformBuffer2, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)
-//                        renderEncoder.setFragmentBuffer(dynamicUniformBuffer2, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)
-//
-//                        for (index, element) in mesh2.vertexDescriptor.layouts.enumerated() {
-//                            guard let layout = element as? MDLVertexBufferLayout else {
-//                                return
-//                            }
-//
-//                            if layout.stride != 0 {
-//                                let buffer = mesh2.vertexBuffers[index]
-//                                renderEncoder.setVertexBuffer(buffer.buffer, offset:buffer.offset, index: index)
-//                            }
-//                        }
-//
-//                        for submesh in mesh2.submeshes {
-//                            renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType,
-//                                                                indexCount: submesh.indexCount,
-//                                                                indexType: submesh.indexType,
-//                                                                indexBuffer: submesh.indexBuffer.buffer,
-//                                                                indexBufferOffset: submesh.indexBuffer.offset)
-//
-//                        }
-//
-//                        renderEncoder.popDebugGroup()
-//
-//                        renderEncoder.endEncoding()
-//                    }
-//                }
+                for x in 0..<6 {
+
+                    if let renderEncoder = parallel.makeRenderCommandEncoder() {
+
+                        /// Final pass rendering code here
+                        renderEncoder.label = "Text Render Encoder"
+
+                        renderEncoder.pushDebugGroup("Draw Box")
+
+                        renderEncoder.setCullMode(.back)
+
+                        renderEncoder.setFrontFacing(.counterClockwise)
+
+                        renderEncoder.setRenderPipelineState(pipelineState2)
+
+                        renderEncoder.setDepthStencilState(depthState)
+
+                        renderEncoder.setFragmentSamplerState(sampler, index: 0)
+
+                        if x % 2 == 0 {
+                            renderEncoder.setFragmentTexture(fontTexture1, index: TextureIndex.color.rawValue)
+                        }
+                        else {
+                            renderEncoder.setFragmentTexture(fontTexture2, index: TextureIndex.color.rawValue)
+                        }
+
+                        renderEncoder.setVertexBuffer(dynamicUniformBuffer2, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)
+                        renderEncoder.setFragmentBuffer(dynamicUniformBuffer2, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)
+
+                        for (index, element) in mesh2.vertexDescriptor.layouts.enumerated() {
+                            guard let layout = element as? MDLVertexBufferLayout else {
+                                return
+                            }
+
+                            if layout.stride != 0 {
+                                let buffer = mesh2.vertexBuffers[index]
+                                renderEncoder.setVertexBuffer(buffer.buffer, offset:buffer.offset, index: index)
+                            }
+                        }
+
+                        for submesh in mesh2.submeshes {
+                            renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType,
+                                                                indexCount: submesh.indexCount,
+                                                                indexType: submesh.indexType,
+                                                                indexBuffer: submesh.indexBuffer.buffer,
+                                                                indexBufferOffset: submesh.indexBuffer.offset)
+
+                        }
+
+                        renderEncoder.popDebugGroup()
+
+                        renderEncoder.endEncoding()
+                    }
+                }
 
                 parallel.endEncoding()
             }
