@@ -417,6 +417,53 @@ class Renderer: NSObject, MTKViewDelegate {
         
         return try MTKMesh(mesh:mdlMesh1, device:device)
     }
+    
+    class func generateVertexIndices(vertexIndices1: [Int], vertexIndices2: [Int]) -> [(Int, Int, Int)]? {
+        
+        var firstIndices: [Int]!
+        var secondIndices: [Int]!
+        
+        if vertexIndices1.count > vertexIndices2.count {
+            firstIndices = vertexIndices1
+            secondIndices = vertexIndices2
+        }
+        else {
+            firstIndices = vertexIndices2
+            secondIndices = vertexIndices1
+        }
+        
+        var tempIndices: [Int] = []
+        let ratio = Double(secondIndices.count) / Double(firstIndices.count)
+        
+        for x in (1..<firstIndices.count) {
+            tempIndices.append(Int(ratio * Double(x)))
+        }
+        
+        var indices: [(Int, Int, Int)] = []
+        for (x, vertexIndex) in firstIndices.enumerated() {
+            if x == firstIndices.count - 1 {
+                break
+            }
+            indices.append((firstIndices[x + 1], vertexIndex, secondIndices[tempIndices[x]]))
+        }
+        
+        print(tempIndices)
+        for (x, index) in tempIndices.enumerated() {
+            if x == 0 {
+                continue
+            }
+            print("\(index), \(tempIndices[x - 1])")
+            if index != tempIndices[x - 1] {
+                indices.append((secondIndices[tempIndices[x - 1]], secondIndices[index], firstIndices[x]))
+            }
+        }
+        
+        if indices.count == 0 {
+            return nil
+        }
+        
+        return indices
+    }
 
     class func buildMesh1(device: MTLDevice,
                          mtlVertexDescriptor: MTLVertexDescriptor) throws -> MTKMesh {
