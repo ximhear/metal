@@ -423,7 +423,7 @@ class Renderer: NSObject, MTKViewDelegate {
         var firstIndices: [Int]!
         var secondIndices: [Int]!
         
-        if vertexIndices1.count > vertexIndices2.count {
+        if vertexIndices1.count >= vertexIndices2.count {
             firstIndices = vertexIndices1
             secondIndices = vertexIndices2
         }
@@ -435,7 +435,7 @@ class Renderer: NSObject, MTKViewDelegate {
         var tempIndices: [Int] = []
         let ratio = Double(secondIndices.count) / Double(firstIndices.count)
         
-        for x in (1..<firstIndices.count) {
+        for x in (0..<firstIndices.count) {
             tempIndices.append(Int(ratio * Double(x)))
         }
         
@@ -447,14 +447,13 @@ class Renderer: NSObject, MTKViewDelegate {
             indices.append((firstIndices[x + 1], vertexIndex, secondIndices[tempIndices[x]]))
         }
         
-        print(tempIndices)
+        GZLog(tempIndices)
         for (x, index) in tempIndices.enumerated() {
-            if x == 0 {
-                continue
+            if x == tempIndices.count - 1 {
+                break
             }
-            print("\(index), \(tempIndices[x - 1])")
-            if index != tempIndices[x - 1] {
-                indices.append((secondIndices[tempIndices[x - 1]], secondIndices[index], firstIndices[x]))
+            if index != tempIndices[x + 1] {
+                indices.append((secondIndices[index], secondIndices[tempIndices[x + 1]], firstIndices[x + 1]))
             }
         }
         
