@@ -555,7 +555,8 @@ class Renderer: NSObject, MTKViewDelegate {
 
         let vertices1 = UnsafeMutableRawPointer(vertexBuffer2.buffer.contents()).bindMemory(to:Float.self, capacity: totalVetexCount * 3)
         for x in 0..<totalVetexCount {
-            vertices1[x * 3 + 0] = 1
+            GZLog(Float(drand48()))
+            vertices1[x * 3 + 0] = 0.05 + 0.95 * Float(drand48())
             vertices1[x * 3 + 1] = 0
             vertices1[x * 3 + 1] = 0
         }
@@ -643,7 +644,7 @@ class Renderer: NSObject, MTKViewDelegate {
         for x in 0..<totalVetexCount {
             vertices1[x * 3 + 0] = 0
             vertices1[x * 3 + 1] = 0
-            vertices1[x * 3 + 1] = 1
+            vertices1[x * 3 + 1] = 0.05 + 0.95 * Float(drand48())
         }
         
         var yVertexIndices: [[Int]] = []
