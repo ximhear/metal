@@ -374,22 +374,22 @@ class FontAtlasGenerator: NSObject {
             for x in 0..<width {
                 line = line + "\(outData[y*width + x]),"
             }
-            GZLog(line)
+//            GZLog(line)
         }
-        GZLog()
+//        GZLog()
 
         let title = (0..<width).map { (a) in
             return "\(a)"
         }
-        print(title.joined(separator: ","))
+//        print(title.joined(separator: ","))
         for y in 0..<height {
             var values = [String]()
             for x in 0..<width {
                 values.append("\(outData[y * width + x])")
             }
-            print(values.joined(separator: ","))
+//            print(values.joined(separator: ","))
         }
-        GZLog()
+//        GZLog()
 
 //        for (long y = 0; y < height; ++y) {
 //            NSString* line = @"";
@@ -475,7 +475,7 @@ class FontAtlasGenerator: NSObject {
         var y: CGFloat = CGFloat(lineSpacing)
         for glyph in glyphs {
             
-            GZLog(glyph)
+//            GZLog(glyph)
             var boundingRect: CGRect = .zero
             var g = glyph
             CTFontGetBoundingRectsForGlyphs(ctFont, CTFontOrientation.horizontal, &g, &boundingRect, 1);

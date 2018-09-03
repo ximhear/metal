@@ -67,7 +67,7 @@ class Renderer: NSObject, MTKViewDelegate {
     var scale2Y: Float = 1
 
     var mesh: MTKMesh
-    var mesh1_0: MTKMesh
+    var mesh1_0: [MTKMesh]
     var mesh1_1: MTKMesh
     var mesh2: MTKMesh
     
@@ -166,13 +166,26 @@ class Renderer: NSObject, MTKViewDelegate {
         }
 
         do {
-            mesh1_0 = try Renderer.buildMesh1_0(device: device, mtlVertexDescriptor: mtlVertexDescriptor, xDivideCount: 10, yDivideCount: 7)
+            mesh1_0 = []
+            srand48(Int(Date().timeIntervalSince1970))
+            let colors: [() -> vector_float3] = [
+                { let a = Float(drand48()); return vector_float3(0.05 + 0.95 * a, 0, 0) },
+                { let a = Float(drand48()); return vector_float3(0.05 + 0.95 * a, 0.05 + 0.95 * a, 0) },
+                { let a = Float(drand48()); return vector_float3(0, 0.05 + 0.95 * a, 0) },
+                { let a = Float(drand48()); return vector_float3(0, 0.05 + 0.95 * a, 0.05 + 0.95 * a) },
+                { let a = Float(drand48()); return vector_float3(0, 0, 0.05 + 0.75 * a) },
+                { let a = Float(drand48()); return vector_float3(0.05 + 0.95 * a, 0, 0.05 + 0.95 * a) }
+            ]
+            for x in 0..<6 {
+                let a = try Renderer.buildMesh1_0(device: device, mtlVertexDescriptor: mtlVertexDescriptor1, xDivideCount: 10, yDivideCount: 7, color: colors[x])
+                mesh1_0.append(a)
+            }
         } catch {
             GZLog("Unable to build MetalKit Mesh. Error info: \(error)")
             return nil
         }
         do {
-            mesh1_1 = try Renderer.buildMesh1_1(device: device, mtlVertexDescriptor: mtlVertexDescriptor, xDivideCount: 2, yDivideCount: 10, width: 0.02)
+            mesh1_1 = try Renderer.buildMesh1_1(device: device, mtlVertexDescriptor: mtlVertexDescriptor1, xDivideCount: 2, yDivideCount: 10, width: 0.02)
         } catch {
             GZLog("Unable to build MetalKit Mesh. Error info: \(error)")
             return nil
@@ -504,7 +517,8 @@ class Renderer: NSObject, MTKViewDelegate {
     class func buildMesh1_0(device: MTLDevice,
                           mtlVertexDescriptor: MTLVertexDescriptor,
                           xDivideCount: Int,
-                          yDivideCount: Int) throws -> MTKMesh {
+                          yDivideCount: Int,
+                          color: () -> vector_float3) throws -> MTKMesh {
         /// Create and condition mesh data to feed into a pipeline using the given vertex descriptor
         
         let mdlVertexDescriptor = MTKModelIOVertexDescriptorFromMetal(mtlVertexDescriptor)
@@ -555,10 +569,11 @@ class Renderer: NSObject, MTKViewDelegate {
 
         let vertices1 = UnsafeMutableRawPointer(vertexBuffer2.buffer.contents()).bindMemory(to:Float.self, capacity: totalVetexCount * 3)
         for x in 0..<totalVetexCount {
-            GZLog(Float(drand48()))
-            vertices1[x * 3 + 0] = 0.05 + 0.95 * Float(drand48())
-            vertices1[x * 3 + 1] = 0
-            vertices1[x * 3 + 1] = 0
+            let a = color()
+            GZLog(a)
+            vertices1[x * 3 + 0] = a.x
+            vertices1[x * 3 + 1] = a.y
+            vertices1[x * 3 + 2] = a.z
         }
         
         var yVertexIndices: [[Int]] = []
@@ -644,7 +659,7 @@ class Renderer: NSObject, MTKViewDelegate {
         for x in 0..<totalVetexCount {
             vertices1[x * 3 + 0] = 0
             vertices1[x * 3 + 1] = 0
-            vertices1[x * 3 + 1] = 0.05 + 0.95 * Float(drand48())
+            vertices1[x * 3 + 2] = 0.05 + 0.95 * Float(drand48())
         }
         
         var yVertexIndices: [[Int]] = []
@@ -990,18 +1005,18 @@ class Renderer: NSObject, MTKViewDelegate {
                         renderEncoder.setVertexBuffer(dynamicUniformBuffer1_0, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)
                         renderEncoder.setFragmentBuffer(dynamicUniformBuffer1_0, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)
                         
-                        for (index, element) in mesh1_0.vertexDescriptor.layouts.enumerated() {
+                        for (index, element) in mesh1_0[x].vertexDescriptor.layouts.enumerated() {
                             guard let layout = element as? MDLVertexBufferLayout else {
                                 return
                             }
                             
                             if layout.stride != 0 {
-                                let buffer = mesh1_0.vertexBuffers[index]
+                                let buffer = mesh1_0[x].vertexBuffers[index]
                                 renderEncoder.setVertexBuffer(buffer.buffer, offset:buffer.offset, index: index)
                             }
                         }
                         
-                        for submesh in mesh1_0.submeshes {
+                        for submesh in mesh1_0[x].submeshes {
                             renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType,
                                                                 indexCount: submesh.indexCount,
                                                                 indexType: submesh.indexType,
