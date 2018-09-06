@@ -46,6 +46,7 @@ typedef struct
     vector_float4 fg;
     vector_float4 bg;
     vector_float4 lineColor;
+    float speed;
 } Uniforms;
 
 #endif /* ShaderTypes_h */

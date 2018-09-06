@@ -209,7 +209,7 @@ class Renderer: NSObject, MTKViewDelegate {
 //        }
 
         do {
-            mesh2 = try Renderer.buildMesh2 (device: device, mtlVertexDescriptor: mtlVertexDescriptor, ratio: 1, divideCount: 1)
+            mesh2 = try Renderer.buildMesh2 (device: device, mtlVertexDescriptor: mtlVertexDescriptor, ratio: 1, divideCount: 10)
         } catch {
             GZLog("Unable to build MetalKit Mesh. Error info: \(error)")
             return nil
@@ -834,6 +834,7 @@ class Renderer: NSObject, MTKViewDelegate {
         uniforms[0].projectionMatrix = projectionMatrix
         
         
+        var speed: Float = 0
         if self.rotating == true {
             elapsedTime = Date().timeIntervalSince1970 - self.beginingTime
             
@@ -851,6 +852,8 @@ class Renderer: NSObject, MTKViewDelegate {
                     result = beginingRotationZ + (self.endingRotationZ - beginingRotationZ) * elapsedTime / (self.endingTime - self.beginingTime)
                 }
                 self.rotationZ = result
+                let x = elapsedTime / (self.endingTime - self.beginingTime)
+                speed = 3 * Float(pow(x - 1, 2))
             }
         }
 
@@ -893,6 +896,7 @@ class Renderer: NSObject, MTKViewDelegate {
             }
             uniforms2[x].fg = fgs[x]
             uniforms2[x].bg = bgs[x]
+            uniforms2[x].speed = speed
         }
         
         
@@ -908,12 +912,14 @@ class Renderer: NSObject, MTKViewDelegate {
             uniforms1_0[x].modelViewMatrix = simd_mul(viewMatrix1_0, modelMatrix1_0)
             uniforms1_0[x].fg = fgs[x]
             uniforms1_0[x].bg = bgs[x]
-            
+            uniforms1_0[x].speed = speed
+
             let modelMatrix1_1 = matrix4x4_rotation(radians: Float(self.rotationZ) + theta * Float(x) + theta / 2, axis: rotationAxis2)
             uniforms1_1[x].projectionMatrix = projectionMatrix
             uniforms1_1[x].modelViewMatrix = simd_mul(viewMatrix1_1, modelMatrix1_1)
             uniforms1_1[x].fg = fgs[x]
             uniforms1_1[x].bg = bgs[x]
+            uniforms1_1[x].speed = speed
         }
     }
     

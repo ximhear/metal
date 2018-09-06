@@ -48,8 +48,12 @@ vertex ColorVertexInOut coloredVertexShader(ColorVertex in [[ stage_in ]],
     ColorVertexInOut out;
     
     float4 position = float4(in.position, 1.0);
-    out.position = uniforms.projectionMatrix * uniforms.modelViewMatrix * position;
     out.orgPosition = uniforms.modelViewMatrix * position;
+    float len = length(out.orgPosition.xy);
+    float theta = uniforms.speed * pow(len, 2);
+//    if (theta M_PI_F
+    float4x4 rotation = float4x4(float4(cos(theta), -sin(theta), 0 ,0), float4(sin(theta), cos(theta), 0 ,0), float4(0, 0, 1, 0), float4(0, 0, 0, 1));
+    out.position = uniforms.projectionMatrix * rotation * uniforms.modelViewMatrix * position;
     out.color = float4(in.color, 1.0);
     
     return out;
@@ -96,8 +100,11 @@ vertex ColorInOut vertexShader1(Vertex in [[ stage_in ]],
     ColorInOut out;
     
     float4 position = float4(in.position, 1.0);
-    out.position = uniforms.projectionMatrix * uniforms.modelViewMatrix * position;
     out.orgPosition = uniforms.modelViewMatrix * position;
+    float len = length(out.orgPosition.xy);
+    float theta = uniforms.speed * pow(len, 2);
+    float4x4 rotation = float4x4(float4(cos(theta), -sin(theta), 0 ,0), float4(sin(theta), cos(theta), 0 ,0), float4(0, 0, 1, 0), float4(0, 0, 0, 1));
+    out.position = uniforms.projectionMatrix * rotation * uniforms.modelViewMatrix * position;
     out.texCoord = in.texCoord.xy;
     
     return out;
