@@ -43,6 +43,8 @@ typedef struct
 {
     matrix_float4x4 projectionMatrix;
     matrix_float4x4 modelViewMatrix;
+    matrix_float4x4 separatorRotationMatrix1;
+    matrix_float4x4 separatorRotationMatrix2;
     vector_float4 fg;
     vector_float4 bg;
     vector_float4 lineColor;

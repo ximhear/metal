@@ -32,6 +32,8 @@ typedef struct
 {
     float4 position [[position]];
     float4 orgPosition;
+    float4 rotPosition1;
+    float4 rotPosition2;
     float4 color;
 } ColorVertexInOut;
 
@@ -49,6 +51,8 @@ vertex ColorVertexInOut coloredVertexShader(ColorVertex in [[ stage_in ]],
     
     float4 position = float4(in.position, 1.0);
     out.orgPosition = uniforms.modelViewMatrix * position;
+    out.rotPosition1 = uniforms.separatorRotationMatrix1 * position;
+    out.rotPosition2 = uniforms.separatorRotationMatrix2 * position;
     float len = length(out.orgPosition.xy);
     float theta = -uniforms.speed * pow(len, 2);
 //    if (theta M_PI_F
@@ -76,6 +80,12 @@ fragment half4 fragmentShaderOffScreen(ColorVertexInOut in [[stage_in]],
 fragment half4 coloredFragmentShader(ColorVertexInOut in [[stage_in]],
                                        constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]])
 {
+    if (in.rotPosition1.y > 1) {
+        discard_fragment();
+    }
+    if (in.rotPosition2.y > 1) {
+        discard_fragment();
+    }
     return half4(in.color);
 }
 

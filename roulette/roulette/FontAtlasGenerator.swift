@@ -28,6 +28,24 @@ fileprivate let MBEGlyphDescriptorsKey = "glyphDescriptors"
 
 let MBE_GENERATE_DEBUG_ATLAS_IMAGE = 1
 
+struct CharacterDrawInfo {
+    var y: CGFloat = 0
+    var height: CGFloat = 0
+    var firstRow: Int = 0
+    var lastRow: Int = 0
+    
+    init(y: CGFloat, height: CGFloat, first: Int, last: Int) {
+        self.y = y
+        self.height = height
+        self.firstRow = first
+        self.lastRow = last
+    }
+    
+    var calculatedHeight: CGFloat {
+        return CGFloat(lastRow - firstRow + 1)
+    }
+}
+
 class GlyphDescriptor : NSObject, NSSecureCoding {
     var glyphIndex: CGGlyph = 0
     @objc var topLeftTexCoord = CGPoint.zero
@@ -506,11 +524,165 @@ class FontAtlasGenerator: NSObject {
 
         completion(UnsafePointer<UInt8>.init(imageData), maxWidth, totalHeight)
     }
+
+    func createFontImage1(for font: UIFont, string: String, completion: (_ imageData: UnsafePointer<UInt8>, _ width: Int, _ height: Int) -> Void) -> Void {
+        
+        let colorSpace = CGColorSpaceCreateDeviceGray()
+        let lineSpacing: Int = 8
+        
+        let attributedStringParagraphStyle = NSMutableParagraphStyle()
+        attributedStringParagraphStyle.alignment = NSTextAlignment.center
+        attributedStringParagraphStyle.lineSpacing = 0
+        attributedStringParagraphStyle.paragraphSpacing = 0
+        attributedStringParagraphStyle.paragraphSpacingBefore = 0
+        attributedStringParagraphStyle.lineBreakMode = .byCharWrapping
+        
+        var w: CGFloat = 0
+        var h: CGFloat = 0
+        var yPositions: [CharacterDrawInfo] = []
+        string.unicodeScalars.map { String.init($0) }.forEach { (str) in
+            
+            let imageSize = font.sizeOfString(string: str, constrainedToWidth: 10000)
+            if w < imageSize.width {
+                w = imageSize.width
+            }
+            yPositions.append(CharacterDrawInfo(y: h, height:  ceil(imageSize.height), first: 0, last: 0))
+            h += imageSize.height + CGFloat(lineSpacing)
+        }
+        
+        h -= CGFloat(lineSpacing)
+        
+        var width = Int(ceilf(Float(w)))
+        var height = Int(ceilf(Float(h)))
+        if width % 2 == 1 {
+            width += 1
+        }
+        if height % 2 == 1 {
+            height += 1
+        }
+        
+        for (index, x) in string.unicodeScalars.enumerated() {
+            
+            let str = String.init(x)
+            let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(width), height: yPositions[index].height))
+            let img = renderer.image { ctx in
+                
+                str.draw(with: CGRect(x: 0, y: 0, width: CGFloat(width), height: yPositions[index].height),
+                         options: .usesLineFragmentOrigin,
+                         attributes: [.font: font,
+                                      .foregroundColor: UIColor.white,
+                                      .paragraphStyle: attributedStringParagraphStyle,
+                                      ],
+                         context: nil)
+            }
+            let imageData = UnsafeMutablePointer<UInt8>.allocate(capacity: width * height)
+            let context = CGContext.init(data: imageData,
+                                         width: width,
+                                         height: Int(yPositions[index].height),
+                                         bitsPerComponent: 8,
+                                         bytesPerRow: width,
+                                         space: colorSpace,
+                                         bitmapInfo: 0)
+            context?.setFillColor(red: 0, green: 0, blue: 0, alpha: 1)
+            context?.fill(CGRect.init(x: 0, y: 0, width: CGFloat(width), height: yPositions[index].height))
+            context?.draw(img.cgImage!, in: CGRect(x: 0, y: 0, width: CGFloat(width), height: yPositions[index].height))
+            
+            var firstRow: Int = 0
+            var lastRow: Int = 0
+            for row in 0..<Int(yPositions[index].height) {
+                var found = false
+                for col in 0..<width {
+                    if imageData[row * width + col] != 0 {
+                        firstRow = row
+                        found = true
+                        break
+                    }
+                }
+                if found == true {
+                    break
+                }
+            }
+            for row in 0..<Int(yPositions[index].height) {
+                var found = false
+                let r = Int(yPositions[index].height) - 1 - row
+                for col in 0..<width {
+                    if imageData[r * width + col] != 0 {
+                        found = true
+                        break
+                    }
+                }
+                if found == true {
+                    lastRow = r
+                    break
+                }
+            }
+            print("first : \(firstRow)")
+            print("last : \(lastRow)")
+            yPositions[index].firstRow = firstRow
+            yPositions[index].lastRow = lastRow
+        }
+        
+        height = lineSpacing
+        for x in yPositions {
+            height += Int(x.calculatedHeight)
+            height += lineSpacing
+        }
+        if height % 2 == 1 {
+            height += 1
+        }
+        
+        print("height : \(height)")
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: width, height: height))
+        let img = renderer.image { ctx in
+            
+            var offsetY: CGFloat = CGFloat(-lineSpacing)
+            for (index, x) in string.unicodeScalars.enumerated() {
+                let str = String.init(x)
+                
+                offsetY += CGFloat(yPositions[index].firstRow)
+                
+                str.draw(with: CGRect(x: 0, y: yPositions[index].y - offsetY, width: CGFloat(width), height: yPositions[index].height),
+                         options: .usesLineFragmentOrigin,
+                         attributes: [.font: font,
+                                      .foregroundColor: UIColor.white,
+                                      .paragraphStyle: attributedStringParagraphStyle,
+                                      //                                      .verticalGlyphForm: 1,
+                            //                                      .ligature: 0
+                    ],
+                         context: nil)
+                offsetY += yPositions[index].height - CGFloat(yPositions[index].lastRow) - 1
+            }
+        }
+        
+        let imageData = UnsafeMutablePointer<UInt8>.allocate(capacity: width * height)
+        let context = CGContext.init(data: imageData,
+                                     width: width,
+                                     height: height,
+                                     bitsPerComponent: 8,
+                                     bytesPerRow: width,
+                                     space: colorSpace,
+                                     bitmapInfo: 0)
+        
+        // Turn off antialiasing so we only get fully-on or fully-off pixels.
+        // This implicitly disables subpixel antialiasing and hinting.
+        context?.setAllowsAntialiasing(true)
+        
+        context?.setFillColor(red: 0, green: 0, blue: 0, alpha: 1)
+        context?.fill(CGRect.init(x: 0, y: 0, width: CGFloat(width), height: CGFloat(height)))
+        
+        context?.draw(img.cgImage!, in: CGRect(x: 0, y: 0, width: width, height: height))
+        let contextImage = context?.makeImage()
+        // Break here to view the generated font atlas bitmap
+        let image = UIImage.init(cgImage: contextImage!)
+        
+        self.fontImage = image
+        completion(UnsafePointer<UInt8>.init(imageData), width, height)
+    }
     
     func createTextureData(font: UIFont, string: String) {
         
         // Generate an atlas image for the font, resizing if necessary to fit in the specified size.
-        createFontImage(for: font, string: string) { (atlasData, width, height) in
+        createFontImage1(for: font, string: string) { (atlasData, width, height) in
             
             
             self.textureWidth = width / 2
@@ -546,5 +718,25 @@ class FontAtlasGenerator: NSObject {
             
             self.glyphDescriptors.append(descriptor)
         }
+    }
+}
+
+extension UIImage {
+    
+    func convertToGrayScaleNoAlpha() -> CGImage {
+        let colorSpace = CGColorSpaceCreateDeviceGray();
+        let bitmapInfo = CGBitmapInfo(rawValue: CGImageAlphaInfo.none.rawValue)
+        let context = CGContext(data: nil, width: Int(UInt(size.width)), height: Int(UInt(size.height)), bitsPerComponent: 8, bytesPerRow: 0, space: colorSpace, bitmapInfo: bitmapInfo.rawValue)
+        context?.draw(self.cgImage!, in: CGRect.init(x: 0, y: 0, width: size.width, height: size.height))
+        return context!.makeImage()!
+    }
+}
+
+extension UIFont {
+
+    func sizeOfString (string: String, constrainedToWidth width: Double) -> CGSize {
+        let attString = NSAttributedString(string: string,attributes: [.font: self])
+        let framesetter = CTFramesetterCreateWithAttributedString(attString)
+        return CTFramesetterSuggestFrameSizeWithConstraints(framesetter, CFRange(location: 0,length: 0), nil, CGSize(width: width, height: Double.greatestFiniteMagnitude), nil)
     }
 }

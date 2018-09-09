@@ -221,7 +221,7 @@ class Renderer: NSObject, MTKViewDelegate {
 
         let font2 = UIFont.init(name: "AppleSDGothicNeo-Regular", size: 128)
         atlasGenerator2 = FontAtlasGenerator.init()
-        atlasGenerator2!.createTextureData(font: font2!, string: "커피")
+        atlasGenerator2!.createTextureData(font: font1, string: "커피")
         
         var x1: Float = 0
         var x2: Float = 0
@@ -917,6 +917,8 @@ class Renderer: NSObject, MTKViewDelegate {
             let modelMatrix1_1 = matrix4x4_rotation(radians: Float(self.rotationZ) + theta * Float(x) + theta / 2, axis: rotationAxis2)
             uniforms1_1[x].projectionMatrix = projectionMatrix
             uniforms1_1[x].modelViewMatrix = simd_mul(viewMatrix1_1, modelMatrix1_1)
+            uniforms1_1[x].separatorRotationMatrix1 = matrix4x4_rotation(radians: theta / 2, axis: rotationAxis2)
+            uniforms1_1[x].separatorRotationMatrix2 = matrix4x4_rotation(radians: -theta / 2, axis: rotationAxis2)
             uniforms1_1[x].fg = fgs[x]
             uniforms1_1[x].bg = bgs[x]
             uniforms1_1[x].speed = speed
