@@ -14,6 +14,7 @@
 		EC10630E211772020038A988 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EC10630C211772020038A988 /* Main.storyboard */; };
 		EC106310211772030038A988 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EC10630F211772030038A988 /* Assets.xcassets */; };
 		EC106313211772030038A988 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EC106311211772030038A988 /* LaunchScreen.storyboard */; };
+		EC533D6C2146CD2900F082A1 /* RouletteItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC533D6B2146CD2900F082A1 /* RouletteItem.swift */; };
 		EC679F4F2119F28D000CF114 /* GZLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC679F4E2119F28D000CF114 /* GZLog.swift */; };
 		EC68AFE5213467E30048A1E9 /* OffScreenRenderer .swift in Sources */ = {isa = PBXBuildFile; fileRef = EC68AFE4213467E30048A1E9 /* OffScreenRenderer .swift */; };
 		EC6ED0772121F96B00ED76D1 /* FontAtlasGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC6ED0762121F96B00ED76D1 /* FontAtlasGenerator.swift */; };
@@ -30,6 +31,7 @@
 		EC10630F211772030038A988 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		EC106312211772030038A988 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EC106314211772030038A988 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		EC533D6B2146CD2900F082A1 /* RouletteItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RouletteItem.swift; sourceTree = "<group>"; };
 		EC679F4E2119F28D000CF114 /* GZLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = GZLog.swift; path = ../../GZLog.swift; sourceTree = "<group>"; };
 		EC68AFE4213467E30048A1E9 /* OffScreenRenderer .swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "OffScreenRenderer .swift"; sourceTree = "<group>"; };
 		EC6ED0762121F96B00ED76D1 /* FontAtlasGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FontAtlasGenerator.swift; sourceTree = "<group>"; };
@@ -77,6 +79,7 @@
 				EC10630F211772030038A988 /* Assets.xcassets */,
 				EC106311211772030038A988 /* LaunchScreen.storyboard */,
 				EC106314211772030038A988 /* Info.plist */,
+				EC533D6B2146CD2900F082A1 /* RouletteItem.swift */,
 			);
 			path = roulette;
 			sourceTree = "<group>";
@@ -152,6 +155,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EC533D6C2146CD2900F082A1 /* RouletteItem.swift in Sources */,
 				EC6ED0772121F96B00ED76D1 /* FontAtlasGenerator.swift in Sources */,
 				EC10630B211772020038A988 /* Shaders.metal in Sources */,
 				EC106307211772020038A988 /* Renderer.swift in Sources */,

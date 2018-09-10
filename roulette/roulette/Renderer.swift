@@ -19,7 +19,6 @@ struct GVertex {
 
 // The 256 byte aligned size of our uniform structure
 let alignedUniformsSize = (MemoryLayout<Uniforms>.size & ~0xFF) + 0x100
-let aligned6UniformsSize = ((MemoryLayout<Uniforms>.size * 6) & ~0xFF) + 0x100
 let uniformsSize = MemoryLayout<Uniforms>.size
 
 let maxBuffersInFlight = 3
@@ -40,8 +39,6 @@ class Renderer: NSObject, MTKViewDelegate {
     var pipelineState1: MTLRenderPipelineState
     var pipelineState2: MTLRenderPipelineState
     var depthState: MTLDepthStencilState
-    var colorMap: MTLTexture
-    var illuminati: MTLTexture
     
     let inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
     
@@ -60,21 +57,12 @@ class Renderer: NSObject, MTKViewDelegate {
     var texture1Width: Float = 0
     var texture2Width: Float = 0
     
-    var scale1X: Float = 1
-    var scale1Y: Float = 1
-    
-    var scale2X: Float = 1
-    var scale2Y: Float = 1
-
     var mesh: MTKMesh
     var mesh1_0: [MTKMesh]
     var mesh1_1: MTKMesh
     var mesh2: MTKMesh
     
-    var atlasGenerator1: FontAtlasGenerator?
-    var atlasGenerator2: FontAtlasGenerator?
-    var fontTexture1: MTLTexture?
-    var fontTexture2: MTLTexture?
+    var sdfGenerators: [FontAtlasGenerator]
     var samplerState: MTLSamplerState?
     var sampler: MTLSamplerState?
     
@@ -86,8 +74,18 @@ class Renderer: NSObject, MTKViewDelegate {
     var endingRotationZ: Double = 0
     var elapsedTime : Double = 0
     var rotationZ : Double = 0
+    
+    let items: [RouletteItem]
 
-    init?(metalKitView: MTKView, t: MTLTexture) {
+    init?(metalKitView: MTKView, items: [RouletteItem]) {
+        
+        if items.count < 2 {
+            return nil
+        }
+        
+        self.items = items
+        
+        
         self.device = metalKitView.device!
         guard let queue = self.device.makeCommandQueue() else { return nil }
         self.commandQueue = queue
@@ -101,7 +99,8 @@ class Renderer: NSObject, MTKViewDelegate {
         
         uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents()).bindMemory(to:Uniforms.self, capacity:1)
 
-        let uniformBufferSize1 = aligned6UniformsSize * maxBuffersInFlight
+        let uniformsSize = ((MemoryLayout<Uniforms>.size * self.items.count) & ~0xFF) + 0x100
+        let uniformBufferSize1 = uniformsSize * maxBuffersInFlight
         guard let buffer1_0 = self.device.makeBuffer(length: uniformBufferSize1, options: [.storageModeShared]) else { return nil }
         dynamicUniformBuffer1_0 = buffer1_0
         self.dynamicUniformBuffer1_0.label = "UniformBuffer1_0"
@@ -112,7 +111,7 @@ class Renderer: NSObject, MTKViewDelegate {
         self.dynamicUniformBuffer1_1.label = "UniformBuffer1_1"
         uniforms1_1 = UnsafeMutableRawPointer(dynamicUniformBuffer1_1.contents()).bindMemory(to:Uniforms.self, capacity:1)
 
-        let uniformBufferSize2 = aligned6UniformsSize * maxBuffersInFlight
+        let uniformBufferSize2 = uniformsSize * maxBuffersInFlight
         guard let buffer2 = self.device.makeBuffer(length: uniformBufferSize2, options: [.storageModeShared]) else { return nil }
         dynamicUniformBuffer2 = buffer2
         self.dynamicUniformBuffer2.label = "UniformBuffer2"
@@ -176,8 +175,13 @@ class Renderer: NSObject, MTKViewDelegate {
                 { let a = Float(drand48()); return vector_float3(0, 0, 0.05 + 0.75 * a) },
                 { let a = Float(drand48()); return vector_float3(0.05 + 0.95 * a, 0, 0.05 + 0.95 * a) }
             ]
-            for x in 0..<6 {
-                let a = try Renderer.buildMesh1_0(device: device, mtlVertexDescriptor: mtlVertexDescriptor1, xDivideCount: 10, yDivideCount: 7, color: colors[x])
+            for (x, item) in self.items.enumerated() {
+                let a = try Renderer.buildMesh1_0(device: device,
+                                                  mtlVertexDescriptor: mtlVertexDescriptor1,
+                                                  xDivideCount: 10,
+                                                  yDivideCount: 7,
+                                                  rouletteCount: self.items.count,
+                                                  color: { let a = Float(drand48()); return vector_float3(item.color.x * (0.05 + 0.95 * a), item.color.y * (0.05 + 0.95 * a), item.color.z * (0.05 + 0.95 * a)) })
                 mesh1_0.append(a)
             }
         } catch {
@@ -185,28 +189,16 @@ class Renderer: NSObject, MTKViewDelegate {
             return nil
         }
         do {
-            mesh1_1 = try Renderer.buildMesh1_1(device: device, mtlVertexDescriptor: mtlVertexDescriptor1, xDivideCount: 2, yDivideCount: 10, width: 0.02)
+            mesh1_1 = try Renderer.buildMesh1_1(device: device,
+                                                mtlVertexDescriptor: mtlVertexDescriptor1,
+                                                xDivideCount: 2,
+                                                yDivideCount: 10,
+                                                rouletteCount: self.items.count,
+                                                width: 0.02)
         } catch {
             GZLog("Unable to build MetalKit Mesh. Error info: \(error)")
             return nil
         }
-
-//        do {
-//            colorMap = try Renderer.loadTexture(device: device, textureName: "ColorMap")
-//        } catch {
-//            GZLog("Unable to load texture. Error info: \(error)")
-//            return nil
-//        }
-        
-        colorMap = t
-        illuminati = t
-//        do {
-//            illuminati = try Renderer.loadTexture(device: device, texture: t)
-////            illuminati = try Renderer.loadTexture(device: device, textureName: "illuminati")
-//        } catch {
-//            GZLog("Unable to load texture. Error info: \(error)")
-//            return nil
-//        }
 
         do {
             mesh2 = try Renderer.buildMesh2 (device: device, mtlVertexDescriptor: mtlVertexDescriptor, ratio: 1, divideCount: 10)
@@ -215,58 +207,49 @@ class Renderer: NSObject, MTKViewDelegate {
             return nil
         }
         
-        let font1 = UIFont.systemFont(ofSize: 128)
-        atlasGenerator1 = FontAtlasGenerator.init()
-        atlasGenerator1!.createTextureData(font: font1, string: "Pandas")
-
-        let font2 = UIFont.init(name: "AppleSDGothicNeo-Regular", size: 128)
-        atlasGenerator2 = FontAtlasGenerator.init()
-        atlasGenerator2!.createTextureData(font: font1, string: "커피")
+        let font = UIFont.systemFont(ofSize: 128)
         
-        var x1: Float = 0
-        var x2: Float = 0
-        var p: Float = 1
-        var t: Float = 1
+        sdfGenerators = []
+        for x in items {
+            let generator = FontAtlasGenerator()
+            generator.createTextureData(font: font, string: x.text)
+            sdfGenerators.append(generator)
+        }
         
-        p = Float(atlasGenerator1!.textureHeight) / Float(atlasGenerator1!.textureWidth)
-        t = tan(Float.pi / 2.0 - Float.pi / 6.0)
-        
-        x1 = (-p + sqrt(4 * p * p + 3)) / 2 / (p * p + 1)
-        x2 = 0.5 / (t + p)
-        scale1X = min(x1, x2) * 2
-        scale1Y = scale1X * p
+        for (index, x) in self.items.enumerated() {
+            var x1: Float = 0
+            var x2: Float = 0
+            var p: Float = 1
+            var t: Float = 1
+            let generator = sdfGenerators[index]
+            p = Float(generator.textureHeight) / Float(generator.textureWidth)
+            t = tan(Float.pi / 2.0 - Float.pi / Float(self.items.count))
+            
+            x1 = (-p + sqrt(4 * p * p + 3)) / 2 / (p * p + 1)
+            x2 = 0.5 / (t + p)
+            x.scaleX = min(x1, x2) * 2
+            x.scaleY = x.scaleX * p
+            
+            let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r8Unorm, width: generator.textureWidth, height: generator.textureHeight, mipmapped: false)
+            textureDescriptor.usage = .shaderRead
+            let region = MTLRegionMake2D(0, 0, generator.textureWidth, generator.textureHeight)
+            
+            x.fontTexture = device.makeTexture(descriptor: textureDescriptor)
 
-        p = Float(atlasGenerator2!.textureHeight) / Float(atlasGenerator2!.textureWidth)
-        
-        x1 = (-p + sqrt(4 * p * p + 3)) / 2 / (p * p + 1)
-        x2 = 0.5 / (t + p)
-        scale2X = min(x1, x2) * 2
-        scale2Y = scale2X * p
+            _ = generator.textureData?.withUnsafeBytes({ (bytes: UnsafePointer<UInt8>) -> Int  in
+                x.fontTexture?.replace(region: region, mipmapLevel: 0, withBytes: bytes, bytesPerRow: generator.textureWidth)
+                return 0
+            })
+        }
 
-        let textureDescriptor1 = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r8Unorm, width: atlasGenerator1!.textureWidth, height: atlasGenerator1!.textureHeight, mipmapped: false)
-        textureDescriptor1.usage = .shaderRead
-        let region1 = MTLRegionMake2D(0, 0, atlasGenerator1!.textureWidth, atlasGenerator1!.textureHeight)
-
-        let textureDescriptor2 = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .r8Unorm, width: atlasGenerator2!.textureWidth, height: atlasGenerator2!.textureHeight, mipmapped: false)
-        textureDescriptor2.usage = .shaderRead
-        let region2 = MTLRegionMake2D(0, 0, atlasGenerator2!.textureWidth, atlasGenerator2!.textureHeight)
-
-        fontTexture1 = device.makeTexture(descriptor: textureDescriptor1)
-        fontTexture2 = device.makeTexture(descriptor: textureDescriptor2)
 
         super.init()
-        
-        _ = atlasGenerator1!.textureData?.withUnsafeBytes({ (bytes: UnsafePointer<UInt8>) -> Int  in
-            fontTexture1?.replace(region: region1, mipmapLevel: 0, withBytes: bytes, bytesPerRow: atlasGenerator1!.textureWidth)
-            return 0
-        })
-
-        _ = atlasGenerator2!.textureData?.withUnsafeBytes({ (bytes: UnsafePointer<UInt8>) -> Int  in
-            fontTexture2?.replace(region: region2, mipmapLevel: 0, withBytes: bytes, bytesPerRow: atlasGenerator2!.textureWidth)
-            return 0
-        })
 
         buildSamplerState()
+    }
+    
+    func uniformsSizeForRouletteItems() -> Int {
+        return ((MemoryLayout<Uniforms>.size * self.items.count) & ~0xFF) + 0x100
     }
     
     class func buildMetalVertexDescriptor() -> MTLVertexDescriptor {
@@ -518,6 +501,7 @@ class Renderer: NSObject, MTKViewDelegate {
                           mtlVertexDescriptor: MTLVertexDescriptor,
                           xDivideCount: Int,
                           yDivideCount: Int,
+                          rouletteCount: Int,
                           color: () -> vector_float3) throws -> MTKMesh {
         /// Create and condition mesh data to feed into a pipeline using the given vertex descriptor
         
@@ -530,9 +514,16 @@ class Renderer: NSObject, MTKViewDelegate {
         attributes[VertexAttribute.texcoord.rawValue].name = MDLVertexAttributeColor
         
         var xVertexCounts: [Int] = []
-        for y in 0...yDivideCount {
-            let count = Int((Float(yDivideCount - y) * Float(xDivideCount + 1) + 1 * Float(y)) / Float(yDivideCount))
-            xVertexCounts.append(count)
+        if rouletteCount == 2 {
+            for y in 0...yDivideCount {
+                xVertexCounts.append(xDivideCount + 1)
+            }
+        }
+        else {
+            for y in 0...yDivideCount {
+                let count = Int((Float(yDivideCount - y) * Float(xDivideCount + 1) + 1 * Float(y)) / Float(yDivideCount))
+                xVertexCounts.append(count)
+            }
         }
         
         let totalVetexCount = xVertexCounts.reduce(0) { $0 + $1 }
@@ -543,16 +534,21 @@ class Renderer: NSObject, MTKViewDelegate {
         let vertexBuffer2 = metalAllocator.newBuffer(totalVetexCount * 3 * MemoryLayout<Float>.stride, type: .vertex) as! MTKMeshBuffer
         
         let maxY: Float = 1//1 / cos(Float.pi / 6)
-        let maxX = tan(Float.pi / 6)
+        let maxX = rouletteCount == 2 ? 1 : tan(Float.pi / Float(rouletteCount))
         let vertices = UnsafeMutableRawPointer(vertexBuffer1.buffer.contents()).bindMemory(to:Float.self, capacity: totalVetexCount * 3)
         var verticesIndex: Int = 0
         let z: Float = 0
         for (index, count) in xVertexCounts.enumerated() {
             let y = Float(yDivideCount - index) * maxY / Float(yDivideCount)
-            let x = Float(yDivideCount - index) * -maxX / Float(yDivideCount)
+            let x = rouletteCount == 2 ? -maxX : Float(yDivideCount - index) * -maxX / Float(yDivideCount)
             var xOffset: Float = 0
             if xVertexCounts.count - 1 == index {
-                xOffset = 0
+                if rouletteCount == 2 { // 2일 경우에는 한점으로 모이지 않는다.
+                    xOffset = -2 * x / Float(count - 1)
+                }
+                else {
+                    xOffset = 0 // 마지막은 한점(0)으로 모인다.
+                }
             }
             else {
                 xOffset = -2 * x / Float(count - 1)
@@ -619,6 +615,7 @@ class Renderer: NSObject, MTKViewDelegate {
                           mtlVertexDescriptor: MTLVertexDescriptor,
                           xDivideCount: Int,
                           yDivideCount: Int,
+                          rouletteCount: Int,
                           width: Float) throws -> MTKMesh {
         /// Create and condition mesh data to feed into a pipeline using the given vertex descriptor
         
@@ -637,7 +634,7 @@ class Renderer: NSObject, MTKViewDelegate {
         let vertexBuffer1 = metalAllocator.newBuffer(totalVetexCount * 3 * MemoryLayout<Float>.stride, type: .vertex) as! MTKMeshBuffer
         let vertexBuffer2 = metalAllocator.newBuffer(totalVetexCount * 3 * MemoryLayout<Float>.stride, type: .vertex) as! MTKMeshBuffer
         
-        let maxY: Float = 1 / cos(Float.pi / 6)
+        let maxY: Float = rouletteCount == 2 ? 1 : 1 / cos(Float.pi / Float(rouletteCount))
         let vertices = UnsafeMutableRawPointer(vertexBuffer1.buffer.contents()).bindMemory(to:Float.self, capacity: totalVetexCount * 3)
         var verticesIndex: Int = 0
         let z: Float = 0
@@ -820,7 +817,7 @@ class Renderer: NSObject, MTKViewDelegate {
         
         uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents() + uniformBufferOffset).bindMemory(to:Uniforms.self, capacity:1)
 
-        sixUniformBufferOffset = aligned6UniformsSize * uniformBufferIndex
+        sixUniformBufferOffset = uniformsSizeForRouletteItems() * uniformBufferIndex
         
         uniforms1_0 = UnsafeMutableRawPointer(dynamicUniformBuffer1_0.contents() + sixUniformBufferOffset).bindMemory(to:Uniforms.self, capacity:6)
         uniforms1_1 = UnsafeMutableRawPointer(dynamicUniformBuffer1_1.contents() + sixUniformBufferOffset).bindMemory(to:Uniforms.self, capacity:6)
@@ -857,6 +854,7 @@ class Renderer: NSObject, MTKViewDelegate {
             }
         }
 
+        let rouletteCount = Float(self.items.count)
         let rotationAxis = float3(0, 0, 1)
         let modelMatrix = matrix4x4_rotation(radians: Float(self.rotationZ), axis: rotationAxis)
         let viewMatrix = matrix4x4_translation(0.0, 0.0, -3.5)
@@ -866,7 +864,7 @@ class Renderer: NSObject, MTKViewDelegate {
         let viewMatrix2 = matrix4x4_translation(0.0, 0.0, -3.2)
         
         let radius: Float = 1
-        let theta = Float.pi / 3.0
+        let theta = Float.pi * 2.0 / rouletteCount
         let ratio: Float = 1.0 / 10.0
         let moveY = radius * cos(theta / 2.0) * ratio
         let scaleX = radius * sin(theta / 2.0) * 2
@@ -879,23 +877,16 @@ class Renderer: NSObject, MTKViewDelegate {
         let transition1Y = matrix4x4_translation(0, -0.5, 0)
         let transition2Y = matrix4x4_translation(0, 0.5, 0)
 
-        let scaleMatrix1 = matrix4x4_scale(scale1X, scale1Y, 1)
-        let scaleMatrix2 = matrix4x4_scale(scale2X, scale2Y, 1)
-
         let fgs = [simd_float4(1, 0, 0, 1), simd_float4(0, 1, 0, 1), simd_float4(0, 0, 1, 1), simd_float4(1, 1, 0, 1), simd_float4(1, 0, 1, 1), simd_float4(0, 1, 1, 1)]
         let bgs = [simd_float4(0, 1, 1, 1), simd_float4(1, 0, 1, 1), simd_float4(1, 1, 0, 1), simd_float4(0, 0, 1, 1), simd_float4(0, 1, 0, 1), simd_float4(1, 0, 0, 1)]
-        for x in 0..<6 {
+        for (x, item) in self.items.enumerated() {
+            let scaleMatrix = matrix4x4_scale(item.scaleX, item.scaleY, 1)
+            
             let modelMatrix2 = matrix4x4_rotation(radians: Float(self.rotationZ) + theta * Float(x), axis: rotationAxis2)
             uniforms2[x].projectionMatrix = projectionMatrix
-//            uniforms2[x].modelViewMatrix = simd_mul(viewMatrix2, simd_mul(modelMatrix2, simd_mul(transitionY, scaleMatrix)))
-            if x % 2 == 0 {
-                uniforms2[x].modelViewMatrix = simd_mul(viewMatrix2, simd_mul(modelMatrix2, simd_mul(transition2Y, simd_mul(scaleMatrix1, transition1Y))))
-            }
-            else {
-                uniforms2[x].modelViewMatrix = simd_mul(viewMatrix2, simd_mul(modelMatrix2, simd_mul(transition2Y, simd_mul(scaleMatrix2, transition1Y))))
-            }
-            uniforms2[x].fg = fgs[x]
-            uniforms2[x].bg = bgs[x]
+            uniforms2[x].modelViewMatrix = simd_mul(viewMatrix2, simd_mul(modelMatrix2, simd_mul(transition2Y, simd_mul(scaleMatrix, transition1Y))))
+            uniforms2[x].fg = item.textColor
+            uniforms2[x].bg = item.bgColor
             uniforms2[x].speed = speed
         }
         
@@ -906,12 +897,12 @@ class Renderer: NSObject, MTKViewDelegate {
 //        uniforms1[0].modelViewMatrix = simd_mul(viewMatrix1, modelMatrix)
         let viewMatrix1_0 = matrix4x4_translation(0.0, 0.0, -3.5)
         let viewMatrix1_1 = matrix4x4_translation(0.0, 0.0, -3.4)
-        for x in 0..<6 {
+        for (x, item) in self.items.enumerated() {
             let modelMatrix1_0 = matrix4x4_rotation(radians: Float(self.rotationZ) + theta * Float(x), axis: rotationAxis2)
             uniforms1_0[x].projectionMatrix = projectionMatrix
             uniforms1_0[x].modelViewMatrix = simd_mul(viewMatrix1_0, modelMatrix1_0)
-            uniforms1_0[x].fg = fgs[x]
-            uniforms1_0[x].bg = bgs[x]
+            uniforms2[x].fg = item.textColor
+            uniforms2[x].bg = item.bgColor
             uniforms1_0[x].speed = speed
 
             let modelMatrix1_1 = matrix4x4_rotation(radians: Float(self.rotationZ) + theta * Float(x) + theta / 2, axis: rotationAxis2)
@@ -993,7 +984,7 @@ class Renderer: NSObject, MTKViewDelegate {
 //
 //                }
 
-                for x in 0..<6 {
+                for x in 0..<(self.items.count) {
                     
                     if let renderEncoder = parallel.makeRenderCommandEncoder() {
                         
@@ -1040,8 +1031,8 @@ class Renderer: NSObject, MTKViewDelegate {
                     }
                 }
                 
-                for x in 0..<6 {
-                    
+                for x in 0..<(self.items.count) {
+
                     if let renderEncoder = parallel.makeRenderCommandEncoder() {
                         
                         /// Final pass rendering code here
@@ -1087,7 +1078,7 @@ class Renderer: NSObject, MTKViewDelegate {
                     }
                 }
                 
-                for x in 0..<6 {
+                for (x, item) in self.items.enumerated() {
 
                     if let renderEncoder = parallel.makeRenderCommandEncoder() {
 
@@ -1106,12 +1097,7 @@ class Renderer: NSObject, MTKViewDelegate {
 
                         renderEncoder.setFragmentSamplerState(sampler, index: 0)
 
-                        if x % 2 == 0 {
-                            renderEncoder.setFragmentTexture(fontTexture1, index: TextureIndex.color.rawValue)
-                        }
-                        else {
-                            renderEncoder.setFragmentTexture(fontTexture2, index: TextureIndex.color.rawValue)
-                        }
+                        renderEncoder.setFragmentTexture(item.fontTexture, index: TextureIndex.color.rawValue)
 
                         renderEncoder.setVertexBuffer(dynamicUniformBuffer2, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)
                         renderEncoder.setFragmentBuffer(dynamicUniformBuffer2, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)

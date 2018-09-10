@@ -12,6 +12,8 @@ import Metal
 import MetalKit
 import simd
 
+let aligned6UniformsSize = ((MemoryLayout<Uniforms>.size * 6) & ~0xFF) + 0x100
+
 class OffScreenRenderer: NSObject {
     
     public let device: MTLDevice

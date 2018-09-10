@@ -41,16 +41,24 @@ class GameViewController: UIViewController {
         offScreenRenderer.draw(in: mtkView)
         GZLog(offScreenRenderer.texture)
         let t = offScreenRenderer.texture
+        let c = CIImage.init(mtlTexture: t!, options: nil)
         GZLog()
         
 
-        guard let newRenderer = Renderer(metalKitView: mtkView, t: t!) else {
+        let items = [
+            RouletteItem(text: "Pandas", color: simd_float4(1, 0, 0, 1), textColor: simd_float4(0, 1, 1, 1), bgColor: simd_float4(1, 0, 0, 1)),
+            RouletteItem(text: "Python", color: simd_float4(1, 1, 0, 1), textColor: simd_float4(0, 0, 1, 1), bgColor: simd_float4(1, 1, 0, 1)),
+            RouletteItem(text: "커피", color: simd_float4(0, 1, 0, 1), textColor: simd_float4(1, 0, 1, 1), bgColor: simd_float4(0, 1, 0, 1)),
+            RouletteItem(text: "구름", color: simd_float4(0, 1, 1, 1), textColor: simd_float4(1, 0, 0, 1), bgColor: simd_float4(0, 1, 1, 1)),
+            RouletteItem(text: "아이패드", color: simd_float4(0, 0, 1, 1), textColor: simd_float4(1, 1, 0, 1), bgColor: simd_float4(0, 0, 1, 1)),
+            RouletteItem(text: "베이블래이드", color: simd_float4(1, 0, 1, 1), textColor: simd_float4(0, 1, 0, 1), bgColor: simd_float4(1, 0, 1, 1))
+        ]
+        guard let newRenderer = Renderer(metalKitView: mtkView, items: items) else {
             print("Renderer cannot be initialized")
             return
         }
 
         renderer = newRenderer
-        renderer.illuminati = t!
 
         renderer.mtkView(mtkView, drawableSizeWillChange: mtkView.drawableSize)
 
