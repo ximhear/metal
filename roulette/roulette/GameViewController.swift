@@ -31,7 +31,7 @@ class GameViewController: UIViewController {
         }
         
         mtkView.device = defaultDevice
-        mtkView.backgroundColor = UIColor.black
+        mtkView.backgroundColor = UIColor.white
 
         guard let r = OffScreenRenderer(metalKitView: mtkView) else {
             print("Renderer cannot be initialized")
@@ -49,9 +49,9 @@ class GameViewController: UIViewController {
             RouletteItem(text: "Pandas", color: simd_float4(1, 0, 0, 1), textColor: simd_float4(0, 1, 1, 1), bgColor: simd_float4(1, 0, 0, 1)),
             RouletteItem(text: "Python", color: simd_float4(1, 1, 0, 1), textColor: simd_float4(0, 0, 1, 1), bgColor: simd_float4(1, 1, 0, 1)),
             RouletteItem(text: "커피", color: simd_float4(0, 1, 0, 1), textColor: simd_float4(1, 0, 1, 1), bgColor: simd_float4(0, 1, 0, 1)),
-            RouletteItem(text: "구름", color: simd_float4(0, 1, 1, 1), textColor: simd_float4(1, 0, 0, 1), bgColor: simd_float4(0, 1, 1, 1)),
-            RouletteItem(text: "아이패드", color: simd_float4(0, 0, 1, 1), textColor: simd_float4(1, 1, 0, 1), bgColor: simd_float4(0, 0, 1, 1)),
-            RouletteItem(text: "베이블래이드", color: simd_float4(1, 0, 1, 1), textColor: simd_float4(0, 1, 0, 1), bgColor: simd_float4(1, 0, 1, 1))
+//            RouletteItem(text: "구름", color: simd_float4(0, 1, 1, 1), textColor: simd_float4(1, 0, 0, 1), bgColor: simd_float4(0, 1, 1, 1)),
+//            RouletteItem(text: "아이패드", color: simd_float4(0, 0, 1, 1), textColor: simd_float4(1, 1, 0, 1), bgColor: simd_float4(0, 0, 1, 1)),
+//            RouletteItem(text: "베이블래이드", color: simd_float4(1, 0, 1, 1), textColor: simd_float4(0, 1, 0, 1), bgColor: simd_float4(1, 0, 1, 1))
         ]
         guard let newRenderer = Renderer(metalKitView: mtkView, items: items) else {
             print("Renderer cannot be initialized")
@@ -63,12 +63,19 @@ class GameViewController: UIViewController {
         renderer.mtkView(mtkView, drawableSizeWillChange: mtkView.drawableSize)
 
         mtkView.delegate = renderer
+        
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+//            self.renderer.startRotation(duration: 100 + 10 * drand48(), endingRotationZ: Double.pi * 15 + Double.pi * 30 * drand48(),
+//                                   timingFunction:  { (tx) -> Double in
+//                                    return pow(tx-1, 3) + 1
+//            })
+//        }
     }
     
     @IBAction func rotationClicked(_ sender: Any) {
         GZLog()
         
-        renderer.startRotation(duration: 7.5 + 10 * drand48(), endingRotationZ: Double.pi * 15 + Double.pi * 30 * drand48(),
+        renderer.startRotation(duration: 100 + 10 * drand48(), endingRotationZ: Double.pi * 15 + Double.pi * 30 * drand48(),
                                 timingFunction:  { (tx) -> Double in
                                     return pow(tx-1, 3) + 1
         })
