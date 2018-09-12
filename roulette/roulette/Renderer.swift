@@ -87,6 +87,7 @@ class Renderer: NSObject, MTKViewDelegate {
         self.items = items
         
         let rouletteCount = Renderer.rouletteCount(items.count)
+        let yDivideCount = 10
         
         self.device = metalKitView.device!
         guard let queue = self.device.makeCommandQueue() else { return nil }
@@ -174,7 +175,7 @@ class Renderer: NSObject, MTKViewDelegate {
             mesh1_1 = try Renderer.buildMesh1_1(device: device,
                                                 mtlVertexDescriptor: mtlVertexDescriptor1,
                                                 xDivideCount: 2,
-                                                yDivideCount: 10,
+                                                yDivideCount: yDivideCount,
                                                 rouletteCount: self.items.count,
                                                 width: 0.02)
         } catch {
@@ -183,7 +184,7 @@ class Renderer: NSObject, MTKViewDelegate {
         }
 
         do {
-            mesh2 = try Renderer.buildMesh2 (device: device, mtlVertexDescriptor: mtlVertexDescriptor, ratio: 1, divideCount: 10)
+            mesh2 = try Renderer.buildMesh2 (device: device, mtlVertexDescriptor: mtlVertexDescriptor, ratio: 1, divideCount: yDivideCount)
         } catch {
             GZLog("Unable to build MetalKit Mesh. Error info: \(error)")
             return nil
@@ -233,8 +234,8 @@ class Renderer: NSObject, MTKViewDelegate {
             for x in 0..<rouletteCount {
                 let a = try Renderer.buildMesh1_0(device: device,
                                                   mtlVertexDescriptor: mtlVertexDescriptor1,
-                                                  xDivideCount: 10,
-                                                  yDivideCount: 10,
+                                                  xDivideCount: yDivideCount,
+                                                  yDivideCount: yDivideCount,
                                                   rouletteCount: rouletteCount,
                                                   color: {[weak self] in
                                                     guard let welf = self else {
@@ -531,10 +532,16 @@ class Renderer: NSObject, MTKViewDelegate {
         else {
             for y in 0...yDivideCount {
                 let count = Int((Float(yDivideCount - y) * Float(xDivideCount + 1) + 1 * Float(y)) / Float(yDivideCount))
-                xVertexCounts.append(count)
+                if y < yDivideCount && count == 1 {
+                    xVertexCounts.append(2)
+                }
+                else {
+                    xVertexCounts.append(count)
+                }
             }
         }
         
+        GZLog(xVertexCounts)
         let totalVetexCount = xVertexCounts.reduce(0) { $0 + $1 }
         
         let metalAllocator = MTKMeshBufferAllocator(device: device)
