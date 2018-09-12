@@ -15,6 +15,7 @@ class GameViewController: UIViewController {
     var renderer: Renderer!
     var offScreenRenderer: OffScreenRenderer!
     var mtkView: MTKView!
+    var items: [RouletteItem]!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -45,24 +46,18 @@ class GameViewController: UIViewController {
         GZLog()
         
 
-        let items = [
+        items = [
             RouletteItem(text: "Pandas", color: simd_float4(1, 0, 0, 1), textColor: simd_float4(0, 1, 1, 1), bgColor: simd_float4(1, 0, 0, 1)),
             RouletteItem(text: "Python", color: simd_float4(1, 1, 0, 1), textColor: simd_float4(0, 0, 1, 1), bgColor: simd_float4(1, 1, 0, 1)),
             RouletteItem(text: "커피", color: simd_float4(0, 1, 0, 1), textColor: simd_float4(1, 0, 1, 1), bgColor: simd_float4(0, 1, 0, 1)),
             RouletteItem(text: "구름", color: simd_float4(0, 1, 1, 1), textColor: simd_float4(1, 0, 0, 1), bgColor: simd_float4(0, 1, 1, 1)),
             RouletteItem(text: "아이패드", color: simd_float4(0, 0, 1, 1), textColor: simd_float4(1, 1, 0, 1), bgColor: simd_float4(0, 0, 1, 1)),
-//            RouletteItem(text: "베이블래이드", color: simd_float4(1, 0, 1, 1), textColor: simd_float4(0, 1, 0, 1), bgColor: simd_float4(1, 0, 1, 1))
+            RouletteItem(text: "베이블래이드", color: simd_float4(1, 0, 1, 1), textColor: simd_float4(0, 1, 0, 1), bgColor: simd_float4(1, 0, 1, 1)),
+            RouletteItem(text: "METAL", color: simd_float4(Float(0x21)/255, Float(0xff)/255, Float(0xc5)/255, 1), textColor: simd_float4(0, 0, 0, 1), bgColor: simd_float4(Float(0x21)/255, Float(0xff)/255, Float(0xc5)/255, 1)),
         ]
-        guard let newRenderer = Renderer(metalKitView: mtkView, items: items) else {
-            print("Renderer cannot be initialized")
-            return
-        }
 
-        renderer = newRenderer
-
-        renderer.mtkView(mtkView, drawableSizeWillChange: mtkView.drawableSize)
-
-        mtkView.delegate = renderer
+        self.mtkView = mtkView
+        applyRoulette(count: 6)
     }
     
     @IBAction func rotationClicked(_ sender: Any) {
@@ -73,4 +68,47 @@ class GameViewController: UIViewController {
                                     return pow(tx-1, 3) + 1
         })
     }
+    
+    func applyRoulette(count: Int) {
+        
+        var items: [RouletteItem] = []
+        for x in 0..<count {
+            items.append(self.items[x])
+        }
+        guard let newRenderer = Renderer(metalKitView: mtkView, items: items) else {
+            print("Renderer cannot be initialized")
+            return
+        }
+        
+        renderer = newRenderer
+        
+        renderer.mtkView(mtkView, drawableSizeWillChange: mtkView.drawableSize)
+        
+        mtkView.delegate = renderer
+    }
+
+    @IBAction func b2Clicked(_ sender: Any) {
+        applyRoulette(count: 2)
+    }
+
+    @IBAction func b3Clicked(_ sender: Any) {
+        applyRoulette(count: 3)
+    }
+
+    @IBAction func b4Clicked(_ sender: Any) {
+        applyRoulette(count: 4)
+    }
+
+    @IBAction func b5Clicked(_ sender: Any) {
+        applyRoulette(count: 5)
+    }
+
+    @IBAction func b6Clicked(_ sender: Any) {
+        applyRoulette(count: 6)
+    }
+
+    @IBAction func b7Clicked(_ sender: Any) {
+        applyRoulette(count: 7)
+    }
+
 }

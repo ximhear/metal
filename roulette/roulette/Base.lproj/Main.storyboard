@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.3.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="14313.13.2" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BV1-FR-VrT">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.1"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14283.9"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -28,11 +28,61 @@
                                     <action selector="rotationClicked:" destination="BV1-FR-VrT" eventType="touchUpInside" id="zhg-7R-qCA"/>
                                 </connections>
                             </button>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="WD9-Pl-Esd">
+                                <rect key="frame" x="16" y="36" width="343" height="30"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ujR-w8-IVJ">
+                                        <rect key="frame" x="0.0" y="0.0" width="57" height="30"/>
+                                        <state key="normal" title="2"/>
+                                        <connections>
+                                            <action selector="b2Clicked:" destination="BV1-FR-VrT" eventType="touchUpInside" id="k4X-s7-zKJ"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kci-E7-9Y3">
+                                        <rect key="frame" x="57" y="0.0" width="57.5" height="30"/>
+                                        <state key="normal" title="3"/>
+                                        <connections>
+                                            <action selector="b3Clicked:" destination="BV1-FR-VrT" eventType="touchUpInside" id="sim-oX-wig"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="H5p-uP-C93">
+                                        <rect key="frame" x="114.5" y="0.0" width="57" height="30"/>
+                                        <state key="normal" title="4"/>
+                                        <connections>
+                                            <action selector="b4Clicked:" destination="BV1-FR-VrT" eventType="touchUpInside" id="9vr-tV-ODy"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SK6-tr-s1T">
+                                        <rect key="frame" x="171.5" y="0.0" width="57" height="30"/>
+                                        <state key="normal" title="5"/>
+                                        <connections>
+                                            <action selector="b5Clicked:" destination="BV1-FR-VrT" eventType="touchUpInside" id="aQJ-SK-i6n"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6eJ-l8-s2X">
+                                        <rect key="frame" x="228.5" y="0.0" width="57.5" height="30"/>
+                                        <state key="normal" title="6"/>
+                                        <connections>
+                                            <action selector="b6Clicked:" destination="BV1-FR-VrT" eventType="touchUpInside" id="VEU-vC-eVG"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HY4-hq-tiU">
+                                        <rect key="frame" x="286" y="0.0" width="57" height="30"/>
+                                        <state key="normal" title="7"/>
+                                        <connections>
+                                            <action selector="b7Clicked:" destination="BV1-FR-VrT" eventType="touchUpInside" id="xka-Pz-jdp"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
                             <constraint firstItem="rZh-zQ-HcR" firstAttribute="bottom" secondItem="o0x-IB-710" secondAttribute="bottom" constant="20" id="DiS-ce-FgV"/>
+                            <constraint firstItem="WD9-Pl-Esd" firstAttribute="top" secondItem="rZh-zQ-HcR" secondAttribute="top" constant="16" id="FoG-2z-ITk"/>
+                            <constraint firstItem="WD9-Pl-Esd" firstAttribute="leading" secondItem="rZh-zQ-HcR" secondAttribute="leading" constant="16" id="ICk-GT-IUb"/>
                             <constraint firstItem="o0x-IB-710" firstAttribute="centerX" secondItem="3se-qz-xqx" secondAttribute="centerX" id="WBs-nz-9mF"/>
+                            <constraint firstItem="rZh-zQ-HcR" firstAttribute="trailing" secondItem="WD9-Pl-Esd" secondAttribute="trailing" constant="16" id="ZUN-JQ-y7f"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="rZh-zQ-HcR"/>
                     </view>
