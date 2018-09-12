@@ -31,7 +31,7 @@ class GameViewController: UIViewController {
         }
         
         mtkView.device = defaultDevice
-        mtkView.backgroundColor = UIColor.white
+        mtkView.backgroundColor = UIColor.black
 
         guard let r = OffScreenRenderer(metalKitView: mtkView) else {
             print("Renderer cannot be initialized")
@@ -75,7 +75,8 @@ class GameViewController: UIViewController {
     @IBAction func rotationClicked(_ sender: Any) {
         GZLog()
         
-        renderer.startRotation(duration: 100 + 10 * drand48(), endingRotationZ: Double.pi * 15 + Double.pi * 30 * drand48(),
+        renderer.startRotation(duration: 7.5 + 10 * drand48(), endingRotationZ: Double.pi * 15 + Double.pi * 30 * drand48(),
+//        renderer.startRotation(duration: 100 + 10 * drand48(), endingRotationZ: Double.pi * 15 + Double.pi * 30 * drand48(),
                                 timingFunction:  { (tx) -> Double in
                                     return pow(tx-1, 3) + 1
         })

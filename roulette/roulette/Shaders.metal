@@ -53,8 +53,8 @@ vertex ColorVertexInOut coloredVertexShader(ColorVertex in [[ stage_in ]],
     out.orgPosition = uniforms.modelViewMatrix * position;
     out.rotPosition1 = uniforms.separatorRotationMatrix1 * position;
     out.rotPosition2 = uniforms.separatorRotationMatrix2 * position;
-    float len = length(position);
-    float theta = -uniforms.speed * pow(len, 2) / 10.0;// * pow(len, 2);
+    float len = length(out.orgPosition.xy);
+    float theta = -uniforms.speed * pow(len, 2);
 //    if (theta M_PI_F
     float4x4 rotation = float4x4(float4(cos(theta), sin(theta), 0 ,0), float4(-sin(theta), cos(theta), 0 ,0), float4(0, 0, 1, 0), float4(0, 0, 0, 1));
     out.position = uniforms.projectionMatrix * rotation * uniforms.modelViewMatrix * position;
