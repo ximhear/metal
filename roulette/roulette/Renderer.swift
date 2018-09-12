@@ -86,10 +86,7 @@ class Renderer: NSObject, MTKViewDelegate {
         
         self.items = items
         
-        var rouletteCount = self.items.count
-        if rouletteCount == 3 {
-            rouletteCount = 9
-        }
+        let rouletteCount = Renderer.rouletteCount(items.count)
         
         self.device = metalKitView.device!
         guard let queue = self.device.makeCommandQueue() else { return nil }
@@ -232,10 +229,7 @@ class Renderer: NSObject, MTKViewDelegate {
         
         
         do {
-            var rouletteCount = self.items.count
-            if rouletteCount == 3 {
-                rouletteCount = 9
-            }
+            let rouletteCount = self.rouletteCount()
             for x in 0..<rouletteCount {
                 let a = try Renderer.buildMesh1_0(device: device,
                                                   mtlVertexDescriptor: mtlVertexDescriptor1,
@@ -247,7 +241,7 @@ class Renderer: NSObject, MTKViewDelegate {
                                                         return vector_float3(1,1,1)
                                                     }
                                                     let a = Float(drand48());
-                                                    let item = welf.items[ ((x + 1) % rouletteCount) * welf.items.count / rouletteCount]
+                                                    let item = welf.items[sectorToIndex(sector: x)]
                                                     return vector_float3(item.color.x * (0.05 + 0.95 * a), item.color.y * (0.05 + 0.95 * a), item.color.z * (0.05 + 0.95 * a)) })
                 mesh1_0.append(a)
             }
@@ -262,7 +256,11 @@ class Renderer: NSObject, MTKViewDelegate {
     func uniformsSizeForRouletteItems() -> Int {
         return ((MemoryLayout<Uniforms>.size * self.items.count) & ~0xFF) + 0x100
     }
-    
+
+    func uniformsSizeForRouletteCount() -> Int {
+        return ((MemoryLayout<Uniforms>.size * rouletteCount()) & ~0xFF) + 0x100
+    }
+
     class func buildMetalVertexDescriptor() -> MTLVertexDescriptor {
         // Creete a Metal vertex descriptor specifying how vertices will by laid out for input into our render
         //   pipeline and how we'll layout our Model IO vertices
@@ -544,7 +542,7 @@ class Renderer: NSObject, MTKViewDelegate {
         let vertexBuffer1 = metalAllocator.newBuffer(totalVetexCount * 3 * MemoryLayout<Float>.stride, type: .vertex) as! MTKMeshBuffer
         let vertexBuffer2 = metalAllocator.newBuffer(totalVetexCount * 3 * MemoryLayout<Float>.stride, type: .vertex) as! MTKMeshBuffer
         
-        let maxY: Float = 1//1 / cos(Float.pi / 6)
+        let maxY: Float = 1
         let maxX = rouletteCount == 2 ? 1 : tan(Float.pi / Float(rouletteCount))
         let vertices = UnsafeMutableRawPointer(vertexBuffer1.buffer.contents()).bindMemory(to:Float.self, capacity: totalVetexCount * 3)
         var verticesIndex: Int = 0
@@ -577,7 +575,6 @@ class Renderer: NSObject, MTKViewDelegate {
         let vertices1 = UnsafeMutableRawPointer(vertexBuffer2.buffer.contents()).bindMemory(to:Float.self, capacity: totalVetexCount * 3)
         for x in 0..<totalVetexCount {
             let a = color()
-            GZLog(a)
             vertices1[x * 3 + 0] = a.x
             vertices1[x * 3 + 1] = a.y
             vertices1[x * 3 + 2] = a.z
@@ -703,11 +700,10 @@ class Renderer: NSObject, MTKViewDelegate {
         }
         
         
-        let submesh1 = MDLSubmesh.init(indexBuffer: indexBuffer1, indexCount: triangles.count * 3, indexType: .uInt16, geometryType: .triangles, material: nil)
-        //        let submesh2 = MDLSubmesh.init(indexBuffer: indexBuffer2, indexCount: 3, indexType: .uInt16, geometryType: .triangles, material: nil)
-        let mdlMesh1 = MDLMesh.init(vertexBuffers: [vertexBuffer1, vertexBuffer2], vertexCount: totalVetexCount, descriptor: mdlVertexDescriptor, submeshes: [submesh1])
+        let submesh = MDLSubmesh.init(indexBuffer: indexBuffer1, indexCount: triangles.count * 3, indexType: .uInt16, geometryType: .triangles, material: nil)
+        let mdlMesh = MDLMesh.init(vertexBuffers: [vertexBuffer1, vertexBuffer2], vertexCount: totalVetexCount, descriptor: mdlVertexDescriptor, submeshes: [submesh])
         
-        return try MTKMesh(mesh:mdlMesh1, device:device)
+        return try MTKMesh(mesh:mdlMesh, device:device)
     }
     
     class func buildMesh2(device: MTLDevice, mtlVertexDescriptor: MTLVertexDescriptor, ratio: Float, divideCount: Int) throws -> MTKMesh {
@@ -820,25 +816,32 @@ class Renderer: NSObject, MTKViewDelegate {
     
     static func rouletteCount(_ count: Int) -> Int {
 
-        var c = count
-        if c == 3 {
-            return 9
+        switch count {
+        case 2:
+            return 6
+        case 3:
+            return 6
+        case 4:
+            return 8
+        case 5:
+            return 10
+        default:
+            return count
         }
-        return c
-
     }
 
     func rouletteCount() -> Int {
         
-        var c = self.items.count
-        if c == 3 {
-            return 9
-        }
-        return c
+        return Renderer.rouletteCount(self.items.count)
     }
     
     func orgCount() -> Int {
         return self.items.count
+    }
+    
+    func sectorToIndex(sector: Int) -> Int {
+        
+        return sector * orgCount() / rouletteCount()
     }
     
     private func updateDynamicBufferState() {
@@ -935,10 +938,14 @@ class Renderer: NSObject, MTKViewDelegate {
         
         let rc = self.rouletteCount()
         let theta1 = Float.pi * 2.0 / Float(rc)
+        var offsetTheta: Float = 0
+        if self.rouletteCount() > orgCount() {
+            offsetTheta = theta1 * Float(self.rouletteCount() / orgCount() - 1) / 2
+        }
         for x in 0..<rc {
             let index = x * orgCount() / rc
             let item = self.items[index]
-            let modelMatrix1_0 = matrix4x4_rotation(radians: Float(self.rotationZ) + theta1 * Float(x), axis: rotationAxis2)
+            let modelMatrix1_0 = matrix4x4_rotation(radians: Float(self.rotationZ) + theta1 * Float(x) - offsetTheta, axis: rotationAxis2)
             uniforms1_0[x].projectionMatrix = projectionMatrix
             uniforms1_0[x].modelViewMatrix = simd_mul(viewMatrix1_0, modelMatrix1_0)
             uniforms1_0[x].fg = item.textColor
@@ -950,10 +957,10 @@ class Renderer: NSObject, MTKViewDelegate {
             let modelMatrix1_1 = matrix4x4_rotation(radians: Float(self.rotationZ) + theta * Float(x) + theta / 2, axis: rotationAxis2)
             uniforms1_1[x].projectionMatrix = projectionMatrix
             uniforms1_1[x].modelViewMatrix = simd_mul(viewMatrix1_1, modelMatrix1_1)
-            uniforms1_1[x].separatorRotationMatrix1 = matrix4x4_rotation(radians: theta / 2, axis: rotationAxis2)
-            uniforms1_1[x].separatorRotationMatrix2 = matrix4x4_rotation(radians: -theta / 2, axis: rotationAxis2)
-            uniforms1_1[x].fg = fgs[x]
-            uniforms1_1[x].bg = bgs[x]
+            uniforms1_1[x].separatorRotationMatrix1 = matrix4x4_rotation(radians: theta1 / 2, axis: rotationAxis2)
+            uniforms1_1[x].separatorRotationMatrix2 = matrix4x4_rotation(radians: -theta1 / 2, axis: rotationAxis2)
+            uniforms1_1[x].fg = fgs[x % 6]
+            uniforms1_1[x].bg = bgs[x % 6]
             uniforms1_1[x].speed = speed
         }
     }
@@ -983,15 +990,10 @@ class Renderer: NSObject, MTKViewDelegate {
                 if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
                     /// Final pass rendering code here
                     renderEncoder.label = "Primary Render Encoder"
-                    
                     renderEncoder.pushDebugGroup("Draw Box")
-                    
                     renderEncoder.setCullMode(.back)
-                    
                     renderEncoder.setFrontFacing(.counterClockwise)
-                    
                     renderEncoder.setRenderPipelineState(pipelineState1)
-                    
                     renderEncoder.setDepthStencilState(depthState)
                     
                     for x in 0..<(mesh1_0.count) {
@@ -1050,21 +1052,13 @@ class Renderer: NSObject, MTKViewDelegate {
                         
                         /// Final pass rendering code here
                         renderEncoder.label = "Text Render Encoder"
-                        
                         renderEncoder.pushDebugGroup("Draw Box")
-                        
                         renderEncoder.setCullMode(.back)
-                        
                         renderEncoder.setFrontFacing(.counterClockwise)
-                        
                         renderEncoder.setRenderPipelineState(pipelineState2)
-                        
                         renderEncoder.setDepthStencilState(depthState)
-                        
                         renderEncoder.setFragmentSamplerState(sampler, index: 0)
-                        
                         renderEncoder.setFragmentTexture(item.fontTexture, index: TextureIndex.color.rawValue)
-                        
                         renderEncoder.setVertexBuffer(dynamicUniformBuffer2, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)
                         renderEncoder.setFragmentBuffer(dynamicUniformBuffer2, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)
                         
