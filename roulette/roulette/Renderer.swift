@@ -87,7 +87,7 @@ class Renderer: NSObject, MTKViewDelegate {
         self.items = items
         
         let rouletteCount = Renderer.rouletteCount(items.count)
-        let yDivideCount = 10
+        let yDivideCount = 100
         
         self.device = metalKitView.device!
         guard let queue = self.device.makeCommandQueue() else { return nil }
