@@ -993,7 +993,7 @@ class Renderer: NSObject, MTKViewDelegate {
             let renderPassDescriptor = view.currentRenderPassDescriptor
             
             if let renderPassDescriptor = renderPassDescriptor {
-
+                
                 if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
                     /// Final pass rendering code here
                     renderEncoder.label = "Primary Render Encoder"
@@ -1055,15 +1055,11 @@ class Renderer: NSObject, MTKViewDelegate {
                         }
                     }
                     
+                    renderEncoder.setRenderPipelineState(pipelineState2)
+                    renderEncoder.setDepthStencilState(depthState)
+                    
                     for (x, item) in self.items.enumerated() {
                         
-                        /// Final pass rendering code here
-                        renderEncoder.label = "Text Render Encoder"
-                        renderEncoder.pushDebugGroup("Draw Box")
-                        renderEncoder.setCullMode(.back)
-                        renderEncoder.setFrontFacing(.counterClockwise)
-                        renderEncoder.setRenderPipelineState(pipelineState2)
-                        renderEncoder.setDepthStencilState(depthState)
                         renderEncoder.setFragmentSamplerState(sampler, index: 0)
                         renderEncoder.setFragmentTexture(item.fontTexture, index: TextureIndex.color.rawValue)
                         renderEncoder.setVertexBuffer(dynamicUniformBuffer2, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)
@@ -1089,12 +1085,10 @@ class Renderer: NSObject, MTKViewDelegate {
                             
                         }
                     }
-                    renderEncoder.popDebugGroup()
                     
+                    renderEncoder.popDebugGroup()
                     renderEncoder.endEncoding()
                 }
-
-//                parallel.endEncoding()
             }
             
             if let drawable = view.currentDrawable {
