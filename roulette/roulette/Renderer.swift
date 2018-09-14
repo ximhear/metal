@@ -87,7 +87,7 @@ class Renderer: NSObject, MTKViewDelegate {
         self.items = items
         
         let rouletteCount = Renderer.rouletteCount(items.count)
-        let yDivideCount = 100
+        let yDivideCount = 50
         
         self.device = metalKitView.device!
         guard let queue = self.device.makeCommandQueue() else { return nil }
@@ -243,7 +243,7 @@ class Renderer: NSObject, MTKViewDelegate {
                                                     }
                                                     let a = Float(drand48());
                                                     let item = welf.items[sectorToIndex(sector: x)]
-                                                    return vector_float3(item.color.x * (0.05 + 0.95 * a), item.color.y * (0.05 + 0.95 * a), item.color.z * (0.05 + 0.95 * a)) })
+                                                    return vector_float3(item.color.x * (0.5 + 0.5 * a), item.color.y * (0.5 + 0.5 * a), item.color.z * (0.5 + 0.5 * a)) })
                 mesh1_0.append(a)
             }
         } catch {
@@ -550,7 +550,7 @@ class Renderer: NSObject, MTKViewDelegate {
         let vertexBuffer2 = metalAllocator.newBuffer(totalVetexCount * 3 * MemoryLayout<Float>.stride, type: .vertex) as! MTKMeshBuffer
         
         let maxY: Float = 1
-        let maxX = rouletteCount == 2 ? 1 : tan(Float.pi / Float(rouletteCount))
+        let maxX = tan(Float.pi / Float(rouletteCount))
         let vertices = UnsafeMutableRawPointer(vertexBuffer1.buffer.contents()).bindMemory(to:Float.self, capacity: totalVetexCount * 3)
         var verticesIndex: Int = 0
         let z: Float = 0
@@ -649,7 +649,7 @@ class Renderer: NSObject, MTKViewDelegate {
         let vertexBuffer1 = metalAllocator.newBuffer(totalVetexCount * 3 * MemoryLayout<Float>.stride, type: .vertex) as! MTKMeshBuffer
         let vertexBuffer2 = metalAllocator.newBuffer(totalVetexCount * 3 * MemoryLayout<Float>.stride, type: .vertex) as! MTKMeshBuffer
         
-        let maxY: Float = rouletteCount == 2 ? 1 : 1 / cos(Float.pi / Float(self.rouletteCount(rouletteCount)))
+        let maxY: Float = 1 / cos(Float.pi / Float(self.rouletteCount(rouletteCount)))
         let vertices = UnsafeMutableRawPointer(vertexBuffer1.buffer.contents()).bindMemory(to:Float.self, capacity: totalVetexCount * 3)
         var verticesIndex: Int = 0
         let z: Float = 0
@@ -669,9 +669,9 @@ class Renderer: NSObject, MTKViewDelegate {
         
         let vertices1 = UnsafeMutableRawPointer(vertexBuffer2.buffer.contents()).bindMemory(to:Float.self, capacity: totalVetexCount * 3)
         for x in 0..<totalVetexCount {
-            vertices1[x * 3 + 0] = 0.05 + 0.95 * Float(drand48())
-            vertices1[x * 3 + 1] = 0.05 + 0.95 * Float(drand48())
-            vertices1[x * 3 + 2] = 0.05 + 0.95 * Float(drand48())
+            vertices1[x * 3 + 0] = 0.5 + 0.5 * Float(drand48())
+            vertices1[x * 3 + 1] = 0.5 + 0.5 * Float(drand48())
+            vertices1[x * 3 + 2] = 0.5 + 0.5 * Float(drand48())
         }
         
         var yVertexIndices: [[Int]] = []
