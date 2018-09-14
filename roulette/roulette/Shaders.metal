@@ -89,6 +89,38 @@ fragment half4 coloredFragmentShader(ColorVertexInOut in [[stage_in]],
     return half4(in.color);
 }
 
+vertex ColorVertexInOut instanceRenderingColoredVertexShader(ColorVertex in [[ stage_in ]],
+                                            constant Uniforms* uniforms [[ buffer(BufferIndexUniforms) ]],
+                                                             ushort iid [[ instance_id ]])
+{
+    ColorVertexInOut out;
+    
+    float4 position = float4(in.position, 1.0);
+    out.orgPosition = uniforms[iid].modelViewMatrix * position;
+    out.rotPosition1 = uniforms[iid].separatorRotationMatrix1 * position;
+    out.rotPosition2 = uniforms[iid].separatorRotationMatrix2 * position;
+    float len = length(out.orgPosition.xy);
+    float theta = -uniforms[iid].speed * pow(len, 2);
+    //    if (theta M_PI_F
+    float4x4 rotation = float4x4(float4(cos(theta), sin(theta), 0 ,0), float4(-sin(theta), cos(theta), 0 ,0), float4(0, 0, 1, 0), float4(0, 0, 0, 1));
+    out.position = uniforms[iid].projectionMatrix * rotation * uniforms[iid].modelViewMatrix * position;
+    out.color = uniforms[iid].fg * float4(in.color, 1);
+    
+    return out;
+}
+
+fragment half4 instanceRenderingColoredFragmentShader(ColorVertexInOut in [[stage_in]],
+                                     constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]])
+{
+    if (in.rotPosition1.y > 1) {
+        discard_fragment();
+    }
+    if (in.rotPosition2.y > 1) {
+        discard_fragment();
+    }
+    return half4(in.color);
+}
+
 
 
 vertex ColorInOut vertexShader(Vertex in [[ stage_in ]],
