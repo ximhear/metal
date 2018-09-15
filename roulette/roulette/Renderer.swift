@@ -151,7 +151,7 @@ class Renderer: NSObject, MTKViewDelegate {
         
         let mtlVertexDescriptor1_1 = Renderer.buildMetalVertexDescriptor1_1()
         do {
-            pipelineState1_1 = try Renderer.buildRenderPipelineWithDevice1_1(device: device,
+            pipelineState1_1 = try Renderer.buildRenderPipelineWithDevice1_0(device: device,
                                                                          metalKitView: metalKitView,
                                                                          mtlVertexDescriptor: mtlVertexDescriptor1_1)
         } catch {
@@ -1027,8 +1027,7 @@ class Renderer: NSObject, MTKViewDelegate {
             uniforms1_1[x].modelViewMatrix = simd_mul(viewMatrix1_1, modelMatrix1_1)
             uniforms1_1[x].separatorRotationMatrix1 = matrix4x4_rotation(radians: theta1 / 2, axis: rotationAxis2)
             uniforms1_1[x].separatorRotationMatrix2 = matrix4x4_rotation(radians: -theta1 / 2, axis: rotationAxis2)
-            uniforms1_1[x].fg = fgs[x % 6]
-            uniforms1_1[x].bg = bgs[x % 6]
+            uniforms1_1[x].fg = simd_float4(1, 1, 1, 1)
             uniforms1_1[x].speed = speed
         }
     }
@@ -1091,43 +1090,41 @@ class Renderer: NSObject, MTKViewDelegate {
                         renderEncoder.endEncoding()
                     }
                     
-                    for x in 0..<(self.items.count) {
+                    if let renderEncoder = parallel.makeRenderCommandEncoder() {
+                        renderEncoder.label = "Primary Render Encoder"
+                        renderEncoder.pushDebugGroup("Draw Box")
+                        renderEncoder.setCullMode(.back)
+                        renderEncoder.setFrontFacing(.counterClockwise)
+                        renderEncoder.setRenderPipelineState(pipelineState1_0)
+                        renderEncoder.setDepthStencilState(depthState)
                         
-                        if let renderEncoder = parallel.makeRenderCommandEncoder() {
-                            renderEncoder.label = "Primary Render Encoder"
-                            renderEncoder.pushDebugGroup("Draw Box")
-                            renderEncoder.setCullMode(.back)
-                            renderEncoder.setFrontFacing(.counterClockwise)
-                            renderEncoder.setRenderPipelineState(pipelineState1_1)
-                            renderEncoder.setDepthStencilState(depthState)
-                            
-                            renderEncoder.setVertexBuffer(dynamicUniformBuffer1_1, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)
-                            renderEncoder.setFragmentBuffer(dynamicUniformBuffer1_1, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)
-                            
-                            for (index, element) in mesh1_1.vertexDescriptor.layouts.enumerated() {
-                                guard let layout = element as? MDLVertexBufferLayout else {
-                                    return
-                                }
-                                
-                                if layout.stride != 0 {
-                                    let buffer = mesh1_1.vertexBuffers[index]
-                                    renderEncoder.setVertexBuffer(buffer.buffer, offset:buffer.offset, index: index)
-                                }
+                        renderEncoder.setVertexBuffer(dynamicUniformBuffer1_1, offset:sixUniformBufferOffset, index: BufferIndex.uniforms.rawValue)
+                        renderEncoder.setFragmentBuffer(dynamicUniformBuffer1_1, offset:sixUniformBufferOffset, index: BufferIndex.uniforms.rawValue)
+                        
+                        for (index, element) in mesh1_1.vertexDescriptor.layouts.enumerated() {
+                            guard let layout = element as? MDLVertexBufferLayout else {
+                                return
                             }
                             
-                            for submesh in mesh1_1.submeshes {
-                                renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType,
-                                                                    indexCount: submesh.indexCount,
-                                                                    indexType: submesh.indexType,
-                                                                    indexBuffer: submesh.indexBuffer.buffer,
-                                                                    indexBufferOffset: submesh.indexBuffer.offset)
-                                
+                            if layout.stride != 0 {
+                                let buffer = mesh1_1.vertexBuffers[index]
+                                renderEncoder.setVertexBuffer(buffer.buffer, offset:buffer.offset, index: index)
                             }
-                            renderEncoder.popDebugGroup()
-                            renderEncoder.endEncoding()
                         }
-                    }
                         
+                        for submesh in mesh1_1.submeshes {
+                            renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType,
+                                                                indexCount: submesh.indexCount,
+                                                                indexType: submesh.indexType,
+                                                                indexBuffer: submesh.indexBuffer.buffer,
+                                                                indexBufferOffset: submesh.indexBuffer.offset,
+                                                                instanceCount: orgCount())
+
+                        }
+                        renderEncoder.popDebugGroup()
+                        renderEncoder.endEncoding()
+                    }
+                    
                     for (x, item) in self.items.enumerated() {
                         
                         if let renderEncoder = parallel.makeRenderCommandEncoder() {
