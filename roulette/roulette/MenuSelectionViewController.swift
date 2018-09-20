@@ -51,7 +51,8 @@ class MenuSelectionViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
 
         if let menu = objects?[indexPath.row] {
-            cell.textLabel!.text = menu.modified.localFormatString()
+            let a = menu.items.map { $0.title }.joined(separator: ",")
+            cell.textLabel!.text = "\(menu.items.count) - \(a)"
         }
         else {
             cell.textLabel!.text = "XX"

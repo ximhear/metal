@@ -13,7 +13,6 @@ class MenuItemListViewController: UIViewController {
 
     @IBOutlet weak var tableView: UITableView!
 
-
     func configureView() {
         // Update the user interface for the detail item.
         if let _ = menu {

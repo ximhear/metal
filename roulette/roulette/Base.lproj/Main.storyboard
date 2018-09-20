@@ -185,10 +185,10 @@
             </objects>
             <point key="canvasLocation" x="-38" y="-630"/>
         </scene>
-        <!--Master-->
+        <!--MenuListViewController-->
         <scene sceneID="vBT-EU-wpn">
             <objects>
-                <tableViewController title="Master" clearsSelectionOnViewWillAppear="NO" id="xYH-xf-DbU" customClass="MenuListViewController" customModule="Menu" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Master" clearsSelectionOnViewWillAppear="NO" id="xYH-xf-DbU" userLabel="MenuListViewController" customClass="MenuListViewController" customModule="Menu" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="cye-fC-006">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

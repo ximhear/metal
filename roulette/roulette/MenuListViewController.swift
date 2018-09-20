@@ -12,8 +12,12 @@ import RealmSwift
 class MenuListViewController: UITableViewController {
 
     var objects: Results<Menu>?
+    var notificationToken: NotificationToken? = nil
 
-
+    deinit {
+        notificationToken?.invalidate()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -66,9 +70,26 @@ class MenuListViewController: UITableViewController {
         if segue.identifier == "showDetail" {
             if let indexPath = tableView.indexPathForSelectedRow {
                 let menu = objects?[indexPath.row]
-                let controller = segue.destination as! MenuItemListViewController
-                controller.menu = menu
-                controller.navigationItem.leftItemsSupplementBackButton = true
+                let vc = segue.destination as! MenuItemListViewController
+                vc.menu = menu
+                vc.navigationItem.leftItemsSupplementBackButton = true
+                
+                notificationToken?.invalidate()
+                let results = menu!.items
+                
+                // Observe Results Notifications
+                notificationToken = results.observe { [weak self] (changes: RealmCollectionChange) in
+                    guard let tableView = self?.tableView else { return }
+                    switch changes {
+                    case .initial:
+                        tableView.reloadData()
+                    case .update(_, let deletions, let insertions, let modifications):
+                        tableView.reloadData()
+                    case .error(let error):
+                        // An error occurred while opening the Realm file on the background worker thread
+                        fatalError("\(error)")
+                    }
+                }
             }
         }
     }
@@ -87,7 +108,13 @@ class MenuListViewController: UITableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
 
         if let menu = objects?[indexPath.row] {
-            cell.textLabel!.text = menu.modified.localFormatString()
+            if menu.items.count == 0 {
+                cell.textLabel!.text = menu.modified.localFormatString()
+            }
+            else {
+                let a = menu.items.map { $0.title }.joined(separator: ",")
+                cell.textLabel!.text = "\(menu.items.count) - \(a)"
+            }
         }
         else {
             cell.textLabel!.text = "XX"
