@@ -8,6 +8,7 @@
 
 import UIKit
 import MetalKit
+import RealmSwift
 
 // Our iOS specific view controller
 class GameViewController: UIViewController {
@@ -44,20 +45,23 @@ class GameViewController: UIViewController {
         let t = offScreenRenderer.texture
         let c = CIImage.init(mtlTexture: t!, options: nil)
         GZLog()
-        
-
-        items = [
-            RouletteItem(text: "Pandas", color: simd_float4(1, 0, 0, 1), textColor: simd_float4(0, 1, 1, 1), bgColor: simd_float4(1, 0, 0, 1)),
-            RouletteItem(text: "Python", color: simd_float4(1, 1, 0, 1), textColor: simd_float4(0, 0, 1, 1), bgColor: simd_float4(1, 1, 0, 1)),
-            RouletteItem(text: "커피", color: simd_float4(0, 1, 0, 1), textColor: simd_float4(1, 0, 1, 1), bgColor: simd_float4(0, 1, 0, 1)),
-            RouletteItem(text: "구름", color: simd_float4(0, 1, 1, 1), textColor: simd_float4(1, 0, 0, 1), bgColor: simd_float4(0, 1, 1, 1)),
-            RouletteItem(text: "아이패드", color: simd_float4(0, 0, 1, 1), textColor: simd_float4(1, 1, 0, 1), bgColor: simd_float4(0, 0, 1, 1)),
-            RouletteItem(text: "베이블래이드", color: simd_float4(1, 0, 1, 1), textColor: simd_float4(0, 1, 0, 1), bgColor: simd_float4(1, 0, 1, 1)),
-            RouletteItem(text: "METAL", color: simd_float4(Float(0x21)/255, Float(0xff)/255, Float(0xc5)/255, 1), textColor: simd_float4(0, 0, 0, 1), bgColor: simd_float4(Float(0x21)/255, Float(0xff)/255, Float(0xc5)/255, 1)),
-        ]
 
         self.mtkView = mtkView
-        applyRoulette(count: 6)
+        if let menu = latestRoulette() {
+            applyRoulette(menu: menu)
+        }
+        else {
+            items = [
+                RouletteItem(text: "Pandas", color: simd_float4(1, 0, 0, 1), textColor: simd_float4(0, 1, 1, 1), bgColor: simd_float4(1, 0, 0, 1)),
+                RouletteItem(text: "Python", color: simd_float4(1, 1, 0, 1), textColor: simd_float4(0, 0, 1, 1), bgColor: simd_float4(1, 1, 0, 1)),
+                RouletteItem(text: "커피", color: simd_float4(0, 1, 0, 1), textColor: simd_float4(1, 0, 1, 1), bgColor: simd_float4(0, 1, 0, 1)),
+                RouletteItem(text: "구름", color: simd_float4(0, 1, 1, 1), textColor: simd_float4(1, 0, 0, 1), bgColor: simd_float4(0, 1, 1, 1)),
+                RouletteItem(text: "아이패드", color: simd_float4(0, 0, 1, 1), textColor: simd_float4(1, 1, 0, 1), bgColor: simd_float4(0, 0, 1, 1)),
+                RouletteItem(text: "베이블래이드", color: simd_float4(1, 0, 1, 1), textColor: simd_float4(0, 1, 0, 1), bgColor: simd_float4(1, 0, 1, 1)),
+                RouletteItem(text: "METAL", color: simd_float4(Float(0x21)/255, Float(0xff)/255, Float(0xc5)/255, 1), textColor: simd_float4(0, 0, 0, 1), bgColor: simd_float4(Float(0x21)/255, Float(0xff)/255, Float(0xc5)/255, 1)),
+            ]
+            applyRoulette(count: 6)
+        }
     }
     
     @IBAction func rotationClicked(_ sender: Any) {
@@ -69,6 +73,54 @@ class GameViewController: UIViewController {
         })
     }
     
+    func latestRoulette() -> Menu? {
+        
+        let t = UserDefaults.standard.double(forKey: "roulette")
+        if t == 0 {
+            return nil
+        }
+        do {
+            let realm = try Realm()
+            if let menu = realm.objects(Menu.self).filter("created == %@", Date(timeIntervalSince1970: t)).first {
+                return menu
+            }
+        } catch let error as NSError {
+            // If the encryption key is wrong, `error` will say that it's an invalid database
+            fatalError("Error opening realm: \(error)")
+        }
+        return nil
+    }
+
+    func applyRoulette(menu: Menu) {
+        
+        let colors: [(color: simd_float4, textColor: simd_float4, bgCololr: simd_float4)] = [
+            (simd_float4(1, 0, 0, 1), simd_float4(0, 1, 1, 1), simd_float4(1, 0, 0, 1)),
+            (simd_float4(1, 1, 0, 1), simd_float4(0, 0, 1, 1), simd_float4(1, 1, 0, 1)),
+            (simd_float4(0, 1, 0, 1), simd_float4(1, 0, 1, 1), simd_float4(0, 1, 0, 1)),
+            (simd_float4(0, 1, 1, 1), simd_float4(1, 0, 0, 1), simd_float4(0, 1, 1, 1)),
+            (simd_float4(0, 0, 1, 1), simd_float4(1, 1, 0, 1), simd_float4(0, 0, 1, 1)),
+            (simd_float4(1, 0, 1, 1), simd_float4(0, 1, 0, 1), simd_float4(1, 0, 1, 1)),
+            (simd_float4(Float(0x21)/255, Float(0xff)/255, Float(0xc5)/255, 1), simd_float4(0, 0, 0, 1), simd_float4(Float(0x21)/255, Float(0xff)/255, Float(0xc5)/255, 1))]
+
+        
+        var items: [RouletteItem] = []
+        for (index, x) in menu.items.enumerated() {
+            let a = colors[index % 7]
+            items.append(RouletteItem(text: x.title, color: a.color, textColor: a.textColor, bgColor: a.bgCololr))
+        }
+        guard let newRenderer = Renderer(metalKitView: mtkView, items: items) else {
+            print("Renderer cannot be initialized")
+            return
+        }
+        
+        renderer = newRenderer
+        
+        renderer.mtkView(mtkView, drawableSizeWillChange: mtkView.drawableSize)
+        
+        mtkView.delegate = renderer
+    }
+    
+
     func applyRoulette(count: Int) {
         
         var items: [RouletteItem] = []
@@ -109,6 +161,19 @@ class GameViewController: UIViewController {
 
     @IBAction func b7Clicked(_ sender: Any) {
         applyRoulette(count: 7)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "showSelection" {
+            let vc = (segue.destination as! UINavigationController).topViewController as! MenuSelectionViewController
+            vc.selectionChanged = {[weak self] (menu) in
+                UserDefaults.standard.set(menu.created.timeIntervalSince1970, forKey: "roulette")
+                self?.applyRoulette(menu: menu)
+                DispatchQueue.main.async {
+                    vc.dismiss(animated: true, completion: nil)
+                }
+            }
+        }
     }
 
 }
