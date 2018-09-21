@@ -78,6 +78,10 @@ class Renderer: NSObject, MTKViewDelegate {
     var rotationZ : Double = 0
     
     let items: [RouletteItem]
+    
+    deinit {
+        GZLog()
+    }
 
     init?(metalKitView: MTKView, items: [RouletteItem]) {
         
