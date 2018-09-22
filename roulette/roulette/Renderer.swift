@@ -68,7 +68,9 @@ class Renderer: NSObject, MTKViewDelegate {
     var samplerState: MTLSamplerState?
     var sampler: MTLSamplerState?
     
-    var timingFunction: ((_ tx: Double) -> Double)?
+    var angleFunction: ((_ tx: Double) -> Double) = { _ in 0 }
+    var speedFunction: ((_ tx: Double) -> Double) = { _ in 0 }
+    var counterClockwiseRotation: Bool = true
     var beginingTime: Double = 0
     var endingTime: Double = 0
     var rotating = false
@@ -952,15 +954,10 @@ class Renderer: NSObject, MTKViewDelegate {
             }
             else {
                 var result: Double = 0
-                if let timingFunction = self.timingFunction {
-                    result = beginingRotationZ + timingFunction(elapsedTime/(self.endingTime - self.beginingTime)) * (self.endingRotationZ - beginingRotationZ)
-                }
-                else {
-                    result = beginingRotationZ + (self.endingRotationZ - beginingRotationZ) * elapsedTime / (self.endingTime - self.beginingTime)
-                }
-                self.rotationZ = result
                 let x = elapsedTime / (self.endingTime - self.beginingTime)
-                speed = 3 * Float(pow(x - 1, 2))
+                result = beginingRotationZ + angleFunction(x)
+                self.rotationZ = result
+                speed = Float(speedFunction(elapsedTime))
             }
         }
 
@@ -997,7 +994,7 @@ class Renderer: NSObject, MTKViewDelegate {
             uniforms2[x].modelViewMatrix = simd_mul(viewMatrix2, simd_mul(modelMatrix2, simd_mul(transition2Y, simd_mul(scaleMatrix, transition1Y))))
             uniforms2[x].fg = item.textColor
             uniforms2[x].bg = item.bgColor
-            uniforms2[x].speed = speed
+            uniforms2[x].speed = counterClockwiseRotation == true ? speed : -speed
         }
         
         
@@ -1022,7 +1019,7 @@ class Renderer: NSObject, MTKViewDelegate {
             uniforms1_0[x].modelViewMatrix = simd_mul(viewMatrix1_0, modelMatrix1_0)
             uniforms1_0[x].fg = item.color
             uniforms1_0[x].bg = item.bgColor
-            uniforms1_0[x].speed = speed
+            uniforms1_0[x].speed = counterClockwiseRotation == true ? speed : -speed
         }
 
         for (x, item) in self.items.enumerated() {
@@ -1032,7 +1029,7 @@ class Renderer: NSObject, MTKViewDelegate {
             uniforms1_1[x].separatorRotationMatrix1 = matrix4x4_rotation(radians: theta1 / 2, axis: rotationAxis2)
             uniforms1_1[x].separatorRotationMatrix2 = matrix4x4_rotation(radians: -theta1 / 2, axis: rotationAxis2)
             uniforms1_1[x].fg = simd_float4(1, 1, 1, 1)
-            uniforms1_1[x].speed = speed
+            uniforms1_1[x].speed = counterClockwiseRotation == true ? speed : -speed
         }
     }
     
@@ -1193,10 +1190,12 @@ class Renderer: NSObject, MTKViewDelegate {
         
     }
     
-    func startRotation(duration: Double, endingRotationZ: Double, timingFunction: ((_ tx: Double) -> Double)?) {
+    func startRotation(duration: Double, endingRotationZ: Double, counterClockwise: Bool, angleFunction: @escaping (_ tx: Double) -> Double, speedFunction: @escaping (_ tx: Double) -> Double) {
         GZLog("Rotation started")
         
-        self.timingFunction = timingFunction
+        self.angleFunction = angleFunction
+        self.speedFunction = speedFunction
+        counterClockwiseRotation = counterClockwise
         if duration > 0 {
             self.beginingTime = Date().timeIntervalSince1970
             GZLog(self.beginingTime)
@@ -1206,7 +1205,7 @@ class Renderer: NSObject, MTKViewDelegate {
             self.rotating = true
             self.rotationZ = self.rotationZ.truncatingRemainder(dividingBy: Double.pi * 2.0)
             self.beginingRotationZ = self.rotationZ
-            self.endingRotationZ = endingRotationZ
+            self.endingRotationZ = self.rotationZ + endingRotationZ
         }
         else {
             self.rotating = false

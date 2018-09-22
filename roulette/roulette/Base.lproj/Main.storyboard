@@ -17,17 +17,6 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kYv-nQ-PIC">
-                                <rect key="frame" x="71.5" y="602" width="56" height="45"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="45" id="ths-Ys-SYr"/>
-                                </constraints>
-                                <inset key="contentEdgeInsets" minX="15" minY="0.0" maxX="15" maxY="0.0"/>
-                                <state key="normal" title="선택"/>
-                                <connections>
-                                    <segue destination="QXE-bM-9ch" kind="showDetail" identifier="showSelection" id="fjs-Ju-KNW"/>
-                                </connections>
-                            </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o0x-IB-710">
                                 <rect key="frame" x="159.5" y="602" width="56" height="45"/>
                                 <constraints>
@@ -39,74 +28,40 @@
                                     <action selector="rotationClicked:" destination="BV1-FR-VrT" eventType="touchUpInside" id="zhg-7R-qCA"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FUF-zE-tBO">
-                                <rect key="frame" x="247.5" y="602" width="56" height="45"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="45" id="aUl-j1-1yc"/>
-                                </constraints>
-                                <inset key="contentEdgeInsets" minX="15" minY="0.0" maxX="15" maxY="0.0"/>
-                                <state key="normal" title="설정"/>
-                                <connections>
-                                    <segue destination="kkw-tV-Ijp" kind="showDetail" id="1Gb-xz-9cf"/>
-                                </connections>
-                            </button>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="WD9-Pl-Esd">
-                                <rect key="frame" x="16" y="36" width="343" height="30"/>
+                                <rect key="frame" x="16" y="36" width="343" height="45"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ujR-w8-IVJ">
-                                        <rect key="frame" x="0.0" y="0.0" width="57" height="30"/>
-                                        <state key="normal" title="2"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kYv-nQ-PIC">
+                                        <rect key="frame" x="0.0" y="0.0" width="171.5" height="45"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="45" id="ths-Ys-SYr"/>
+                                        </constraints>
+                                        <inset key="contentEdgeInsets" minX="15" minY="0.0" maxX="15" maxY="0.0"/>
+                                        <state key="normal" title="선택"/>
                                         <connections>
-                                            <action selector="b2Clicked:" destination="BV1-FR-VrT" eventType="touchUpInside" id="k4X-s7-zKJ"/>
+                                            <segue destination="QXE-bM-9ch" kind="showDetail" identifier="showSelection" id="fjs-Ju-KNW"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kci-E7-9Y3">
-                                        <rect key="frame" x="57" y="0.0" width="57.5" height="30"/>
-                                        <state key="normal" title="3"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FUF-zE-tBO">
+                                        <rect key="frame" x="171.5" y="0.0" width="171.5" height="45"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="45" id="aUl-j1-1yc"/>
+                                        </constraints>
+                                        <inset key="contentEdgeInsets" minX="15" minY="0.0" maxX="15" maxY="0.0"/>
+                                        <state key="normal" title="설정"/>
                                         <connections>
-                                            <action selector="b3Clicked:" destination="BV1-FR-VrT" eventType="touchUpInside" id="sim-oX-wig"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="H5p-uP-C93">
-                                        <rect key="frame" x="114.5" y="0.0" width="57" height="30"/>
-                                        <state key="normal" title="4"/>
-                                        <connections>
-                                            <action selector="b4Clicked:" destination="BV1-FR-VrT" eventType="touchUpInside" id="9vr-tV-ODy"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="SK6-tr-s1T">
-                                        <rect key="frame" x="171.5" y="0.0" width="57" height="30"/>
-                                        <state key="normal" title="5"/>
-                                        <connections>
-                                            <action selector="b5Clicked:" destination="BV1-FR-VrT" eventType="touchUpInside" id="aQJ-SK-i6n"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6eJ-l8-s2X">
-                                        <rect key="frame" x="228.5" y="0.0" width="57.5" height="30"/>
-                                        <state key="normal" title="6"/>
-                                        <connections>
-                                            <action selector="b6Clicked:" destination="BV1-FR-VrT" eventType="touchUpInside" id="VEU-vC-eVG"/>
-                                        </connections>
-                                    </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="HY4-hq-tiU">
-                                        <rect key="frame" x="286" y="0.0" width="57" height="30"/>
-                                        <state key="normal" title="7"/>
-                                        <connections>
-                                            <action selector="b7Clicked:" destination="BV1-FR-VrT" eventType="touchUpInside" id="xka-Pz-jdp"/>
+                                            <segue destination="kkw-tV-Ijp" kind="showDetail" id="1Gb-xz-9cf"/>
                                         </connections>
                                     </button>
                                 </subviews>
                             </stackView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <gestureRecognizers/>
                         <constraints>
-                            <constraint firstItem="FUF-zE-tBO" firstAttribute="centerY" secondItem="o0x-IB-710" secondAttribute="centerY" id="CMg-Jx-Rgp"/>
                             <constraint firstItem="rZh-zQ-HcR" firstAttribute="bottom" secondItem="o0x-IB-710" secondAttribute="bottom" constant="20" id="DiS-ce-FgV"/>
                             <constraint firstItem="WD9-Pl-Esd" firstAttribute="top" secondItem="rZh-zQ-HcR" secondAttribute="top" constant="16" id="FoG-2z-ITk"/>
                             <constraint firstItem="WD9-Pl-Esd" firstAttribute="leading" secondItem="rZh-zQ-HcR" secondAttribute="leading" constant="16" id="ICk-GT-IUb"/>
-                            <constraint firstItem="o0x-IB-710" firstAttribute="leading" secondItem="kYv-nQ-PIC" secondAttribute="trailing" constant="32" id="KW5-Lh-md5"/>
-                            <constraint firstItem="FUF-zE-tBO" firstAttribute="leading" secondItem="o0x-IB-710" secondAttribute="trailing" constant="32" id="Mpr-1p-3qa"/>
-                            <constraint firstItem="kYv-nQ-PIC" firstAttribute="centerY" secondItem="o0x-IB-710" secondAttribute="centerY" id="TgR-WC-crr"/>
                             <constraint firstItem="o0x-IB-710" firstAttribute="centerX" secondItem="3se-qz-xqx" secondAttribute="centerX" id="WBs-nz-9mF"/>
                             <constraint firstItem="rZh-zQ-HcR" firstAttribute="trailing" secondItem="WD9-Pl-Esd" secondAttribute="trailing" constant="16" id="ZUN-JQ-y7f"/>
                         </constraints>
@@ -188,7 +143,7 @@
         <!--MenuListViewController-->
         <scene sceneID="vBT-EU-wpn">
             <objects>
-                <tableViewController title="Master" clearsSelectionOnViewWillAppear="NO" id="xYH-xf-DbU" userLabel="MenuListViewController" customClass="MenuListViewController" customModule="Menu" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Master" clearsSelectionOnViewWillAppear="NO" id="xYH-xf-DbU" userLabel="MenuListViewController" customClass="MenuListViewController" customModule="roulette" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="cye-fC-006">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -233,7 +188,7 @@
         <!--Menu Item List View Controller-->
         <scene sceneID="e5M-wq-BHm">
             <objects>
-                <viewController id="wWE-95-WEV" customClass="MenuItemListViewController" customModule="Menu" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="wWE-95-WEV" customClass="MenuItemListViewController" customModule="roulette" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="yrh-3i-GBW">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -300,7 +255,7 @@
         <!--History Table View Controller-->
         <scene sceneID="f61-fy-v8G">
             <objects>
-                <tableViewController id="TGp-6n-OY4" customClass="HistoryTableViewController" customModule="Menu" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="TGp-6n-OY4" customClass="HistoryTableViewController" customModule="roulette" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="3su-O3-mkY">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>

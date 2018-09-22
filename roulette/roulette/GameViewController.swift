@@ -67,9 +67,17 @@ class GameViewController: UIViewController {
     @IBAction func rotationClicked(_ sender: Any) {
         GZLog()
         
-        renderer.startRotation(duration: 7.5 + 10 * drand48(), endingRotationZ: Double.pi * 15 + Double.pi * 30 * drand48(),
-                                timingFunction:  { (tx) -> Double in
-                                    return pow(tx-1, 3) + 1
+        let duration: Double = 2
+        let endingRotationZ = Double.pi * 2
+        let counterClockwise = true
+        let v0: Double = 0.2
+        let a: Double = 0.1
+        renderer.startRotation(duration: duration, endingRotationZ: endingRotationZ,
+                               counterClockwise: counterClockwise,
+                               angleFunction: { (tx) -> Double in
+                                return (-pow(tx - 1, 2) + 1) * endingRotationZ
+        }, speedFunction: { (tx) -> Double in
+            return v0 - tx * a
         })
     }
     
@@ -139,30 +147,6 @@ class GameViewController: UIViewController {
         mtkView.delegate = renderer
     }
 
-    @IBAction func b2Clicked(_ sender: Any) {
-        applyRoulette(count: 2)
-    }
-
-    @IBAction func b3Clicked(_ sender: Any) {
-        applyRoulette(count: 3)
-    }
-
-    @IBAction func b4Clicked(_ sender: Any) {
-        applyRoulette(count: 4)
-    }
-
-    @IBAction func b5Clicked(_ sender: Any) {
-        applyRoulette(count: 5)
-    }
-
-    @IBAction func b6Clicked(_ sender: Any) {
-        applyRoulette(count: 6)
-    }
-
-    @IBAction func b7Clicked(_ sender: Any) {
-        applyRoulette(count: 7)
-    }
-    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showSelection" {
             let vc = (segue.destination as! UINavigationController).topViewController as! MenuSelectionViewController
@@ -176,4 +160,108 @@ class GameViewController: UIViewController {
         }
     }
 
+
+    var prevMovePoint: CGPoint?
+    var prevMoveTime: TimeInterval?
+    var lastMovePoint: CGPoint?
+    var lastMoveTime: TimeInterval?
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        GZLog(touches.first?.location(in: self.view))
+        prevMovePoint = nil
+        prevMoveTime = nil
+        lastMovePoint = nil
+        lastMoveTime = nil
+    }
+    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        GZLog(touches.first?.location(in: self.view))
+        
+        if prevMovePoint == nil {
+            prevMovePoint = touches.first?.location(in: self.view)
+            prevMoveTime = touches.first?.timestamp
+        }
+        else {
+            prevMovePoint = lastMovePoint
+            prevMoveTime = lastMoveTime
+        }
+        lastMovePoint = touches.first?.location(in: self.view)
+        lastMoveTime = touches.first?.timestamp
+    }
+    
+    override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+        GZLog(touches.first?.location(in: self.view))
+        GZLog(touches.first?.timestamp)
+        
+        if let pt = prevMovePoint, let tm = prevMoveTime,
+            let endPt = lastMovePoint, let endTime = lastMoveTime {
+            let diffTime = endTime - tm
+            guard diffTime > 0 else {
+                return
+            }
+//            GZLog(pt)
+//            GZLog(endPt)
+//            GZLog(tm)
+//            GZLog(endTime)
+//            GZLog("\(endPt.x - pt.x), \(endPt.y - pt.y)")
+            let x = Double(endPt.x - pt.x)
+            let y = Double(endPt.y - pt.y)
+            let distance = sqrt(x * x + y * y)
+            GZLog("distance : \(distance)")
+            GZLog("time : \(diffTime)")
+            let speed = sqrt(x * x + y * y) / diffTime
+            GZLog("speed : \(speed)")
+            if (distance < 3 && speed < 100) /* || renderer.rotating == true*/ {
+                GZLog("ignored")
+            }
+            else {
+                let unitSpeed: Double = 2500
+                var v0 = speed / unitSpeed // 초기속도
+                let a = 0.1 // 가속도
+                let minimumSpeed = 100 / unitSpeed
+                var duration = v0 / a
+                GZLog("duratin : \(duration)")
+                let midX = self.view.bounds.midX
+                let midY = self.view.bounds.midY
+                
+                let x0: CGFloat = 0
+                let y0: CGFloat = 0
+                let x1: CGFloat = pt.x - midX
+                let y1: CGFloat = midY - pt.y
+                let x2: CGFloat = endPt.x - midX
+                let y2: CGFloat = midY - endPt.y
+                
+                var endingRotationZ = Double.pi * 2 * v0 / minimumSpeed
+                if duration < 5 {
+                    duration = 5
+                    v0 = a * duration
+                }
+                else if duration > 20 {
+                    duration = 20
+                    v0 = a * duration
+                }
+
+                let value = x0 * y1 + x1 * y2 + x2 * y0 - x1 * y0 - x2 * y1 - x0 * y2
+                var counterClockwise = true
+                
+                if value < 0 {
+                    counterClockwise = false
+                    endingRotationZ = -endingRotationZ
+                }
+                
+                GZLog(v0)
+                GZLog(endingRotationZ)
+                
+                renderer.startRotation(duration: duration, endingRotationZ: endingRotationZ,
+                                       counterClockwise: counterClockwise,
+                                       angleFunction: { (tx) -> Double in
+                                        let a =  (-pow(tx - 1, 2) + 1) * endingRotationZ
+//                                        print("\(tx) : \(a)")
+                                        return a
+                }, speedFunction: { (tx) -> Double in
+                    return (v0 -  v0 * pow(tx, 2) / duration / duration) * 3
+//                    return (v0 - tx * a) * 2
+                })
+            }
+        }
+    }
 }
