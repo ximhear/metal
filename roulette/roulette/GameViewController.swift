@@ -67,17 +67,23 @@ class GameViewController: UIViewController {
     @IBAction func rotationClicked(_ sender: Any) {
         GZLog()
         
-        let duration: Double = 2
-        let endingRotationZ = Double.pi * 2
         let counterClockwise = true
-        let v0: Double = 0.2
-        let a: Double = 0.1
+        let v0: Double = 7
+        let a: Double = 0.3
+        var duration: Double = v0 / a
+        let endingRotationZ = Double.pi * 10 * v0
+        if duration > 15 {
+            duration = 15
+        }
         renderer.startRotation(duration: duration, endingRotationZ: endingRotationZ,
                                counterClockwise: counterClockwise,
                                angleFunction: { (tx) -> Double in
-                                return (-pow(tx - 1, 2) + 1) * endingRotationZ
+                                let a = (pow(tx - 1, 3) + 1) * endingRotationZ
+//                                let a =  (-pow(tx - 1, 2) + 1) * endingRotationZ
+                                return a
         }, speedFunction: { (tx) -> Double in
-            return v0 - tx * a
+            return v0 * pow(1 - tx / duration, 2)
+//            return (v0 - tx * a) * 1
         })
     }
     
@@ -209,15 +215,18 @@ class GameViewController: UIViewController {
             GZLog("distance : \(distance)")
             GZLog("time : \(diffTime)")
             let speed = sqrt(x * x + y * y) / diffTime
+            let minSpeed: Double = 100
+            let maxSpeed: Double = 10000
             GZLog("speed : \(speed)")
-            if (distance < 3 && speed < 100) /* || renderer.rotating == true*/ {
+            if (distance < 3 && speed < minSpeed) /* || renderer.rotating == true*/ {
                 GZLog("ignored")
             }
             else {
-                let unitSpeed: Double = 2500
-                var v0 = speed / unitSpeed // 초기속도
-                let a = 0.1 // 가속도
-                let minimumSpeed = 100 / unitSpeed
+                let maxDuration: Double = 20
+                let minV0: Double = 0.1
+                let maxV0: Double = 8
+                let v0 = (maxV0 - minV0) / (maxSpeed - minSpeed) * speed // 초기속도
+                let a: Double = 0.2 // 가속도
                 var duration = v0 / a
                 GZLog("duratin : \(duration)")
                 let midX = self.view.bounds.midX
@@ -230,15 +239,15 @@ class GameViewController: UIViewController {
                 let x2: CGFloat = endPt.x - midX
                 let y2: CGFloat = midY - endPt.y
                 
-                var endingRotationZ = Double.pi * 2 * v0 / minimumSpeed
+//                var endingRotationZ = Double.pi * 2 * v0 / minimumSpeed
+                var endingRotationZ = Double.pi * 10 * v0
                 if duration < 5 {
                     duration = 5
-                    v0 = a * duration
                 }
-                else if duration > 20 {
-                    duration = 20
-                    v0 = a * duration
+                else if duration > maxDuration {
+                    duration = maxDuration
                 }
+                endingRotationZ += drand48() * Double.pi * 4
 
                 let value = x0 * y1 + x1 * y2 + x2 * y0 - x1 * y0 - x2 * y1 - x0 * y2
                 var counterClockwise = true
@@ -254,12 +263,14 @@ class GameViewController: UIViewController {
                 renderer.startRotation(duration: duration, endingRotationZ: endingRotationZ,
                                        counterClockwise: counterClockwise,
                                        angleFunction: { (tx) -> Double in
-                                        let a =  (-pow(tx - 1, 2) + 1) * endingRotationZ
+//                                        let a =  (-pow(tx - 1, 2) + 1) * endingRotationZ
+                                        let a = (pow(tx - 1, 3) + 1) * endingRotationZ
 //                                        print("\(tx) : \(a)")
                                         return a
                 }, speedFunction: { (tx) -> Double in
-                    return (v0 -  v0 * pow(tx, 2) / duration / duration) * 3
-//                    return (v0 - tx * a) * 2
+//                    return (v0 -  v0 * pow(tx, 2) / duration / duration) * 3
+//                    return (v0 - tx * a) * 1
+                    return v0 * pow(1 - tx / duration, 2)
                 })
             }
         }
