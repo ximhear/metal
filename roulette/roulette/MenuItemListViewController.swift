@@ -61,6 +61,29 @@ class MenuItemListViewController: UIViewController {
         self.present(alert, animated: true, completion: nil)
     }
     
+    func updateObject(index: Int) {
+        
+        let alert = UIAlertController(title: "Item", message: "Please input text", preferredStyle: UIAlertController.Style.alert)
+        
+        alert.addTextField {[weak self] (textField) in
+            textField.placeholder = "Enter item"
+            textField.text = self?.menu?.items[index].title
+        }
+        
+        let add = UIAlertAction(title: "Add", style: .default) {[weak self] (alertAction) in
+            if let text = alert.textFields?[0].text, text.count > 0 {
+                self?.update(index: index, title: text)
+            }
+        }
+        
+        let cancel = UIAlertAction(title: "Cancel", style: .cancel)
+        
+        alert.addAction(add)
+        alert.addAction(cancel)
+        
+        self.present(alert, animated: true, completion: nil)
+    }
+    
     func add(title: String) {
 
         let count = menu?.items.count ?? 0
@@ -71,10 +94,6 @@ class MenuItemListViewController: UIViewController {
                 let item = MenuItem()
                 item.title = title
                 menu?.items.append(item)
-                
-                let historyItem = MenuHistoryItem()
-                historyItem.title = menu?.items.last?.title ?? ""
-                menu?.history.append(historyItem)
             }
         } catch let error as NSError {
             // If the encryption key is wrong, `error` will say that it's an invalid database
@@ -83,6 +102,24 @@ class MenuItemListViewController: UIViewController {
         
         let indexPath = IndexPath(row: count, section: 0)
         tableView.insertRows(at: [indexPath], with: .automatic)
+    }
+    
+    func update(index: Int, title: String) {
+        
+        do {
+            let realm = try Realm()
+            
+            try realm.write {
+                
+                menu?.items[index].title = title
+            }
+        } catch let error as NSError {
+            // If the encryption key is wrong, `error` will say that it's an invalid database
+            fatalError("Error opening realm: \(error)")
+        }
+        
+        let indexPath = IndexPath(row: index, section: 0)
+        tableView.reloadRows(at: [indexPath], with: .automatic)
     }
 
     // MARK: - Segues
@@ -156,5 +193,10 @@ extension MenuItemListViewController: UITableViewDelegate, UITableViewDataSource
         super.setEditing(false, animated: true)
     }
 
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        updateObject(index: indexPath.row)
+    }
 }
 

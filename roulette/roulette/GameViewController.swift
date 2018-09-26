@@ -17,6 +17,7 @@ class GameViewController: UIViewController {
     var offScreenRenderer: OffScreenRenderer!
     var mtkView: MTKView!
     var items: [RouletteItem]!
+    var menu: Menu?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -117,7 +118,8 @@ class GameViewController: UIViewController {
             (simd_float4(Float(0x21)/255, Float(0xff)/255, Float(0xc5)/255, 1), simd_float4(0, 0, 0, 1), simd_float4(Float(0x21)/255, Float(0xff)/255, Float(0xc5)/255, 1))]
 
         
-        var items: [RouletteItem] = []
+        items = []
+        self.menu = menu
         for (index, x) in menu.items.enumerated() {
             let a = colors[index % 7]
             items.append(RouletteItem(text: x.title, color: a.color, textColor: a.textColor, bgColor: a.bgCololr))
@@ -132,8 +134,40 @@ class GameViewController: UIViewController {
         renderer.mtkView(mtkView, drawableSizeWillChange: mtkView.drawableSize)
         
         mtkView.delegate = renderer
+        
+        renderer.rotationEnded = {[weak self] (angle) in
+            self?.rotationEnded(angle: angle)
+        }
     }
     
+    func rotationEnded(angle: Double) {
+        if items.count == 0 {
+            return
+        }
+        let sectorAngle = Double.pi * 2 / Double(items.count)
+        var a = angle.truncatingRemainder(dividingBy: Double.pi * 2.0)
+        a = Double.pi * 2.0 - (a + Double.pi * 2.0).truncatingRemainder(dividingBy: Double.pi * 2.0)
+        a = (a + sectorAngle / 2).truncatingRemainder(dividingBy: Double.pi * 2.0)
+        GZLog(angle)
+        GZLog(a)
+        
+        let index: Int = Int(a / sectorAngle)
+        GZLog(index)
+
+        do {
+            let realm = try Realm()
+            
+            try realm.write {
+                let historyItem = MenuHistoryItem()
+                historyItem.title = items[index].text
+                self.menu?.history.append(historyItem)
+            }
+        } catch let error as NSError {
+            // If the encryption key is wrong, `error` will say that it's an invalid database
+            fatalError("Error opening realm: \(error)")
+        }
+
+    }
 
     func applyRoulette(count: Int) {
         

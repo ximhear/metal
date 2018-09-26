@@ -227,7 +227,7 @@
                                 </constraints>
                                 <state key="normal" title="History"/>
                                 <connections>
-                                    <segue destination="TGp-6n-OY4" kind="showDetail" identifier="showHistory" id="3AF-B7-5fc"/>
+                                    <segue destination="TGp-6n-OY4" kind="show" identifier="showHistory" id="3AF-B7-5fc"/>
                                 </connections>
                             </button>
                         </subviews>

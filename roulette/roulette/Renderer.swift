@@ -78,6 +78,7 @@ class Renderer: NSObject, MTKViewDelegate {
     var endingRotationZ: Double = 0
     var elapsedTime : Double = 0
     var rotationZ : Double = 0
+    var rotationEnded: (_ angle: Double) -> Void = { _ in }
     
     let items: [RouletteItem]
     
@@ -950,6 +951,7 @@ class Renderer: NSObject, MTKViewDelegate {
             if self.beginingTime + elapsedTime >= self.endingTime {
                 self.rotationZ = self.endingRotationZ
                 self.rotating = false
+                self.rotationEnded(self.rotationZ)
                 GZLog("Rotation ended")
             }
             else {
