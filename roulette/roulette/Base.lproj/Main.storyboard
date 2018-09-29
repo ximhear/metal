@@ -17,7 +17,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o0x-IB-710">
+                            <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="o0x-IB-710">
                                 <rect key="frame" x="159.5" y="602" width="56" height="45"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="45" id="3gF-q2-BDD"/>
@@ -32,7 +32,7 @@
                                 <rect key="frame" x="16" y="36" width="343" height="45"/>
                                 <subviews>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="kYv-nQ-PIC">
-                                        <rect key="frame" x="0.0" y="0.0" width="171.5" height="45"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="114.5" height="45"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="ths-Ys-SYr"/>
                                         </constraints>
@@ -42,8 +42,15 @@
                                             <segue destination="QXE-bM-9ch" kind="showDetail" identifier="showSelection" id="fjs-Ju-KNW"/>
                                         </connections>
                                     </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eZ8-Bq-hEg">
+                                        <rect key="frame" x="114.5" y="0.0" width="114" height="45"/>
+                                        <state key="normal" title="History"/>
+                                        <connections>
+                                            <segue destination="lN7-nW-ozg" kind="showDetail" identifier="showHistory" id="X9L-r8-smv"/>
+                                        </connections>
+                                    </button>
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FUF-zE-tBO">
-                                        <rect key="frame" x="171.5" y="0.0" width="171.5" height="45"/>
+                                        <rect key="frame" x="228.5" y="0.0" width="114.5" height="45"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="45" id="aUl-j1-1yc"/>
                                         </constraints>
@@ -284,10 +291,43 @@
                             <outlet property="delegate" destination="TGp-6n-OY4" id="VL8-3G-p5T"/>
                         </connections>
                     </tableView>
+                    <navigationItem key="navigationItem" id="4Te-P3-hXy"/>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="OhB-D0-IFy" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1625" y="133"/>
         </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="h49-do-BFl">
+            <objects>
+                <navigationController id="KHA-vO-bRA" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="RGK-R0-Enx">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="39t-PF-Z0I" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2332" y="133"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="4p8-z1-lLm">
+            <objects>
+                <navigationController id="lN7-nW-ozg" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="HUS-PG-4ZR">
+                        <rect key="frame" x="0.0" y="20" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="TGp-6n-OY4" kind="relationship" relationship="rootViewController" id="XwD-K7-i3L"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="pvI-8g-IZm" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1625" y="-1491"/>
+        </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="XwD-K7-i3L"/>
+    </inferredMetricsTieBreakers>
 </document>

@@ -12,7 +12,6 @@ import RealmSwift
 class HistoryTableViewController: UITableViewController {
     
     var history: Results<MenuHistoryItem>?
-    var menu: Menu?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -22,7 +21,6 @@ class HistoryTableViewController: UITableViewController {
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem
-        history = menu?.history.sorted(byKeyPath: "created", ascending: false)
     }
 
     // MARK: - Table view data source

@@ -198,8 +198,24 @@ class GameViewController: UIViewController {
                 }
             }
         }
+        else if segue.identifier == "showHistory" {
+            let vc = (segue.destination as! UINavigationController).topViewController as! HistoryTableViewController
+            do {
+                let realm = try Realm()
+                // Use the Realm as normal
+                vc.history = realm.objects(MenuHistoryItem.self).sorted(byKeyPath: "created", ascending: false)
+                vc.navigationItem.leftBarButtonItem = UIBarButtonItem.init(title: "닫기", style: .plain, target: self, action: #selector(closeVC(_:)))
+                vc.navigationItem.leftItemsSupplementBackButton = true
+            } catch let error as NSError {
+                // If the encryption key is wrong, `error` will say that it's an invalid database
+                fatalError("Error opening realm: \(error)")
+            }
+        }
     }
 
+    @objc func closeVC(_ sender: Any) {
+        self.dismiss(animated: true, completion: nil)
+    }
 
     var prevMovePoint: CGPoint?
     var prevMoveTime: TimeInterval?

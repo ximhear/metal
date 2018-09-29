@@ -127,7 +127,7 @@ class MenuItemListViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == "showHistory" {
             let controller = segue.destination as! HistoryTableViewController
-            controller.menu = menu
+            controller.history = menu?.history.sorted(byKeyPath: "created", ascending: false)
             controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
             controller.navigationItem.leftItemsSupplementBackButton = true
         }
