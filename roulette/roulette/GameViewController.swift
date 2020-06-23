@@ -36,16 +36,16 @@ class GameViewController: UIViewController {
         mtkView.device = defaultDevice
         mtkView.backgroundColor = UIColor.black
 
-        guard let r = OffScreenRenderer(metalKitView: mtkView) else {
-            print("Renderer cannot be initialized")
-            return
-        }
-        offScreenRenderer = r
-        offScreenRenderer.draw(in: mtkView)
-        GZLog(offScreenRenderer.texture)
-        let t = offScreenRenderer.texture
-        let c = CIImage.init(mtlTexture: t!, options: nil)
-        GZLog()
+//        guard let r = OffScreenRenderer(metalKitView: mtkView) else {
+//            print("Renderer cannot be initialized")
+//            return
+//        }
+//        offScreenRenderer = r
+//        offScreenRenderer.draw(in: mtkView)
+//        GZLog(offScreenRenderer.texture)
+//        let t = offScreenRenderer.texture
+//        let c = CIImage.init(mtlTexture: t!, options: nil)
+//        GZLog()
 
         self.mtkView = mtkView
         if let menu = latestRoulette() {

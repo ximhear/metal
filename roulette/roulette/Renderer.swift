@@ -256,10 +256,7 @@ class Renderer: NSObject, MTKViewDelegate {
                                               xDivideCount: yDivideCount,
                                               yDivideCount: yDivideCount,
                                               rouletteCount: rouletteCount,
-                                              color: {[weak self] in
-                                                guard let welf = self else {
-                                                    return vector_float3(1,1,1)
-                                                }
+                                              color: {
                                                 let a = Float(drand48());
                                                 let b = Float(drand48());
                                                 let c = Float(drand48());
@@ -1056,9 +1053,8 @@ class Renderer: NSObject, MTKViewDelegate {
             let renderPassDescriptor = view.currentRenderPassDescriptor
             
             if let renderPassDescriptor = renderPassDescriptor {
-                if let parallel = commandBuffer.makeParallelRenderCommandEncoder(descriptor: renderPassDescriptor) {
+                if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
                     
-                    if let renderEncoder = parallel.makeRenderCommandEncoder() {
                         renderEncoder.label = "Primary Render Encoder"
                         renderEncoder.pushDebugGroup("Draw Box")
                         renderEncoder.setCullMode(.back)
@@ -1090,10 +1086,10 @@ class Renderer: NSObject, MTKViewDelegate {
                             
                         }
                         renderEncoder.popDebugGroup()
-                        renderEncoder.endEncoding()
-                    }
+//                        renderEncoder.endEncoding()
+//                    }
                     
-                    if let renderEncoder = parallel.makeRenderCommandEncoder() {
+//                if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
                         renderEncoder.label = "Primary Render Encoder"
                         renderEncoder.pushDebugGroup("Draw Box")
                         renderEncoder.setCullMode(.back)
@@ -1125,12 +1121,12 @@ class Renderer: NSObject, MTKViewDelegate {
 
                         }
                         renderEncoder.popDebugGroup()
-                        renderEncoder.endEncoding()
-                    }
+//                        renderEncoder.endEncoding()
+//                    }
                     
                     for (x, item) in self.items.enumerated() {
                         
-                        if let renderEncoder = parallel.makeRenderCommandEncoder() {
+//                        if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
                             /// Final pass rendering code here
                             renderEncoder.label = "Text Render Encoder"
                             renderEncoder.pushDebugGroup("Draw Box")
@@ -1163,14 +1159,13 @@ class Renderer: NSObject, MTKViewDelegate {
                                 
                             }
                             renderEncoder.popDebugGroup()
-                            renderEncoder.endEncoding()
-                        }
+//                            renderEncoder.endEncoding()
+//                        }
                     }
-                    
-                    parallel.endEncoding()
+                    renderEncoder.endEncoding()
                 }
             }
-            
+
             if let drawable = view.currentDrawable {
                 commandBuffer.present(drawable)
             }
