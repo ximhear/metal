@@ -44,6 +44,11 @@ typedef struct
     float2 texCoord;
 } ColorInOut;
 
+struct ControlPoint {
+    float4 position [[attribute(0)]];
+};
+
+[[patch(quad, 4)]]
 vertex ColorVertexInOut coloredVertexShader(ColorVertex in [[ stage_in ]],
                                constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]])
 {
@@ -87,6 +92,39 @@ fragment half4 coloredFragmentShader(ColorVertexInOut in [[stage_in]],
         discard_fragment();
     }
     return half4(in.color);
+}
+
+[[patch(quad, 4)]]
+vertex ColorVertexInOut tessellationInstanceRenderingColoredVertexShader(patch_control_point<ControlPoint> control_points [[stage_in]],
+                                            constant Uniforms* uniforms [[ buffer(BufferIndexUniforms) ]],
+                                                             float2 patch_coord [[position_in_patch]],
+                                                             ushort iid [[ instance_id ]])
+{
+    ColorVertexInOut out;
+   
+    float u = patch_coord.x;
+    float v = patch_coord.y;
+
+    float2 top = mix(control_points[0].position.xy,
+                     control_points[1].position.xy, u);
+    float2 bottom = mix(control_points[3].position.xy,
+                        control_points[2].position.xy, u);
+
+
+    float2 interpolated = mix(top, bottom, v);
+    float4 position = float4(interpolated.x, 0.0,
+                             interpolated.y, 1.0);
+    out.orgPosition = uniforms[iid].modelViewMatrix * position;
+    out.rotPosition1 = uniforms[iid].separatorRotationMatrix1 * position;
+    out.rotPosition2 = uniforms[iid].separatorRotationMatrix2 * position;
+
+    float len = length(out.orgPosition.xy);
+    float theta = -uniforms[iid].speed * pow(len, 2);
+    float4x4 rotation = float4x4(float4(cos(theta), sin(theta), 0 ,0), float4(-sin(theta), cos(theta), 0 ,0), float4(0, 0, 1, 0), float4(0, 0, 0, 1));
+    out.position = uniforms[iid].projectionMatrix * rotation * uniforms[iid].modelViewMatrix * position;
+    out.color = float4(1, 0, 0, 1);
+    
+    return out;
 }
 
 vertex ColorVertexInOut instanceRenderingColoredVertexShader(ColorVertex in [[ stage_in ]],
@@ -218,4 +256,22 @@ fragment half4 signed_distance_field_fragment(ColorInOut vertexIn [[ stage_in ]]
 //        return half4(uniforms.bg.r, uniforms.bg.g, uniforms.bg.b, uniforms.bg.a);
     }
     return half4(uniforms.fg.r, uniforms.fg.g, uniforms.fg.b, 0) * insideness + half4(uniforms.bg.r * (1-insideness), uniforms.bg.g * (1-insideness), uniforms.bg.b * (1-insideness), uniforms.bg.a);
+}
+
+kernel void
+  tessellation_main(constant float* edge_factors [[buffer(0)]],
+               constant float* inside_factors [[buffer(1)]],
+               device MTLQuadTessellationFactorsHalf*
+                              factors [[buffer(2)]],
+               uint pid [[thread_position_in_grid]]) {
+      
+      
+      factors[pid].edgeTessellationFactor[0] = edge_factors[0];
+      factors[pid].edgeTessellationFactor[1] = edge_factors[1];
+      factors[pid].edgeTessellationFactor[2] = edge_factors[2];
+      factors[pid].edgeTessellationFactor[3] = edge_factors[3];
+        
+      factors[pid].insideTessellationFactor[0] = inside_factors[0];
+      factors[pid].insideTessellationFactor[1] = inside_factors[1];
+
 }
