@@ -1100,21 +1100,21 @@ class Renderer: NSObject, MTKViewDelegate {
                         renderEncoder.setFrontFacing(.counterClockwise)
                         renderEncoder.setRenderPipelineState(pipelineState1_0)
                         renderEncoder.setDepthStencilState(depthState)
-                        
+
                         renderEncoder.setVertexBuffer(dynamicUniformBuffer1_1, offset:sixUniformBufferOffset, index: BufferIndex.uniforms.rawValue)
                         renderEncoder.setFragmentBuffer(dynamicUniformBuffer1_1, offset:sixUniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-                        
+
                         for (index, element) in mesh1_1.vertexDescriptor.layouts.enumerated() {
                             guard let layout = element as? MDLVertexBufferLayout else {
                                 return
                             }
-                            
+
                             if layout.stride != 0 {
                                 let buffer = mesh1_1.vertexBuffers[index]
                                 renderEncoder.setVertexBuffer(buffer.buffer, offset:buffer.offset, index: index)
                             }
                         }
-                        
+
                         for submesh in mesh1_1.submeshes {
                             renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType,
                                                                 indexCount: submesh.indexCount,
