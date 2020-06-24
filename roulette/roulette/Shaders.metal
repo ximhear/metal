@@ -96,9 +96,9 @@ fragment half4 coloredFragmentShader(ColorVertexInOut in [[stage_in]],
 
 [[patch(quad, 4)]]
 vertex ColorVertexInOut tessellationInstanceRenderingColoredVertexShader(patch_control_point<ControlPoint> control_points [[stage_in]],
-                                            constant Uniforms* uniforms [[ buffer(BufferIndexUniforms) ]],
-                                                             float2 patch_coord [[position_in_patch]],
-                                                             ushort iid [[ instance_id ]])
+                                                                         constant Uniforms* uniforms [[ buffer(BufferIndexUniforms) ]],
+                                                                         float2 patch_coord [[position_in_patch]],
+                                                                         ushort iid [[ instance_id ]])
 {
     ColorVertexInOut out;
    
@@ -126,13 +126,25 @@ vertex ColorVertexInOut tessellationInstanceRenderingColoredVertexShader(patch_c
     return out;
 }
 
-vertex ColorVertexInOut instanceRenderingColoredVertexShader(ColorVertex in [[ stage_in ]],
-                                            constant Uniforms* uniforms [[ buffer(BufferIndexUniforms) ]],
-                                                             ushort iid [[ instance_id ]])
+[[patch(quad, 4)]]
+vertex ColorVertexInOut instanceRenderingColoredVertexShader(patch_control_point<ControlPoint> control_points [[stage_in]],
+                                                                         constant Uniforms* uniforms [[ buffer(BufferIndexUniforms) ]],
+                                                                         float2 patch_coord [[position_in_patch]],
+                                                                         ushort iid [[ instance_id ]])
 {
     ColorVertexInOut out;
     
-    float4 position = float4(in.position, 1.0);
+    float u = patch_coord.x;
+    float v = patch_coord.y;
+    
+    float2 top = mix(control_points[0].position.xy,
+                     control_points[1].position.xy, u);
+    float2 bottom = mix(control_points[3].position.xy,
+                        control_points[2].position.xy, u);
+    
+    
+    float2 interpolated = mix(top, bottom, v);
+    float4 position = float4(interpolated.x, interpolated.y, 0.0, 1.0);
     out.orgPosition = uniforms[iid].modelViewMatrix * position;
     out.rotPosition1 = uniforms[iid].separatorRotationMatrix1 * position;
     out.rotPosition2 = uniforms[iid].separatorRotationMatrix2 * position;
@@ -141,7 +153,7 @@ vertex ColorVertexInOut instanceRenderingColoredVertexShader(ColorVertex in [[ s
     //    if (theta M_PI_F
     float4x4 rotation = float4x4(float4(cos(theta), sin(theta), 0 ,0), float4(-sin(theta), cos(theta), 0 ,0), float4(0, 0, 1, 0), float4(0, 0, 0, 1));
     out.position = uniforms[iid].projectionMatrix * rotation * uniforms[iid].modelViewMatrix * position;
-    out.color = uniforms[iid].fg * float4(in.color, 1);
+    out.color = uniforms[iid].fg;// * float4(in.color, 1);
     
     return out;
 }
