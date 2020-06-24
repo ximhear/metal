@@ -121,7 +121,7 @@ vertex ColorVertexInOut tessellationInstanceRenderingColoredVertexShader(patch_c
     float theta = -uniforms[iid].speed * pow(len, 2);
     float4x4 rotation = float4x4(float4(cos(theta), sin(theta), 0 ,0), float4(-sin(theta), cos(theta), 0 ,0), float4(0, 0, 1, 0), float4(0, 0, 0, 1));
     out.position = uniforms[iid].projectionMatrix * rotation * uniforms[iid].modelViewMatrix * position;
-    out.color = float4(1, 1, 1, 0.75);
+    out.color = float4(1, 1, 1, 0.35);
     
     return out;
 }

@@ -213,7 +213,7 @@ class Renderer: NSObject, MTKViewDelegate {
         mesh1_0 = []
 
         let maxY: Float = 1 / cos(Float.pi / Float(Renderer.rouletteCount(self.items.count)))
-        let controlPoints = Renderer.createControlPoints(patches: patches, size: (0.02, maxY))
+        let controlPoints = Renderer.createControlPoints(patches: patches, size: (0.04, maxY))
         controlPointsBuffer = device.makeBuffer(bytes: controlPoints, length: MemoryLayout<float4>.stride * controlPoints.count)
 //        do {
 //            mesh1_1 = try Renderer.buildMesh1_1(device: device,
@@ -1196,8 +1196,8 @@ class Renderer: NSObject, MTKViewDelegate {
                                               patchStart: 0, patchCount: patchCount,
                                               patchIndexBuffer: nil,
                                               patchIndexBufferOffset: 0,
-                                              instanceCount: 1, baseInstance: 0)
-//                                              instanceCount: orgCount(), baseInstance: 0)
+//                                              instanceCount: 1, baseInstance: 0)
+                                              instanceCount: orgCount(), baseInstance: 0)
                     
                     renderEncoder.popDebugGroup()
 
