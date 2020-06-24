@@ -112,8 +112,7 @@ vertex ColorVertexInOut tessellationInstanceRenderingColoredVertexShader(patch_c
 
 
     float2 interpolated = mix(top, bottom, v);
-    float4 position = float4(interpolated.x, interpolated.y,
-                             0.0, 1.0);
+    float4 position = float4(interpolated.x, interpolated.y, 0.0, 1.0);
     out.orgPosition = uniforms[iid].modelViewMatrix * position;
     out.rotPosition1 = uniforms[iid].separatorRotationMatrix1 * position;
     out.rotPosition2 = uniforms[iid].separatorRotationMatrix2 * position;
@@ -121,8 +120,8 @@ vertex ColorVertexInOut tessellationInstanceRenderingColoredVertexShader(patch_c
     float len = length(out.orgPosition.xy);
     float theta = -uniforms[iid].speed * pow(len, 2);
     float4x4 rotation = float4x4(float4(cos(theta), sin(theta), 0 ,0), float4(-sin(theta), cos(theta), 0 ,0), float4(0, 0, 1, 0), float4(0, 0, 0, 1));
-    out.position = position;//uniforms[iid].projectionMatrix * rotation * uniforms[iid].modelViewMatrix * position;
-    out.color = float4(1, 0, 0, 1);
+    out.position = uniforms[iid].projectionMatrix * rotation * uniforms[iid].modelViewMatrix * position;
+    out.color = float4(1, 1, 1, 0.75);
     
     return out;
 }
