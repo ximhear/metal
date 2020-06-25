@@ -207,7 +207,7 @@ vertex ColorInOut vertexShader1(patch_control_point<ControlPoint> control_points
     out.position = uniforms.projectionMatrix * rotation * uniforms.modelViewMatrix * position;
     int row = rowVector.x;
     int col = colVector.x;
-    out.texCoord = float2(u / (float)col + (float)(patch_id % col) / (float)col, v / (float)row + (float)(patch_id / row) / (float)row);
+    out.texCoord = float2(u, v);//float2(u / (float)col + (float)(patch_id % col) / (float)col, v / (float)row + (float)(patch_id / row) / (float)row);
 
     return out;
 }
