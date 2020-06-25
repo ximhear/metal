@@ -207,7 +207,8 @@ vertex ColorInOut vertexShader1(patch_control_point<ControlPoint> control_points
     out.position = uniforms.projectionMatrix * rotation * uniforms.modelViewMatrix * position;
     int row = rowVector.x;
     int col = colVector.x;
-    out.texCoord = float2(u, v);//float2(u / (float)col + (float)(patch_id % col) / (float)col, v / (float)row + (float)(patch_id / row) / (float)row);
+//    out.texCoord = float2(u, v);//float2(u / (float)col + (float)(patch_id % col) / (float)col, v / (float)row + (float)(patch_id / row) / (float)row);
+    out.texCoord = float2(u / (float)col + (float)(patch_id % col) / (float)col, v / (float)row + (float)(row - (patch_id / col) - 1) / (float)row);
 
     return out;
 }
@@ -274,9 +275,11 @@ fragment half4 signed_distance_field_fragment(ColorInOut vertexIn [[ stage_in ]]
     // Smooth the glyph edge by interpolating across the boundary in a band with the width determined above
     float insideness = smoothstep(edgeDistance - edgeWidth, edgeDistance + edgeWidth, sampleDistance);
     if (insideness == 0) {
+//        return half4(0, 1, 0, 1);
 		discard_fragment();
 //        return half4(uniforms.bg.r, uniforms.bg.g, uniforms.bg.b, uniforms.bg.a);
     }
+//    return half4(1, 0, 0, 1);
     return half4(uniforms.fg.r, uniforms.fg.g, uniforms.fg.b, 0) * insideness + half4(uniforms.bg.r * (1-insideness), uniforms.bg.g * (1-insideness), uniforms.bg.b * (1-insideness), uniforms.bg.a);
 }
 

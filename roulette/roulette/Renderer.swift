@@ -83,7 +83,7 @@ class Renderer: NSObject, MTKViewDelegate {
     let items: [RouletteItem]
     
     // 패널 백그라운드
-    let backgroundPatchLevel = 4
+    let backgroundPatchLevel = 2
     var backgroundPatchCount: Int {
         return Int(pow(Double(4), Double(backgroundPatchLevel)))
     }
@@ -104,15 +104,15 @@ class Renderer: NSObject, MTKViewDelegate {
     var linePatchCount: Int {
       return linePatches.horizontal * linePatches.vertical
     }
-    var lineEdgeFactors: [Float] = [16, 16, 16, 16]
-    var lineInsideFactors: [Float] = [16, 16]
+    var lineEdgeFactors: [Float] = [16, 4, 16, 4]
+    var lineInsideFactors: [Float] = [4, 16]
     // 텍스트
-    let textPatches = (horizontal: 4, vertical: 4)
+    let textPatches = (horizontal: 1, vertical: 1)
     var textPatchCount: Int {
         return textPatches.horizontal * textPatches.vertical
     }
-    var textEdgeFactors: [Float] = [16, 16, 16, 16]
-    var textInsideFactors: [Float] = [16, 16]
+    var textEdgeFactors: [Float] = [16, 8, 16, 8]
+    var textInsideFactors: [Float] = [8, 16]
 
     var controlPointsBuffer: MTLBuffer?
     var tessellationPipelineState: MTLComputePipelineState
@@ -140,6 +140,7 @@ class Renderer: NSObject, MTKViewDelegate {
    //
     static var device: MTLDevice!
     var isFirstRendering = true
+    var fillMode: MTLTriangleFillMode = .fill
 
     deinit {
         GZLog()
@@ -1222,7 +1223,7 @@ class Renderer: NSObject, MTKViewDelegate {
             
             if let renderPassDescriptor = renderPassDescriptor {
                 //
-                if isFirstRendering {
+                if isFirstRendering == true {
                    isFirstRendering = false
                     
                     let computeEncoder1 = commandBuffer.makeComputeCommandEncoder()!
@@ -1290,7 +1291,7 @@ class Renderer: NSObject, MTKViewDelegate {
                     renderEncoder.setTessellationFactorBuffer(
                         backgroundTessellationFactorsBuffer,
                         offset: 0, instanceStride: 0)
-                    renderEncoder.setTriangleFillMode(.fill)
+                    renderEncoder.setTriangleFillMode(fillMode)
 
                     renderEncoder.setVertexBuffer(dynamicUniformBuffer1_0, offset:sixUniformBufferOffset1_0, index: BufferIndex.uniforms.rawValue)
                     renderEncoder.setFragmentBuffer(dynamicUniformBuffer1_0, offset:sixUniformBufferOffset1_0, index: BufferIndex.uniforms.rawValue)
@@ -1315,7 +1316,7 @@ class Renderer: NSObject, MTKViewDelegate {
                     renderEncoder.setTessellationFactorBuffer(
                         tessellationFactorsBuffer,
                         offset: 0, instanceStride: 0)
-                    renderEncoder.setTriangleFillMode(.fill)
+                    renderEncoder.setTriangleFillMode(fillMode)
 
                     renderEncoder.setVertexBuffer(dynamicUniformBuffer1_1, offset:sixUniformBufferOffset, index: BufferIndex.uniforms.rawValue)
                     renderEncoder.setFragmentBuffer(dynamicUniformBuffer1_1, offset:sixUniformBufferOffset, index: BufferIndex.uniforms.rawValue)
@@ -1329,35 +1330,35 @@ class Renderer: NSObject, MTKViewDelegate {
                                               instanceCount: orgCount(), baseInstance: 0)
                     renderEncoder.popDebugGroup()
 
-//                    renderEncoder.label = "Text Render Encoder"
-//                    renderEncoder.pushDebugGroup("Draw text")
-//                    renderEncoder.setCullMode(.back)
-//                    renderEncoder.setFrontFacing(.counterClockwise)
-//                    renderEncoder.setRenderPipelineState(pipelineState2)
-//                    renderEncoder.setDepthStencilState(depthState)
-//                    renderEncoder.setFragmentSamplerState(sampler, index: 0)
-//                    var row: float4 = float4(Float(textPatches.vertical), 0,0, 0)
-//                    var col: float4 = float4(Float(textPatches.horizontal), 0, 0, 0)
-//                    renderEncoder.setVertexBytes(&row, length: MemoryLayout<float4>.size, index: 3)
-//                    renderEncoder.setVertexBytes(&col, length: MemoryLayout<float4>.size, index: 4)
-//                    renderEncoder.setTessellationFactorBuffer(textTessellationFactorsBuffer, offset: 0, instanceStride: 0)
-//                    renderEncoder.setVertexBuffer(textControlPointsBuffer, offset: 0, index: 0)
-//                    renderEncoder.setTriangleFillMode(.fill)
-//                    for (x, item) in self.items.enumerated() {
-//
-//                        /// Final pass rendering code here
-//                        renderEncoder.setFragmentTexture(item.fontTexture, index: TextureIndex.color.rawValue)
-//                        renderEncoder.setVertexBuffer(dynamicUniformBuffer2, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)
-//                        renderEncoder.setFragmentBuffer(dynamicUniformBuffer2, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)
-//
-//                        renderEncoder.drawPatches(numberOfPatchControlPoints: 4,
-//                                                  patchStart: 0, patchCount: textPatchCount,
-//                                                  patchIndexBuffer: nil,
-//                                                  patchIndexBufferOffset: 0,
-//                                                  instanceCount: 1, baseInstance: 0)
-//
-//                    }
-//                    renderEncoder.popDebugGroup()
+                    renderEncoder.label = "Text Render Encoder"
+                    renderEncoder.pushDebugGroup("Draw text")
+                    renderEncoder.setCullMode(.back)
+                    renderEncoder.setFrontFacing(.counterClockwise)
+                    renderEncoder.setRenderPipelineState(pipelineState2)
+                    renderEncoder.setDepthStencilState(depthState)
+                    renderEncoder.setFragmentSamplerState(sampler, index: 0)
+                    var row: float4 = float4(Float(textPatches.vertical), 0,0, 0)
+                    var col: float4 = float4(Float(textPatches.horizontal), 0, 0, 0)
+                    renderEncoder.setVertexBytes(&row, length: MemoryLayout<float4>.size, index: 3)
+                    renderEncoder.setVertexBytes(&col, length: MemoryLayout<float4>.size, index: 4)
+                    renderEncoder.setTessellationFactorBuffer(textTessellationFactorsBuffer, offset: 0, instanceStride: 0)
+                    renderEncoder.setVertexBuffer(textControlPointsBuffer, offset: 0, index: 0)
+                    renderEncoder.setTriangleFillMode(fillMode)
+                    for (x, item) in self.items.enumerated() {
+
+                        /// Final pass rendering code here
+                        renderEncoder.setFragmentTexture(item.fontTexture, index: TextureIndex.color.rawValue)
+                        renderEncoder.setVertexBuffer(dynamicUniformBuffer2, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)
+                        renderEncoder.setFragmentBuffer(dynamicUniformBuffer2, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)
+
+                        renderEncoder.drawPatches(numberOfPatchControlPoints: 4,
+                                                  patchStart: 0, patchCount: textPatchCount,
+                                                  patchIndexBuffer: nil,
+                                                  patchIndexBufferOffset: 0,
+                                                  instanceCount: 1, baseInstance: 0)
+
+                    }
+                    renderEncoder.popDebugGroup()
                     
                     renderEncoder.endEncoding()
                 }
