@@ -126,25 +126,19 @@ vertex ColorVertexInOut tessellationInstanceRenderingColoredVertexShader(patch_c
     return out;
 }
 
-[[patch(quad, 4)]]
+[[patch(triangle, 3)]]
 vertex ColorVertexInOut instanceRenderingColoredVertexShader(patch_control_point<ControlPoint> control_points [[stage_in]],
                                                                          constant Uniforms* uniforms [[ buffer(BufferIndexUniforms) ]],
-                                                                         float2 patch_coord [[position_in_patch]],
+                                                                         float3 patch_coord [[position_in_patch]],
                                                                          ushort iid [[ instance_id ]])
 {
     ColorVertexInOut out;
     
     float u = patch_coord.x;
     float v = patch_coord.y;
-    
-    float2 top = mix(control_points[0].position.xy,
-                     control_points[1].position.xy, u);
-    float2 bottom = mix(control_points[3].position.xy,
-                        control_points[2].position.xy, u);
-    
-    
-    float2 interpolated = mix(top, bottom, v);
-    float4 position = float4(interpolated.x, interpolated.y, 0.0, 1.0);
+    float w = patch_coord.z;
+    float4 interpolated = control_points[0].position * u + control_points[1].position * v + control_points[2].position * w;
+    float4 position = float4(interpolated.xyz, 1);
     out.orgPosition = uniforms[iid].modelViewMatrix * position;
     out.rotPosition1 = uniforms[iid].separatorRotationMatrix1 * position;
     out.rotPosition2 = uniforms[iid].separatorRotationMatrix2 * position;
@@ -284,4 +278,16 @@ kernel void tessellation_main(constant float* edge_factors [[buffer(0)]],
       factors[pid].insideTessellationFactor[0] = inside_factors[0];
       factors[pid].insideTessellationFactor[1] = inside_factors[0];
 
+}
+
+kernel void tessellation_triangle_main(constant float* edge_factors [[ buffer(0) ]],
+                              constant float& inside_factors [[ buffer(1) ]],
+                              device MTLTriangleTessellationFactorsHalf* factors [[buffer(2)]],
+                              uint pid [[thread_position_in_grid]]) {
+    
+    factors[pid].edgeTessellationFactor[0] = edge_factors[0];
+    factors[pid].edgeTessellationFactor[1] = edge_factors[1];
+    factors[pid].edgeTessellationFactor[2] = edge_factors[2];
+
+    factors[pid].insideTessellationFactor = inside_factors;
 }

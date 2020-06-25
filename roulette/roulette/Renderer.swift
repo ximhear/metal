@@ -83,10 +83,12 @@ class Renderer: NSObject, MTKViewDelegate {
     let items: [RouletteItem]
     
     // 패널 백그라운드
-    let backgroundPatches = (horizontal: 4, vertical: 4)
+    let backgroundPatchLevel = 4
     var backgroundPatchCount: Int {
-        return backgroundPatches.horizontal * backgroundPatches.vertical
+        return Int(pow(Double(4), Double(backgroundPatchLevel)))
     }
+    var backgroundEdgeFactors: [Float] = [16, 16, 16]
+    var backgroundInsideFactors: Float  = 16
     var backgroundControlPointsBuffer: MTLBuffer?
     var backgroundTessellationPipelineState: MTLComputePipelineState
     lazy var backgroundTessellationFactorsBuffer: MTLBuffer? = {
@@ -183,11 +185,11 @@ class Renderer: NSObject, MTKViewDelegate {
             return nil
         }
         
-        let mtlVertexDescriptor1_0 = Renderer.buildMetalVertexDescriptor1_0()
+        let descriptor1_0 = Renderer.buildMetalVertexDescriptor1_0()
         do {
             pipelineState1_0 = try Renderer.buildRenderPipelineWithDevice1_0(device: device,
                                                                              metalKitView: metalKitView,
-                                                                             mtlVertexDescriptor: mtlVertexDescriptor1_0)
+                                                                             mtlVertexDescriptor: descriptor1_0)
         } catch {
             GZLog("Unable to compile render pipeline state.  Error info: \(error)")
             return nil
@@ -232,7 +234,12 @@ class Renderer: NSObject, MTKViewDelegate {
         controlPointsBuffer = device.makeBuffer(bytes: controlPoints, length: MemoryLayout<float3>.stride * controlPoints.count)
         
         let maxX = tan(Float.pi / Float(Renderer.rouletteCount(self.items.count)))
-        let backgourndControlPoints = Renderer.createBackgroundControlPoints(patches: backgroundPatches, size: (maxX * 2, 1))
+        let backgourndControlPoints = Renderer.createControlPoints(patchLevel: backgroundPatchLevel,
+                                                                   controlPoints: [
+                                                                    float3(0, 0, 0),
+                                                                    float3(-maxX, 1, 0),
+                                                                    float3(maxX, 1, 0),
+                                                                   ])
         backgroundControlPointsBuffer = device.makeBuffer(bytes: backgourndControlPoints, length: MemoryLayout<float3>.stride * backgourndControlPoints.count)
 //        do {j
 //            mesh1_1 = try Renderer.buildMesh1_1(device: device,
@@ -289,7 +296,7 @@ class Renderer: NSObject, MTKViewDelegate {
         }
 
 
-        backgroundTessellationPipelineState = Renderer.buildComputePipelineState(device: device)
+        backgroundTessellationPipelineState = Renderer.buildTriangleTesselationComputePipelineState(device: device)
         tessellationPipelineState = Renderer.buildComputePipelineState(device: device)
 
         super.init()
@@ -299,7 +306,7 @@ class Renderer: NSObject, MTKViewDelegate {
             let rouletteCount = self.rouletteCount()
 //            for x in 0..<rouletteCount {
             let a = try Renderer.buildMesh1_0(device: device,
-                                              mtlVertexDescriptor: mtlVertexDescriptor1_0,
+                                              mtlVertexDescriptor: descriptor1_0,
                                               xDivideCount: yDivideCount,
                                               yDivideCount: yDivideCount,
                                               rouletteCount: rouletteCount,
@@ -366,7 +373,7 @@ class Renderer: NSObject, MTKViewDelegate {
 //        mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].bufferIndex = BufferIndex.meshGenerics.rawValue
         
         mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stride = MemoryLayout<float3>.stride
-        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stepRate = 1
+//        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stepRate = 1
         mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stepFunction = .perPatchControlPoint
         
 //        mtlVertexDescriptor.layouts[BufferIndex.meshGenerics.rawValue].stride = 12
@@ -520,6 +527,15 @@ class Renderer: NSObject, MTKViewDelegate {
         sampler = device.makeSamplerState(descriptor: samplerDescriptor)
     }
 
+    static func buildTriangleTesselationComputePipelineState(device: MTLDevice) -> MTLComputePipelineState {
+
+        let library = device.makeDefaultLibrary()
+      guard let kernelFunction = library?.makeFunction(name: "tessellation_triangle_main") else {
+          fatalError("Tessellation shader function not found")
+      }
+      return try! device.makeComputePipelineState(
+                             function: kernelFunction)
+    }
 
     class func buildMesh(device: MTLDevice,
                          mtlVertexDescriptor: MTLVertexDescriptor) throws -> MTKMesh {
@@ -990,6 +1006,24 @@ class Renderer: NSObject, MTKViewDelegate {
       return points
     }
 
+    static func createControlPoints(patchLevel: Int, controlPoints c: [float3]) -> [float3] {
+      
+        if patchLevel == 0 {
+            return c
+        }
+        var points: [float3] = []
+        
+        var m: [float3] = []
+        m.append((c[0] + c[1]) / 2)
+        m.append((c[1] + c[2]) / 2)
+        m.append((c[2] + c[0]) / 2)
+        points.append(contentsOf: createControlPoints(patchLevel: patchLevel - 1, controlPoints: [c[0], m[0], m[2]]))
+        points.append(contentsOf: createControlPoints(patchLevel: patchLevel - 1, controlPoints: [m[0], c[1], m[1]]))
+        points.append(contentsOf: createControlPoints(patchLevel: patchLevel - 1, controlPoints: [m[1], c[2], m[2]]))
+        points.append(contentsOf: createControlPoints(patchLevel: patchLevel - 1, controlPoints: [m[0], m[1], m[2]]))
+      return points
+    }
+
     static func createBackgroundControlPoints(patches: (horizontal: Int, vertical: Int),
                                     size: (width: Float, height: Float)) -> [float4] {
         
@@ -1177,11 +1211,11 @@ class Renderer: NSObject, MTKViewDelegate {
                 //
                 let computeEncoder1 = commandBuffer.makeComputeCommandEncoder()!
                 computeEncoder1.setComputePipelineState(backgroundTessellationPipelineState)
-                computeEncoder1.setBytes(&edgeFactors,
-                                         length: MemoryLayout<Float>.size * edgeFactors.count,
+                computeEncoder1.setBytes(&backgroundEdgeFactors,
+                                         length: MemoryLayout<Float>.size * backgroundEdgeFactors.count,
                                          index: 0)
-                computeEncoder1.setBytes(&insideFactors,
-                                         length: MemoryLayout<Float>.size * insideFactors.count,
+                computeEncoder1.setBytes(&backgroundInsideFactors,
+                                         length: MemoryLayout<Float>.size,
                                          index: 1)
                 computeEncoder1.setBuffer(backgroundTessellationFactorsBuffer, offset: 0,
                                           index: 2)
@@ -1214,7 +1248,7 @@ class Renderer: NSObject, MTKViewDelegate {
 
                     // 1
                     renderEncoder.label = "Primary Render Encoder"
-                    renderEncoder.pushDebugGroup("Draw Box")
+                    renderEncoder.pushDebugGroup("background")
                     //                        renderEncoder.setCullMode(.back)
                     //                        renderEncoder.setFrontFacing(.counterClockwise)
                     renderEncoder.setRenderPipelineState(pipelineState1_0)
@@ -1230,31 +1264,11 @@ class Renderer: NSObject, MTKViewDelegate {
                     renderEncoder.setVertexBuffer(backgroundControlPointsBuffer,
                                                   offset: 0, index: 0)
                     
-                    renderEncoder.drawPatches(numberOfPatchControlPoints: 4,
+                    renderEncoder.drawPatches(numberOfPatchControlPoints: 3,
                                               patchStart: 0, patchCount: backgroundPatchCount,
                                               patchIndexBuffer: nil,
                                               patchIndexBufferOffset: 0,
                                               instanceCount: rouletteCount(), baseInstance: 0)
-//                    for (index, element) in mesh1_0[0].vertexDescriptor.layouts.enumerated() {
-//                        guard let layout = element as? MDLVertexBufferLayout else {
-//                            return
-//                        }
-//
-//                        if layout.stride != 0 {
-//                            let buffer = mesh1_0[0].vertexBuffers[index]
-//                            renderEncoder.setVertexBuffer(buffer.buffer, offset:buffer.offset, index: index)
-//                        }
-//                    }
-//
-//                    for submesh in mesh1_0[0].submeshes {
-//                        renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType,
-//                                                            indexCount: submesh.indexCount,
-//                                                            indexType: submesh.indexType,
-//                                                            indexBuffer: submesh.indexBuffer.buffer,
-//                                                            indexBufferOffset: submesh.indexBuffer.offset,
-//                                                            instanceCount: rouletteCount())
-//
-//                    }
                     renderEncoder.popDebugGroup()
 
                     // 2
@@ -1286,7 +1300,7 @@ class Renderer: NSObject, MTKViewDelegate {
 
                         /// Final pass rendering code here
                         renderEncoder.label = "Text Render Encoder"
-                        renderEncoder.pushDebugGroup("Draw Box")
+                        renderEncoder.pushDebugGroup("Draw text")
                         //                            renderEncoder.setCullMode(.back)
                         //                            renderEncoder.setFrontFacing(.counterClockwise)
                         renderEncoder.setRenderPipelineState(pipelineState2)
