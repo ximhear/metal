@@ -229,11 +229,11 @@ class Renderer: NSObject, MTKViewDelegate {
 
         let maxY: Float = 1 / cos(Float.pi / Float(Renderer.rouletteCount(self.items.count)))
         let controlPoints = Renderer.createControlPoints(patches: patches, size: (0.04, maxY))
-        controlPointsBuffer = device.makeBuffer(bytes: controlPoints, length: MemoryLayout<float4>.stride * controlPoints.count)
+        controlPointsBuffer = device.makeBuffer(bytes: controlPoints, length: MemoryLayout<float3>.stride * controlPoints.count)
         
         let maxX = tan(Float.pi / Float(Renderer.rouletteCount(self.items.count)))
         let backgourndControlPoints = Renderer.createBackgroundControlPoints(patches: backgroundPatches, size: (maxX * 2, 1))
-        backgroundControlPointsBuffer = device.makeBuffer(bytes: backgourndControlPoints, length: MemoryLayout<float4>.stride * backgourndControlPoints.count)
+        backgroundControlPointsBuffer = device.makeBuffer(bytes: backgourndControlPoints, length: MemoryLayout<float3>.stride * backgourndControlPoints.count)
 //        do {j
 //            mesh1_1 = try Renderer.buildMesh1_1(device: device,
 //                                                mtlVertexDescriptor: mtlVertexDescriptor1_1,
@@ -357,7 +357,7 @@ class Renderer: NSObject, MTKViewDelegate {
         
         let mtlVertexDescriptor = MTLVertexDescriptor()
         
-        mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].format = .float4
+        mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].format = .float3
         mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].offset = 0
         mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].bufferIndex = BufferIndex.meshPositions.rawValue
         
@@ -365,7 +365,7 @@ class Renderer: NSObject, MTKViewDelegate {
 //        mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].offset = 0
 //        mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].bufferIndex = BufferIndex.meshGenerics.rawValue
         
-        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stride = 16
+        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stride = MemoryLayout<float3>.stride
         mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stepRate = 1
         mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stepFunction = .perPatchControlPoint
         
@@ -382,11 +382,11 @@ class Renderer: NSObject, MTKViewDelegate {
         
         let mtlVertexDescriptor = MTLVertexDescriptor()
         
-        mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].format = .float4
+        mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].format = .float3
         mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].offset = 0
         mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].bufferIndex = BufferIndex.meshPositions.rawValue
         
-        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stride = 16
+        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stride = MemoryLayout<float3>.stride
 //        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stepRate = 1
         mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stepFunction = .perPatchControlPoint
 
