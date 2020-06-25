@@ -107,12 +107,12 @@ class Renderer: NSObject, MTKViewDelegate {
     var lineEdgeFactors: [Float] = [16, 4, 16, 4]
     var lineInsideFactors: [Float] = [4, 16]
     // 텍스트
-    let textPatches = (horizontal: 1, vertical: 1)
+    let textPatches = (horizontal: 4, vertical: 4)
     var textPatchCount: Int {
         return textPatches.horizontal * textPatches.vertical
     }
-    var textEdgeFactors: [Float] = [16, 8, 16, 8]
-    var textInsideFactors: [Float] = [8, 16]
+    var textEdgeFactors: [Float] = [16, 16, 16, 16]
+    var textInsideFactors: [Float] = [16, 16]
 
     var controlPointsBuffer: MTLBuffer?
     var tessellationPipelineState: MTLComputePipelineState

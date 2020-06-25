@@ -146,7 +146,7 @@ vertex ColorVertexInOut instanceRenderingColoredVertexShader(patch_control_point
     //    if (theta M_PI_F
     float4x4 rotation = float4x4(float4(cos(theta), sin(theta), 0 ,0), float4(-sin(theta), cos(theta), 0 ,0), float4(0, 0, 1, 0), float4(0, 0, 0, 1));
     out.position = uniforms[iid].projectionMatrix * rotation * uniforms[iid].modelViewMatrix * position;
-    out.color = uniforms[iid].fg;// * float4(in.color, 1);
+    out.color = uniforms[iid].fg * float4(0.5 + u / 2.0, 0.5 + v / 2.0, 0.5 + w / 2.0, 1);
     
     return out;
 }
