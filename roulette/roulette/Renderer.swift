@@ -1321,13 +1321,13 @@ class Renderer: NSObject, MTKViewDelegate {
                                               instanceCount: orgCount(), baseInstance: 0)
                     renderEncoder.popDebugGroup()
 
+                    renderEncoder.label = "Text Render Encoder"
+                    renderEncoder.pushDebugGroup("Draw text")
+                    renderEncoder.setCullMode(.back)
+                    renderEncoder.setFrontFacing(.counterClockwise)
                     for (x, item) in self.items.enumerated() {
 
                         /// Final pass rendering code here
-                        renderEncoder.label = "Text Render Encoder"
-                        renderEncoder.pushDebugGroup("Draw text \(x)")
-                        //                            renderEncoder.setCullMode(.back)
-                        //                            renderEncoder.setFrontFacing(.counterClockwise)
                         renderEncoder.setRenderPipelineState(pipelineState2)
                         renderEncoder.setDepthStencilState(depthState)
                         renderEncoder.setFragmentSamplerState(sampler, index: 0)
@@ -1342,34 +1342,15 @@ class Renderer: NSObject, MTKViewDelegate {
                         renderEncoder.setTriangleFillMode(.fill)
 
                         renderEncoder.setVertexBuffer(textControlPointsBuffer, offset: 0, index: 0)
-                        
+
                         renderEncoder.drawPatches(numberOfPatchControlPoints: 4,
                                                   patchStart: 0, patchCount: textPatchCount,
                                                   patchIndexBuffer: nil,
                                                   patchIndexBufferOffset: 0,
                                                   instanceCount: 1, baseInstance: 0)
-                        
-//                        for (index, element) in mesh2.vertexDescriptor.layouts.enumerated() {
-//                            guard let layout = element as? MDLVertexBufferLayout else {
-//                                return
-//                            }
-//
-//                            if layout.stride != 0 {
-//                                let buffer = mesh2.vertexBuffers[index]
-//                                renderEncoder.setVertexBuffer(buffer.buffer, offset:buffer.offset, index: index)
-//                            }
-//                        }
-//
-//                        for submesh in mesh2.submeshes {
-//                            renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType,
-//                                                                indexCount: submesh.indexCount,
-//                                                                indexType: submesh.indexType,
-//                                                                indexBuffer: submesh.indexBuffer.buffer,
-//                                                                indexBufferOffset: submesh.indexBuffer.offset)
-//
-//                        }
-                        renderEncoder.popDebugGroup()
+
                     }
+                    renderEncoder.popDebugGroup()
                     renderEncoder.endEncoding()
                 }
             }
