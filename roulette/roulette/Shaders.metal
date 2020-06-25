@@ -48,7 +48,6 @@ struct ControlPoint {
     float4 position [[attribute(0)]];
 };
 
-[[patch(quad, 4)]]
 vertex ColorVertexInOut coloredVertexShader(ColorVertex in [[ stage_in ]],
                                constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]])
 {
@@ -179,19 +178,37 @@ vertex ColorInOut vertexShader(Vertex in [[ stage_in ]],
     return out;
 }
 
-vertex ColorInOut vertexShader1(Vertex in [[ stage_in ]],
-                               constant Uniforms & uniforms [[ buffer(BufferIndexUniforms) ]])
+[[patch(quad, 4)]]
+vertex ColorInOut vertexShader1(patch_control_point<ControlPoint> control_points [[stage_in]],
+                               constant Uniforms& uniforms [[ buffer(BufferIndexUniforms) ]],
+                                constant float4& rowVector [[ buffer(3) ]],
+                                constant float4& colVector [[ buffer(4) ]],
+                               float2 patch_coord [[position_in_patch]],
+                                uint patch_id [[patch_id]],
+                               ushort iid [[ instance_id ]])
 {
     ColorInOut out;
     
-    float4 position = float4(in.position, 1.0);
+    float u = patch_coord.x;
+    float v = patch_coord.y;
+    
+    float3 top = mix(control_points[0].position.xyz,
+                     control_points[1].position.xyz, u);
+    float3 bottom = mix(control_points[3].position.xyz,
+                        control_points[2].position.xyz, u);
+    
+    
+    float3 interpolated = mix(top, bottom, v);
+    float4 position = float4(interpolated.xyz, 1.0);
     out.orgPosition = uniforms.modelViewMatrix * position;
     float len = length(out.orgPosition.xy);
     float theta = -uniforms.speed * pow(len, 2);
     float4x4 rotation = float4x4(float4(cos(theta), sin(theta), 0 ,0), float4(-sin(theta), cos(theta), 0 ,0), float4(0, 0, 1, 0), float4(0, 0, 0, 1));
     out.position = uniforms.projectionMatrix * rotation * uniforms.modelViewMatrix * position;
-    out.texCoord = in.texCoord.xy;
-    
+    int row = rowVector.x;
+    int col = colVector.x;
+    out.texCoord = float2(u / (float)col + (float)(patch_id % col) / (float)col, v / (float)row + (float)(patch_id / row) / (float)row);
+
     return out;
 }
 
