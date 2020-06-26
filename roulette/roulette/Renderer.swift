@@ -83,7 +83,7 @@ class Renderer: NSObject, MTKViewDelegate {
     let items: [RouletteItem]
     
     // 패널 백그라운드
-    let backgroundPatchLevel = 2
+    let backgroundPatchLevel = 3
     var backgroundPatchCount: Int {
         return Int(pow(Double(4), Double(backgroundPatchLevel)))
     }
@@ -100,14 +100,14 @@ class Renderer: NSObject, MTKViewDelegate {
                                           options: .storageModePrivate)
     }()
     // 패널 사이 조각
-    let linePatches = (horizontal: 2, vertical: 4)
+    let linePatches = (horizontal: 2, vertical: 8)
     var linePatchCount: Int {
       return linePatches.horizontal * linePatches.vertical
     }
     var lineEdgeFactors: [Float] = [16, 4, 16, 4]
     var lineInsideFactors: [Float] = [4, 16]
     // 텍스트
-    let textPatches = (horizontal: 4, vertical: 4)
+    let textPatches = (horizontal: 4, vertical: 8)
     var textPatchCount: Int {
         return textPatches.horizontal * textPatches.vertical
     }
