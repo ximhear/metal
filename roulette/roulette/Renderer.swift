@@ -1307,12 +1307,12 @@ class Renderer: NSObject, MTKViewDelegate {
                     renderEncoder.popDebugGroup()
 
                     // 2
-                    renderEncoder.label = "Primary Render Encoder"
+//                    renderEncoder.label = "Primary Render Encoder"
                     renderEncoder.pushDebugGroup("Draw separator line")
                     //                        renderEncoder.setCullMode(.back)
                     //                        renderEncoder.setFrontFacing(.counterClockwise)
                     renderEncoder.setRenderPipelineState(pipelineState1_1)
-                    renderEncoder.setDepthStencilState(depthState)
+//                    renderEncoder.setDepthStencilState(depthState)
                     renderEncoder.setTessellationFactorBuffer(
                         tessellationFactorsBuffer,
                         offset: 0, instanceStride: 0)
@@ -1330,12 +1330,12 @@ class Renderer: NSObject, MTKViewDelegate {
                                               instanceCount: orgCount(), baseInstance: 0)
                     renderEncoder.popDebugGroup()
 
-                    renderEncoder.label = "Text Render Encoder"
+//                    renderEncoder.label = "Text Render Encoder"
                     renderEncoder.pushDebugGroup("Draw text")
                     renderEncoder.setCullMode(.back)
                     renderEncoder.setFrontFacing(.counterClockwise)
                     renderEncoder.setRenderPipelineState(pipelineState2)
-                    renderEncoder.setDepthStencilState(depthState)
+//                    renderEncoder.setDepthStencilState(depthState)
                     renderEncoder.setFragmentSamplerState(sampler, index: 0)
                     var row: float4 = float4(Float(textPatches.vertical), 0,0, 0)
                     var col: float4 = float4(Float(textPatches.horizontal), 0, 0, 0)
