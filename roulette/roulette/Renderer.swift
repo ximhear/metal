@@ -1220,72 +1220,73 @@ class Renderer: NSObject, MTKViewDelegate {
             /// Delay getting the currentRenderPassDescriptor until we absolutely need it to avoid
             ///   holding onto the drawable and blocking the display pipeline any longer than necessary
             let renderPassDescriptor = view.currentRenderPassDescriptor
-            
-            if let renderPassDescriptor = renderPassDescriptor {
+
+            if isFirstRendering == true {
+               isFirstRendering = false
+                
+                let computeEncoder1 = commandBuffer.makeComputeCommandEncoder()!
+                computeEncoder1.setComputePipelineState(backgroundTessellationPipelineState)
+                computeEncoder1.setBytes(&backgroundEdgeFactors,
+                                         length: MemoryLayout<Float>.size * backgroundEdgeFactors.count,
+                                         index: 0)
+                computeEncoder1.setBytes(&backgroundInsideFactors,
+                                         length: MemoryLayout<Float>.size,
+                                         index: 1)
+                computeEncoder1.setBuffer(backgroundTessellationFactorsBuffer, offset: 0,
+                                          index: 2)
+                let backgroundWidth = min(backgroundPatchCount,
+                                          backgroundTessellationPipelineState.threadExecutionWidth)
+                computeEncoder1.dispatchThreadgroups(MTLSizeMake(backgroundPatchCount, 1, 1),
+                                                     threadsPerThreadgroup: MTLSizeMake(backgroundWidth, 1, 1))
+                computeEncoder1.endEncoding()
+                
                 //
-                if isFirstRendering == true {
-                   isFirstRendering = false
-                    
-                    let computeEncoder1 = commandBuffer.makeComputeCommandEncoder()!
-                    computeEncoder1.setComputePipelineState(backgroundTessellationPipelineState)
-                    computeEncoder1.setBytes(&backgroundEdgeFactors,
-                                             length: MemoryLayout<Float>.size * backgroundEdgeFactors.count,
-                                             index: 0)
-                    computeEncoder1.setBytes(&backgroundInsideFactors,
-                                             length: MemoryLayout<Float>.size,
-                                             index: 1)
-                    computeEncoder1.setBuffer(backgroundTessellationFactorsBuffer, offset: 0,
-                                              index: 2)
-                    let backgroundWidth = min(backgroundPatchCount,
-                                              backgroundTessellationPipelineState.threadExecutionWidth)
-                    computeEncoder1.dispatchThreadgroups(MTLSizeMake(backgroundPatchCount, 1, 1),
-                                                         threadsPerThreadgroup: MTLSizeMake(backgroundWidth, 1, 1))
-                    computeEncoder1.endEncoding()
-                    
-                    //
-                    let computeEncoder = commandBuffer.makeComputeCommandEncoder()!
-                    computeEncoder.setComputePipelineState(tessellationPipelineState)
-                    computeEncoder.setBytes(&lineEdgeFactors,
-                                            length: MemoryLayout<Float>.size * lineEdgeFactors.count,
+                let computeEncoder = commandBuffer.makeComputeCommandEncoder()!
+                computeEncoder.setComputePipelineState(tessellationPipelineState)
+                computeEncoder.setBytes(&lineEdgeFactors,
+                                        length: MemoryLayout<Float>.size * lineEdgeFactors.count,
+                                        index: 0)
+                computeEncoder.setBytes(&lineInsideFactors,
+                                        length: MemoryLayout<Float>.size * lineInsideFactors.count,
+                                        index: 1)
+                computeEncoder.setBuffer(tessellationFactorsBuffer, offset: 0,
+                                         index: 2)
+                let width = min(linePatchCount,
+                                tessellationPipelineState.threadExecutionWidth)
+                computeEncoder.dispatchThreadgroups(MTLSizeMake(linePatchCount,
+                                                                1, 1),
+                                                    threadsPerThreadgroup: MTLSizeMake(width, 1, 1))
+                computeEncoder.endEncoding()
+                
+                let textComputeEncoder = commandBuffer.makeComputeCommandEncoder()!
+                textComputeEncoder.setComputePipelineState(textTessellationPipelineState)
+                textComputeEncoder.setBytes(&textEdgeFactors,
+                                            length: MemoryLayout<Float>.size * textEdgeFactors.count,
                                             index: 0)
-                    computeEncoder.setBytes(&lineInsideFactors,
-                                            length: MemoryLayout<Float>.size * lineInsideFactors.count,
+                textComputeEncoder.setBytes(&textInsideFactors,
+                                            length: MemoryLayout<Float>.size * textInsideFactors.count,
                                             index: 1)
-                    computeEncoder.setBuffer(tessellationFactorsBuffer, offset: 0,
+                textComputeEncoder.setBuffer(tessellationFactorsBuffer, offset: 0,
                                              index: 2)
-                    let width = min(linePatchCount,
-                                    tessellationPipelineState.threadExecutionWidth)
-                    computeEncoder.dispatchThreadgroups(MTLSizeMake(linePatchCount,
-                                                                    1, 1),
-                                                        threadsPerThreadgroup: MTLSizeMake(width, 1, 1))
-                    computeEncoder.endEncoding()
-                    
-                    let textComputeEncoder = commandBuffer.makeComputeCommandEncoder()!
-                    textComputeEncoder.setComputePipelineState(textTessellationPipelineState)
-                    textComputeEncoder.setBytes(&textEdgeFactors,
-                                                length: MemoryLayout<Float>.size * textEdgeFactors.count,
-                                                index: 0)
-                    textComputeEncoder.setBytes(&textInsideFactors,
-                                                length: MemoryLayout<Float>.size * textInsideFactors.count,
-                                                index: 1)
-                    textComputeEncoder.setBuffer(tessellationFactorsBuffer, offset: 0,
-                                                 index: 2)
-                    let textWidth = min(textPatchCount,
-                                        textTessellationPipelineState.threadExecutionWidth)
-                    textComputeEncoder.dispatchThreadgroups(MTLSizeMake(textPatchCount, 1, 1),
-                                                            threadsPerThreadgroup: MTLSizeMake(textWidth, 1, 1))
-                    textComputeEncoder.endEncoding()
-                }
+                let textWidth = min(textPatchCount,
+                                    textTessellationPipelineState.threadExecutionWidth)
+                textComputeEncoder.dispatchThreadgroups(MTLSizeMake(textPatchCount, 1, 1),
+                                                        threadsPerThreadgroup: MTLSizeMake(textWidth, 1, 1))
+                textComputeEncoder.endEncoding()
+            }
+            if let renderPassDescriptor = renderPassDescriptor, let parallel = commandBuffer.makeParallelRenderCommandEncoder(descriptor: renderPassDescriptor) {
+                //
 
 
 
-                if let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) {
+
+                if let renderEncoder = parallel.makeRenderCommandEncoder() {
 
                     // 1
                     renderEncoder.label = "Primary Render Encoder"
                     renderEncoder.pushDebugGroup("background")
-                    //                        renderEncoder.setCullMode(.back)
-                    //                        renderEncoder.setFrontFacing(.counterClockwise)
+                                            renderEncoder.setCullMode(.back)
+                                            renderEncoder.setFrontFacing(.counterClockwise)
                     renderEncoder.setRenderPipelineState(pipelineState1_0)
                     renderEncoder.setDepthStencilState(depthState)
                     renderEncoder.setTessellationFactorBuffer(
@@ -1305,14 +1306,17 @@ class Renderer: NSObject, MTKViewDelegate {
                                               patchIndexBufferOffset: 0,
                                               instanceCount: rouletteCount(), baseInstance: 0)
                     renderEncoder.popDebugGroup()
+                    renderEncoder.endEncoding()
+                }
 
                     // 2
-//                    renderEncoder.label = "Primary Render Encoder"
+                if let renderEncoder = parallel.makeRenderCommandEncoder() {
+                    renderEncoder.label = "Primary Render Encoder"
                     renderEncoder.pushDebugGroup("Draw separator line")
-                    //                        renderEncoder.setCullMode(.back)
-                    //                        renderEncoder.setFrontFacing(.counterClockwise)
+                                            renderEncoder.setCullMode(.back)
+                                            renderEncoder.setFrontFacing(.counterClockwise)
                     renderEncoder.setRenderPipelineState(pipelineState1_1)
-//                    renderEncoder.setDepthStencilState(depthState)
+                    renderEncoder.setDepthStencilState(depthState)
                     renderEncoder.setTessellationFactorBuffer(
                         tessellationFactorsBuffer,
                         offset: 0, instanceStride: 0)
@@ -1329,23 +1333,26 @@ class Renderer: NSObject, MTKViewDelegate {
                                               patchIndexBufferOffset: 0,
                                               instanceCount: orgCount(), baseInstance: 0)
                     renderEncoder.popDebugGroup()
+                    renderEncoder.endEncoding()
+                }
 
-//                    renderEncoder.label = "Text Render Encoder"
-                    renderEncoder.pushDebugGroup("Draw text")
-                    renderEncoder.setCullMode(.back)
-                    renderEncoder.setFrontFacing(.counterClockwise)
-                    renderEncoder.setRenderPipelineState(pipelineState2)
-//                    renderEncoder.setDepthStencilState(depthState)
-                    renderEncoder.setFragmentSamplerState(sampler, index: 0)
-                    var row: float4 = float4(Float(textPatches.vertical), 0,0, 0)
-                    var col: float4 = float4(Float(textPatches.horizontal), 0, 0, 0)
-                    renderEncoder.setVertexBytes(&row, length: MemoryLayout<float4>.size, index: 3)
-                    renderEncoder.setVertexBytes(&col, length: MemoryLayout<float4>.size, index: 4)
-                    renderEncoder.setTessellationFactorBuffer(textTessellationFactorsBuffer, offset: 0, instanceStride: 0)
-                    renderEncoder.setVertexBuffer(textControlPointsBuffer, offset: 0, index: 0)
-                    renderEncoder.setTriangleFillMode(fillMode)
                     for (x, item) in self.items.enumerated() {
 
+                        if let renderEncoder = parallel.makeRenderCommandEncoder() {
+                        renderEncoder.label = "Text Render Encoder"
+                        renderEncoder.pushDebugGroup("Draw text")
+                        renderEncoder.setCullMode(.back)
+                        renderEncoder.setFrontFacing(.counterClockwise)
+                        renderEncoder.setRenderPipelineState(pipelineState2)
+                        renderEncoder.setDepthStencilState(depthState)
+                        renderEncoder.setFragmentSamplerState(sampler, index: 0)
+                        var row: float4 = float4(Float(textPatches.vertical), 0,0, 0)
+                        var col: float4 = float4(Float(textPatches.horizontal), 0, 0, 0)
+                        renderEncoder.setVertexBytes(&row, length: MemoryLayout<float4>.size, index: 3)
+                        renderEncoder.setVertexBytes(&col, length: MemoryLayout<float4>.size, index: 4)
+                        renderEncoder.setTessellationFactorBuffer(textTessellationFactorsBuffer, offset: 0, instanceStride: 0)
+                        renderEncoder.setVertexBuffer(textControlPointsBuffer, offset: 0, index: 0)
+                        renderEncoder.setTriangleFillMode(fillMode)
                         /// Final pass rendering code here
                         renderEncoder.setFragmentTexture(item.fontTexture, index: TextureIndex.color.rawValue)
                         renderEncoder.setVertexBuffer(dynamicUniformBuffer2, offset:sixUniformBufferOffset + uniformsSize * x, index: BufferIndex.uniforms.rawValue)
@@ -1356,12 +1363,14 @@ class Renderer: NSObject, MTKViewDelegate {
                                                   patchIndexBuffer: nil,
                                                   patchIndexBufferOffset: 0,
                                                   instanceCount: 1, baseInstance: 0)
+                            renderEncoder.popDebugGroup()
+                            renderEncoder.endEncoding()
+                        }
 
                     }
-                    renderEncoder.popDebugGroup()
+//                    renderEncoder.popDebugGroup()
                     
-                    renderEncoder.endEncoding()
-                }
+                parallel.endEncoding()
             }
 
             if let drawable = view.currentDrawable {
