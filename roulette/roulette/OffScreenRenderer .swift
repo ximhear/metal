@@ -142,6 +142,7 @@ class OffScreenRenderer: NSObject {
     func makeDepthTexture() {
         let desc = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .depth32Float, width: Int(500), height: Int(500), mipmapped: false)
         desc.usage = .renderTarget
+        desc.storageMode = .memoryless
         depthTexture = self.device.makeTexture(descriptor: desc)
     }
 
