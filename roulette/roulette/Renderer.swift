@@ -1284,8 +1284,8 @@ class Renderer: NSObject, MTKViewDelegate {
                     // 1
                     renderEncoder.label = "Primary Render Encoder"
                     renderEncoder.pushDebugGroup("background")
-                    //                        renderEncoder.setCullMode(.back)
-                    //                        renderEncoder.setFrontFacing(.counterClockwise)
+                    renderEncoder.setCullMode(.back)
+                    renderEncoder.setFrontFacing(.counterClockwise)
                     renderEncoder.setRenderPipelineState(pipelineState1_0)
                     renderEncoder.setDepthStencilState(depthState)
                     renderEncoder.setTessellationFactorBuffer(
@@ -1309,8 +1309,8 @@ class Renderer: NSObject, MTKViewDelegate {
                     // 2
 //                    renderEncoder.label = "Primary Render Encoder"
                     renderEncoder.pushDebugGroup("Draw separator line")
-                    //                        renderEncoder.setCullMode(.back)
-                    //                        renderEncoder.setFrontFacing(.counterClockwise)
+//                    renderEncoder.setCullMode(.back)
+//                    renderEncoder.setFrontFacing(.counterClockwise)
                     renderEncoder.setRenderPipelineState(pipelineState1_1)
 //                    renderEncoder.setDepthStencilState(depthState)
                     renderEncoder.setTessellationFactorBuffer(
@@ -1332,8 +1332,8 @@ class Renderer: NSObject, MTKViewDelegate {
 
 //                    renderEncoder.label = "Text Render Encoder"
                     renderEncoder.pushDebugGroup("Draw text")
-                    renderEncoder.setCullMode(.back)
-                    renderEncoder.setFrontFacing(.counterClockwise)
+//                    renderEncoder.setCullMode(.back)
+//                    renderEncoder.setFrontFacing(.counterClockwise)
                     renderEncoder.setRenderPipelineState(pipelineState2)
 //                    renderEncoder.setDepthStencilState(depthState)
                     renderEncoder.setFragmentSamplerState(sampler, index: 0)
